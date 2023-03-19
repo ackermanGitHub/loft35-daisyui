@@ -277,6 +277,7 @@ const ProductForm = () => {
                 ${upldProState === 'Error' ? 'btn-error' : ''}
                 `}
               type="submit"
+              disabled={upldProState === 'Cargando'}
             >
               {upldProState}
             </button>
