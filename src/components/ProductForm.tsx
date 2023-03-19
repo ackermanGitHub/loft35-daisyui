@@ -67,7 +67,7 @@ const ProductForm = () => {
         Subir Producto
       </label>
       <input type="checkbox" id="my-modal-5" className="modal-toggle" />
-      <div className="modal w-[100vw] ">
+      <div className="modal">
         <form
           className="modal-box flex w-auto max-w-5xl flex-col"
           // eslint-disable-next-line @typescript-eslint/no-misused-promises

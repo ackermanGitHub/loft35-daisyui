@@ -62,9 +62,11 @@ model Product {
   name            String
   description     String?
   image           String
+  imageSizeMb     Float
   price           Float
   stock           Int
   categoryId      Int
+  categoryName    String
   secondaryImages String[]
   category        Category @relation(fields: [categoryId], references: [id])
   orders          Order[]  @relation("Product-Orders")

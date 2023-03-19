@@ -1,9 +1,24 @@
 import { Category, Product } from '@prisma/client';
+import ProductForm from './ProductForm';
+import { useEffect } from 'react';
 
 const ProductTable: React.FC<{
   products: Product[];
   categories: Category[];
 }> = ({ products, categories }) => {
+  useEffect(() => {
+    const selectAll = document.getElementById('select-all') as HTMLInputElement;
+    const checkboxes = document.querySelectorAll(
+      '.checkbox-group'
+    ) as NodeListOf<HTMLInputElement>;
+
+    selectAll.addEventListener('click', () => {
+      for (let i = 0; i < checkboxes.length; i++) {
+        checkboxes[i]!.checked = selectAll.checked;
+      }
+    });
+  }, []);
+
   return (
     <div className="overflow-x-auto w-full">
       <table className="table w-full">
@@ -11,7 +26,7 @@ const ProductTable: React.FC<{
           <tr>
             <th>
               <label>
-                <input type="checkbox" className="checkbox" />
+                <input id="select-all" type="checkbox" className="checkbox" />
               </label>
             </th>
             <th>Nombre</th>
@@ -21,13 +36,16 @@ const ProductTable: React.FC<{
           </tr>
         </thead>
         <tbody>
-          {/* row 1 */}
+          {/* rows */}
           {products.map((product) => {
             return (
               <tr>
                 <th>
                   <label>
-                    <input type="checkbox" className="checkbox" />
+                    <input
+                      type="checkbox"
+                      className="checkbox checkbox-group"
+                    />
                   </label>
                 </th>
                 <td>
@@ -77,6 +95,14 @@ const ProductTable: React.FC<{
               </tr>
             );
           })}
+          <tr>
+            <th></th>
+            <td>
+              <div className="flex items-center space-x-3">
+                <ProductForm />
+              </div>
+            </td>
+          </tr>
         </tbody>
         {/* foot */}
         <tfoot>
@@ -84,8 +110,8 @@ const ProductTable: React.FC<{
             <th></th>
             <th>Nombre</th>
             <th>Categoría</th>
-            <th>Favorite Color</th>
-            <th></th>
+            <th>Disponibles</th>
+            <th>Descripción</th>
           </tr>
         </tfoot>
       </table>
