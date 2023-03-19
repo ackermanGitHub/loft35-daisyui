@@ -1,9 +1,9 @@
-import { z } from "zod";
-import { createTRPCRouter, publicProcedure } from "../trpc";
-import { S3 } from "aws-sdk";
-import sharp from "sharp";
+import { z } from 'zod';
+import { createTRPCRouter, publicProcedure } from '../trpc';
+import { S3 } from 'aws-sdk';
+import sharp from 'sharp';
 
-const bucketName = "loft35-aws-bucket";
+const bucketName = 'loft35-aws-bucket';
 
 // AWS S3 configuration
 const s3 = new S3({
@@ -14,7 +14,8 @@ const s3 = new S3({
 const productSchema = z.object({
   name: z.string(),
   description: z.string().optional(),
-  file: z.instanceof(Buffer),
+  image: z.instanceof(Buffer),
+  imageSize: z.string(),
   secondaryImages: z.union([z.array(z.string()), z.undefined()]),
   price: z.number(),
   stock: z.number(),
@@ -41,18 +42,18 @@ export const productRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       try {
         // Use Sharp to resize and optimize the image
-        const image = sharp(input.file);
+        const image = sharp(input.image);
         const optimizedImage = await image
           .resize({ width: 800 })
           .jpeg({ quality: 80 })
           .toBuffer();
 
-        // Upload the file to the S3 bucket
+        // Upload the image to the S3 bucket
         const s3Params = {
           Bucket: bucketName,
           Key: `${Date.now()}-${input.name}.jpg`,
           Body: optimizedImage,
-          ContentType: "image/jpeg",
+          ContentType: 'image/jpeg',
         };
         const s3Response = await s3.upload(s3Params).promise();
 
@@ -76,14 +77,16 @@ export const productRouter = createTRPCRouter({
             name: input.name,
             description: input.description,
             image: s3Response.Location,
+            imageSizeMb: parseFloat(input.imageSize),
             secondaryImages: input.secondaryImages,
             price: input.price,
             stock: input.stock,
             categoryId: category.id,
+            categoryName: input.categoryName,
           },
         });
       } catch (error) {
-        console.error("Error in create procedure:", error);
+        console.error('Error in create procedure:', error);
         throw error;
       }
     }),
