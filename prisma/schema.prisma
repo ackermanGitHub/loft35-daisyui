@@ -64,6 +64,8 @@ model Product {
   image           String
   imageSizeMb     Float
   price           Float
+  active          Boolean
+  deleted         Boolean
   stock           Int
   categoryId      Int
   categoryName    String
