@@ -1,9 +1,27 @@
-import { type NextPage } from 'next';
+import { Product, Category } from '@prisma/client';
 import Head from 'next/head';
-import Header from '~/containers/Header';
-import Main from '~/containers/Main';
+import Layout from '~/layout/Layout';
+import { prisma } from '~/server/db';
 
-const Home: NextPage = () => {
+export async function getServerSideProps() {
+  const products = await prisma.product.findMany();
+  const categories = await prisma.category.findMany();
+
+  return {
+    props: { products, categories }, // will be passed to the page component as props
+  };
+}
+
+const Home = ({
+  products,
+  categories,
+}: {
+  products: Product[];
+  categories: Category[];
+}) => {
+  console.log(products);
+  console.log(categories);
+
   return (
     <>
       <Head>
@@ -12,8 +30,7 @@ const Home: NextPage = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Header data-theme="coffee" />
-      <Main data-theme="coffee"></Main>
+      <Layout products={products} categories={categories} data-theme="coffee" />
     </>
   );
 };
