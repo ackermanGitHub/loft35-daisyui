@@ -30,6 +30,8 @@ const ImageUploadForm: React.FC = () => {
 
     const arrayBuffer = await data.image[0].arrayBuffer();
     const fileBuffer = Buffer.from(arrayBuffer);
+    const imageSizeInBytes = data.image[0].size;
+    console.log(imageSizeInBytes / 1000);
     setLoadingState('Loading');
 
     productList.mutate(
@@ -38,6 +40,8 @@ const ImageUploadForm: React.FC = () => {
         description: data.description,
         image: fileBuffer,
         imageSize: 2.5,
+        deleted: false,
+        active: false,
         secondaryImages: [],
         price: parseInt(data.price),
         stock: parseInt(data.stock),

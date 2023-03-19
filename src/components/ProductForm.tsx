@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { api } from '../utils/api';
 
@@ -24,6 +24,10 @@ const ProductForm = () => {
     reset,
   } = useForm<FormValues>();
 
+  const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5 MB
+
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {};
+
   const onUpldProClick = async (data: FormValues) => {
     if (
       upldProState === 'Cargando' ||
@@ -44,7 +48,10 @@ const ProductForm = () => {
       {
         name: data.name,
         description: data.description,
-        file: fileBuffer,
+        image: fileBuffer,
+        imageSize: 2.5,
+        deleted: false,
+        active: false,
         secondaryImages: [],
         price: parseInt(data.price),
         stock: parseInt(data.stock),
@@ -81,7 +88,19 @@ const ProductForm = () => {
             <input
               type="file"
               accept="image/*"
-              {...register('image', { required: true })}
+              {...register('image', {
+                required: true,
+                onChange: (e) => {
+                  console.log('bbb');
+
+                  const file = e.target.files[0];
+                  if (file.size > MAX_IMAGE_SIZE) {
+                    alert('The selected image is too large');
+                    return;
+                  }
+                  // Use the file as needed
+                },
+              })}
               className="file-input-bordered file-input w-full max-w-xs"
             />
             {errors.image ? (
