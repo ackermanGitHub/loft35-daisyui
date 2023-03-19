@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { api } from "../utils/api";
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { api } from '../utils/api';
 
 interface FormValues {
   name: string;
@@ -9,10 +9,11 @@ interface FormValues {
   description: string;
   categoryName: string;
   image: FileList;
+  secImages: FileList;
 }
 
 const NavBar: React.FC = () => {
-  const [upldProState, setUpldProstate] = useState<string>("Subir");
+  const [upldProState, setUpldProstate] = useState<string>('Subir');
 
   const productList = api.product.create.useMutation({});
 
@@ -25,11 +26,11 @@ const NavBar: React.FC = () => {
 
   const onUpldProClick = async (data: FormValues) => {
     if (
-      upldProState === "Cargando" ||
-      upldProState === "Error" ||
-      upldProState === "Subida"
+      upldProState === 'Cargando' ||
+      upldProState === 'Error' ||
+      upldProState === 'Subida'
     ) {
-      setUpldProstate("Subir");
+      setUpldProstate('Subir');
       return;
     }
 
@@ -37,7 +38,7 @@ const NavBar: React.FC = () => {
 
     const arrayBuffer = await data.image[0].arrayBuffer();
     const fileBuffer = Buffer.from(arrayBuffer);
-    setUpldProstate("Cargando");
+    setUpldProstate('Cargando');
 
     productList.mutate(
       {
@@ -51,10 +52,10 @@ const NavBar: React.FC = () => {
       },
       {
         onError: () => {
-          setUpldProstate("Error");
+          setUpldProstate('Error');
         },
         onSuccess() {
-          setUpldProstate("Subida");
+          setUpldProstate('Subida');
           reset();
         },
       }
@@ -108,7 +109,8 @@ const NavBar: React.FC = () => {
               </label>
               <input
                 type="file"
-                {...register("image", { required: true })}
+                accept="image/*"
+                {...register('image', { required: true })}
                 className="file-input-bordered file-input w-full max-w-xs"
               />
               {errors.image ? (
@@ -132,10 +134,42 @@ const NavBar: React.FC = () => {
                 <div className="h-6"></div>
               )}
             </div>
+            <div className="form-control w-full max-w-xs">
+              <label className="label">
+                <span className="label-text">Imágenes Secundarias</span>
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                {...register('secImages', { required: true })}
+                className="file-input-bordered file-input w-full max-w-xs"
+              />
+              {errors.secImages ? (
+                <div className="badge-warning  badge my-[2px] gap-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    className="inline-block h-4 w-4 stroke-current"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M6 18L18 6M6 6l12 12"
+                    ></path>
+                  </svg>
+                  This field is required
+                </div>
+              ) : (
+                <div className="h-6"></div>
+              )}
+            </div>
             <input
               type="text"
               placeholder="Nombre"
-              {...register("name", { required: true })}
+              {...register('name', { required: true })}
               className="input-bordered input-secondary input  w-full max-w-xs"
             />
             {errors.name ? (
@@ -161,7 +195,7 @@ const NavBar: React.FC = () => {
             <input
               type="text"
               placeholder="Precio"
-              {...register("price", { required: true })}
+              {...register('price', { required: true })}
               className="input-bordered input-secondary input  w-full max-w-xs"
             />
             {errors.price ? (
@@ -188,7 +222,7 @@ const NavBar: React.FC = () => {
             <input
               type="text"
               placeholder="Cantidad Disponible"
-              {...register("stock", { required: true })}
+              {...register('stock', { required: true })}
               className="input-bordered input-secondary input  w-full max-w-xs"
             />
             {errors.stock ? (
@@ -215,7 +249,7 @@ const NavBar: React.FC = () => {
             <input
               type="text"
               placeholder="Categoría"
-              {...register("categoryName", { required: true })}
+              {...register('categoryName', { required: true })}
               className="input-bordered input-secondary input  w-full max-w-xs"
             />
             {errors.description ? (
@@ -241,7 +275,7 @@ const NavBar: React.FC = () => {
             <textarea
               className="textarea-secondary textarea  w-full max-w-xs"
               placeholder="Descripción"
-              {...register("description", { required: true })}
+              {...register('description', { required: true })}
             ></textarea>
             {errors.categoryName ? (
               <div className="badge-warning  badge my-[2px] gap-2">
@@ -267,9 +301,9 @@ const NavBar: React.FC = () => {
             <div className={`modal-action`}>
               <button
                 className={`btn ${
-                  upldProState === "Cargando" ? "loading" : ""
-                } ${upldProState === "Subida" ? "btn-success" : ""}
-                ${upldProState === "Error" ? "btn-error" : ""}
+                  upldProState === 'Cargando' ? 'loading' : ''
+                } ${upldProState === 'Subida' ? 'btn-success' : ''}
+                ${upldProState === 'Error' ? 'btn-error' : ''}
                 `}
                 type="submit"
               >
@@ -277,7 +311,7 @@ const NavBar: React.FC = () => {
               </button>
               <label
                 onClick={() => {
-                  setUpldProstate("Subir");
+                  setUpldProstate('Subir');
                   reset();
                 }}
                 htmlFor="my-modal-5"

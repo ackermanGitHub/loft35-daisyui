@@ -1,6 +1,6 @@
-import { useForm } from "react-hook-form";
-import { api } from "../utils/api";
-import { useState } from "react";
+import { useForm } from 'react-hook-form';
+import { api } from '../utils/api';
+import { useState } from 'react';
 
 interface FormValues {
   name: string;
@@ -25,12 +25,12 @@ const ImageUploadForm: React.FC = () => {
 
   const onSubmit = async (data: FormValues) => {
     if (!data.image[0]) {
-      throw new Error("submit isnt getting any image");
+      throw new Error('submit isnt getting any image');
     }
 
     const arrayBuffer = await data.image[0].arrayBuffer();
     const fileBuffer = Buffer.from(arrayBuffer);
-    setLoadingState("Loading");
+    setLoadingState('Loading');
 
     productList.mutate(
       {
@@ -44,12 +44,12 @@ const ImageUploadForm: React.FC = () => {
       },
       {
         onError: (e) => {
-          setLoadingState("Error" + ": " + e.message);
+          setLoadingState('Error' + ': ' + e.message);
           console.error(e);
         },
         onSuccess(data) {
-          setLoadingState(data.name + "uploaded");
-          console.log("succes", data);
+          setLoadingState(data.name + 'uploaded');
+          console.log('succes', data);
         },
       }
     );
@@ -76,7 +76,7 @@ const ImageUploadForm: React.FC = () => {
           <input
             type="file"
             id="image"
-            {...register("image", { required: true })}
+            {...register('image', { required: true })}
             className="w-full p-2"
           />
           {errors.image && <span>This field is required</span>}
@@ -84,7 +84,7 @@ const ImageUploadForm: React.FC = () => {
           <input
             type="text"
             id="name"
-            {...register("name", { required: true })}
+            {...register('name', { required: true })}
             className="input w-[50%] p-2 text-white"
           />
           {errors.name && <span>This field is required</span>}
@@ -92,7 +92,7 @@ const ImageUploadForm: React.FC = () => {
           <input
             type="number"
             id="price"
-            {...register("price", { required: true })}
+            {...register('price', { required: true })}
             className="input w-[50%] p-2 text-white"
           />
           {errors.price && <span>This field is required</span>}
@@ -100,7 +100,7 @@ const ImageUploadForm: React.FC = () => {
           <input
             type="number"
             id="stock"
-            {...register("stock", { required: true })}
+            {...register('stock', { required: true })}
             className="input w-[50%] p-2 text-white"
           />
           {errors.stock && <span>This field is required</span>}
@@ -108,7 +108,7 @@ const ImageUploadForm: React.FC = () => {
           <input
             type="text"
             id="description"
-            {...register("description", { required: true })}
+            {...register('description', { required: true })}
             className="input w-[50%] p-2 text-white"
           />
           {errors.description && <span>This field is required</span>}
@@ -116,12 +116,12 @@ const ImageUploadForm: React.FC = () => {
           <input
             type="text"
             id="categoryName"
-            {...register("categoryName", { required: true })}
+            {...register('categoryName', { required: true })}
             className="input w-[50%] p-2 text-white"
           />
           {errors.categoryName && <span>This field is required</span>}
         </div>
-        <button type="submit" className="loading " disabled={!watch("image")}>
+        <button type="submit" className="loading " disabled={!watch('image')}>
           Upload
         </button>
       </form>
@@ -130,3 +130,53 @@ const ImageUploadForm: React.FC = () => {
 };
 
 export default ImageUploadForm;
+
+/* 
+Para hacer un input específicamente para imágenes en React/Tailwind, se puede utilizar el elemento HTML input con el atributo type establecido en "file". Esto permitirá al usuario seleccionar una imagen de su dispositivo. Para mostrar varias imágenes, se puede agregar el atributo multiple al input.
+
+Aquí hay un ejemplo de cómo se puede crear un input para imágenes en React/Tailwind:
+
+jsx
+Copy code
+import React, { useState } from "react";
+
+function ImageInput() {
+  const [images, setImages] = useState([]);
+
+  const handleImageChange = (event) => {
+    const selectedImages = Array.from(event.target.files);
+    setImages(selectedImages);
+  };
+
+  return (
+    <div className="mt-4">
+      <label className="block font-medium text-sm text-gray-700">
+        Imágenes
+      </label>
+      <input
+        type="file"
+        className="mt-1 block w-full"
+        accept="image/*"
+        multiple
+        onChange={handleImageChange}
+      />
+      {images.length > 0 && (
+        <div className="mt-2">
+          <h2 className="text-sm font-medium text-gray-700">Imágenes seleccionadas:</h2>
+          {images.map((image) => (
+            <img
+              key={image.name}
+              src={URL.createObjectURL(image)}
+              className="mt-1 w-20 h-20 object-cover"
+              alt={image.name}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default ImageInput;
+En este ejemplo, se utiliza el hook useState para mantener un estado local de las imágenes seleccionadas por el usuario. Cuando el usuario selecciona una o varias imágenes, se llama a la función handleImageChange, que convierte el objeto FileList devuelto por el
+*/
