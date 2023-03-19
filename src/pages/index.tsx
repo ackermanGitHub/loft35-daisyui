@@ -1,8 +1,7 @@
-import { type NextPage } from "next";
-import Head from "next/head";
-import Header from "~/containers/Header";
-import Footer from "~/containers/Footer";
-import Main from "~/containers/Main";
+import { type NextPage } from 'next';
+import Head from 'next/head';
+import Header from '~/containers/Header';
+import Main from '~/containers/Main';
 
 const Home: NextPage = () => {
   return (
@@ -15,7 +14,6 @@ const Home: NextPage = () => {
       </Head>
       <Header data-theme="coffee" />
       <Main data-theme="coffee"></Main>
-      <Footer data-theme="coffee" />
     </>
   );
 };

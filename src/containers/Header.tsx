@@ -1,9 +1,10 @@
-import NavBar from "~/components/NavBar";
+import Drawer from '~/components/Drawer';
+import NavBar from '~/components/NavBar';
 
 const Header = () => {
   return (
     <header>
-      <NavBar />
+      <Drawer />
     </header>
   );
 };
