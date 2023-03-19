@@ -36,7 +36,8 @@ const ImageUploadForm: React.FC = () => {
       {
         name: data.name,
         description: data.description,
-        file: fileBuffer,
+        image: fileBuffer,
+        imageSize: 2.5,
         secondaryImages: [],
         price: parseInt(data.price),
         stock: parseInt(data.stock),
