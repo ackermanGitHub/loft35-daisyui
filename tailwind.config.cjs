@@ -4,7 +4,10 @@ const config = {
   theme: {
     extend: {},
   },
-  plugins: [],
+  plugins: [require("daisyui")],
+  daisyui: {
+    themes: ["winter", "autumn", "pastel", "cofee"],
+  },
 };
 
 module.exports = config;

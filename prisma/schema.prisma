@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-    provider = "sqlite"
+    provider = "postgresql"
     // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.Text annotations in model Account below
     // Further reading:
     // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
@@ -27,12 +27,12 @@ model Account {
     type              String
     provider          String
     providerAccountId String
-    refresh_token     String? // @db.Text
-    access_token      String? // @db.Text
+    refresh_token     String?  @db.Text
+    access_token      String?  @db.Text
     expires_at        Int?
     token_type        String?
     scope             String?
-    id_token          String? // @db.Text
+    id_token          String?  @db.Text
     session_state     String?
     user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -63,4 +63,69 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+// Definición del modelo de productos
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  image       String
+  secondaryImages String[]
+  price       Float
+  stock       Int
+  category    Category @relation(fields: [categoryId], references: [id])
+  categoryId  Int
+  orders      Order[]  @relation("Product-Orders")
+}
+
+// Definición del modelo de categorías
+model Category {
+  id       Int       @id @default(autoincrement())
+  name     String
+  products Product[]
+}
+
+// Definición del modelo de clientes
+model Customer {
+  id       Int     @id @default(autoincrement())
+  name     String
+  email    String  @unique
+  address  String
+  orders   Order[]
+}
+
+// Definición del modelo de pedidos
+model Order {
+  id           Int        @id @default(autoincrement())
+  customer     Customer   @relation(fields: [customerId], references: [id])
+  customerId   Int
+  totalPrice   Float
+  orderDate    DateTime   @default(now())
+  shippingInfo Shipping?
+  paymentInfo  Payment?
+  products     Product[]  @relation("Product-Orders")
+}
+
+
+// Definición del modelo de pagos
+model Payment {
+  id           Int    @id @default(autoincrement())
+  paymentType  String
+  amount       Float
+  paymentDate  DateTime  @default(now())
+  order        Order    @relation(fields: [orderId], references: [id])
+  orderId      Int @unique
+}
+
+// Definición del modelo de envíos
+model Shipping {
+  id            Int    @id @default(autoincrement())
+  address       String
+  city          String
+  state         String
+  zipCode       String
+  shippingDate  DateTime  @default(now())
+  order         Order    @relation(fields: [orderId], references: [id])
+  orderId       Int @unique
 }
