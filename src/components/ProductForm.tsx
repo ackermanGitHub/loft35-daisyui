@@ -100,6 +100,7 @@ const ProductForm = () => {
       }
     );
   };
+
   return (
     <div className="flex justify-around max-md:justify-between">
       <label htmlFor="my-modal-5" className="btn text-xs">

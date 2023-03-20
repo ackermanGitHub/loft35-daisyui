@@ -1,12 +1,17 @@
 import { Product, Category, Image } from '@prisma/client';
 import Head from 'next/head';
+import { z } from 'zod';
 import Layout from '~/layout/Layout';
 import { prisma } from '~/server/db';
 
 export async function getServerSideProps() {
-  const products = await prisma.product.findMany();
-  const categories = await prisma.category.findMany();
-  const images = await prisma.image.findMany();
+  // const products = await prisma.product.findMany();
+  // const categories = await prisma.category.findMany();
+  // const images = await prisma.image.findMany();
+
+  let products: Product[] = [];
+  const categories: Category[] = [];
+  const images: Image[] = [];
 
   return {
     props: { products, categories, images }, // will be passed to the page component as props
