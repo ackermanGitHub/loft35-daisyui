@@ -1,15 +1,20 @@
-import { Category, Product } from '@prisma/client';
+import { Category, Image, Product } from '@prisma/client';
 import Drawer from '~/components/Drawer';
 import ProductTable from '~/components/ProductTable';
 
-const Layout: React.FC<{ products: Product[]; categories: Category[] }> = ({
-  products,
-  categories,
-}) => {
+const Layout: React.FC<{
+  products: Product[];
+  categories: Category[];
+  images: Image[];
+}> = ({ products, categories, images }) => {
   return (
     <>
       <Drawer>
-        <ProductTable products={products} categories={categories} />
+        <ProductTable
+          products={products}
+          categories={categories}
+          images={images}
+        />
       </Drawer>
     </>
   );

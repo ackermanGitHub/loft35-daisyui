@@ -1,15 +1,16 @@
 import { ChangeEvent, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { api } from '../utils/api';
+// import sharp from 'sharp';
 
 interface FormValues {
   name: string;
   price: string;
   stock: string;
+  secondaryImages: FileList[];
   description: string;
   categoryName: string;
-  image: FileList;
-  secImages: FileList;
+  primaryImage: FileList;
 }
 
 const ProductForm = () => {
@@ -38,21 +39,52 @@ const ProductForm = () => {
       return;
     }
 
-    if (!data.image[0]) return;
-
-    const arrayBuffer = await data.image[0].arrayBuffer();
-    const fileBuffer = Buffer.from(arrayBuffer);
+    if (!data.primaryImage[0]) return;
     setUpldProstate('Cargando');
+
+    const arrayBufferPrimaryImage = await data.primaryImage[0].arrayBuffer();
+    const primaryImageBuffer = Buffer.from(arrayBufferPrimaryImage);
+
+    // const sharpPrimaryImage = sharp(primaryImageBuffer);
+    // let metadataPrimaryImage = await sharpPrimaryImage
+    //   .metadata()
+    //   .then(function (metadata) {
+    //     return sharpPrimaryImage
+    //       .resize(Math.round(metadata.width! / 2))
+    //       .jpeg()
+    //       .toBuffer();
+    //   });
+
+    let metadataSecondaryImages: Buffer[] = [];
+    // data.secondaryImages.map(async (secondaryImage) => {
+    //   const arrayBufferSecondaryImage = await secondaryImage[0]?.arrayBuffer();
+    //   if (!arrayBufferSecondaryImage) return;
+    //   const secondaryImageBuffer = Buffer.from(arrayBufferSecondaryImage);
+
+    //   // const sharpSecondaryImage = sharp(secondaryImageBuffer);
+    //   //
+    //   // // Devuelve una promesa resolviendo el objeto Sharp modificado
+    //   // let metadataSecondaryImage = await sharpSecondaryImage
+    //   //   .metadata()
+    //   //   .then(function (metadata) {
+    //   //     return sharpPrimaryImage
+    //   //       .resize(Math.round(metadata.width! / 2))
+    //   //       .jpeg()
+    //   //       .toBuffer();
+    //   //   });
+
+    //   metadataSecondaryImages.push(secondaryImageBuffer);
+    // });
 
     productList.mutate(
       {
         name: data.name,
         description: data.description,
-        image: fileBuffer,
-        imageSize: 2.5,
+        primaryImage: primaryImageBuffer,
         deleted: false,
         active: false,
-        secondaryImages: [],
+        color: '',
+        secondaryImages: metadataSecondaryImages,
         price: parseInt(data.price),
         stock: parseInt(data.stock),
         categoryName: data.categoryName,
@@ -88,7 +120,7 @@ const ProductForm = () => {
             <input
               type="file"
               accept="image/*"
-              {...register('image', {
+              {...register('primaryImage', {
                 required: true,
                 onChange: (e) => {
                   console.log('bbb');
@@ -103,7 +135,7 @@ const ProductForm = () => {
               })}
               className="file-input-bordered file-input w-full max-w-xs"
             />
-            {errors.image ? (
+            {errors.primaryImage ? (
               <div className="badge-warning  badge my-[2px] gap-2">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -132,10 +164,10 @@ const ProductForm = () => {
               type="file"
               accept="image/*"
               multiple
-              {...register('secImages', { required: true })}
+              {...register('secondaryImages', { required: true })}
               className="file-input-bordered file-input w-full max-w-xs"
             />
-            {errors.secImages ? (
+            {errors.secondaryImages ? (
               <div className="badge-warning  badge my-[2px] gap-2">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

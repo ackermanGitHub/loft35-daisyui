@@ -1,11 +1,12 @@
-import { Category, Product } from '@prisma/client';
+import { Category, Image, Product } from '@prisma/client';
 import ProductForm from './ProductForm';
 import { useEffect } from 'react';
 
 const ProductTable: React.FC<{
   products: Product[];
   categories: Category[];
-}> = ({ products, categories }) => {
+  images: Image[];
+}> = ({ products, categories, images }) => {
   useEffect(() => {
     const selectAll = document.getElementById('select-all') as HTMLInputElement;
     const checkboxes = document.querySelectorAll(
@@ -53,7 +54,11 @@ const ProductTable: React.FC<{
                     <div className="avatar">
                       <div className="mask mask-squircle w-12 h-12">
                         <img
-                          src={product.image}
+                          src={
+                            images.find(
+                              (images) => images.id === product.primaryImageId
+                            )?.url
+                          }
                           alt="Avatar Tailwind CSS Component"
                         />
                       </div>
@@ -73,11 +78,7 @@ const ProductTable: React.FC<{
                   <br />
                   <span className="badge badge-ghost badge-sm">
                     ID:
-                    {
-                      categories.find(
-                        (category) => category.id === product.categoryId
-                      )?.id
-                    }
+                    {product.priority}
                   </span>
                 </td>
                 <td>{product.stock}</td>
