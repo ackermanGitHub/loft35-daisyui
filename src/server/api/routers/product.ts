@@ -25,6 +25,52 @@ const createProductInput = z.object({
 });
 
 export const productRouter = createTRPCRouter({
+  delete: publicProcedure
+    .input(z.object({ productID: z.number() }))
+    .query(({ ctx, input }) => {
+      return ctx.prisma.product.update({
+        where: {
+          id: input.productID,
+        },
+        data: {
+          deleted: true,
+        },
+      });
+    }),
+
+  deleteMany: publicProcedure
+    .input(z.object({ productIDs: z.array(z.number()) }))
+    .query(({ ctx, input }) => {
+      return ctx.prisma.product.updateMany({
+        where: {
+          id: {
+            in: input.productIDs,
+          },
+        },
+        data: {
+          deleted: true,
+        },
+      });
+    }),
+
+  toggleActive: publicProcedure
+    .input(z.object({ productID: z.number() }))
+    .query(({ ctx, input }) => {
+      const currentState = ctx.prisma.product.findFirst({
+        where: {
+          id: input.productID,
+        },
+      });
+      return ctx.prisma.product.update({
+        where: {
+          id: input.productID,
+        },
+        data: {
+          deleted: !currentState,
+        },
+      });
+    }),
+
   get: publicProcedure
     .input(z.object({ productID: z.number() }))
     .query(({ ctx, input }) => {
@@ -45,10 +91,6 @@ export const productRouter = createTRPCRouter({
       try {
         // Use Sharp to resize and optimize the primaryImage
         const primaryImageInput = sharp(input.primaryImage);
-        // const metadata = await image.metadata();
-        // console.log(metadata);
-
-        // optimizing primaryImage
         const optimizedPrimaryImage = await primaryImageInput
           .resize({ width: 800 })
           .jpeg({ quality: 80 })
@@ -62,14 +104,6 @@ export const productRouter = createTRPCRouter({
           ContentType: 'image/jpeg',
         };
         const s3ResponsePrimaryImage = await s3.upload(s3Params).promise();
-
-        // const { ContentLength: primaryImageSize } = await s3
-        //   .headObject({ Bucket: bucketName, Key: s3ResponsePrimaryImage.Key })
-        //   .promise();
-
-        //if (ContentLength) {
-        //  console.log(ContentLength / 1000);
-        //}
 
         // Insert image on db
         const primaryImage = await ctx.prisma.image.create({
@@ -107,12 +141,14 @@ export const productRouter = createTRPCRouter({
         //   secondaryImagesIds.push(secondaryImage.id);
         // });
 
+        // checking if the category named exists
         let category = await ctx.prisma.category.findFirst({
           where: {
             name: input.categoryName,
           },
         });
 
+        // if doesnt exist create a new one with that name
         if (!category) {
           const createdCategory = await ctx.prisma.category.create({
             data: {
@@ -126,10 +162,8 @@ export const productRouter = createTRPCRouter({
           data: {
             name: input.name,
             description: input.description,
-            //image: primaryImage,
+            imageUrl: s3ResponsePrimaryImage.Location,
             primaryImageId: primaryImage.id,
-            // imageSizeMb: 2.6,  np
-            // secondaryImages: input.secondaryImages,
             deleted: input.deleted,
             active: input.active,
             price: input.price,
@@ -146,7 +180,8 @@ export const productRouter = createTRPCRouter({
       }
     }),
 
-  changePriority: publicProcedure
+  //got to fix this one
+  /* changePriority: publicProcedure
     .input(
       z.object({
         productId: z.number(),
@@ -218,5 +253,5 @@ export const productRouter = createTRPCRouter({
         console.error('Error in changePriority procedure:', error);
         throw error;
       }
-    }),
+    }), */
 });

@@ -1,8 +1,8 @@
 import { Product, Category, Image } from '@prisma/client';
 import Head from 'next/head';
-import { z } from 'zod';
 import Layout from '~/layout/Layout';
-import { prisma } from '~/server/db';
+// import { z } from 'zod';
+// import { prisma } from '~/server/db';
 
 export async function getServerSideProps() {
   // const products = await prisma.product.findMany();

@@ -13,7 +13,11 @@ interface FormValues {
   primaryImage: FileList;
 }
 
-const ProductForm = () => {
+interface IProps {
+  onUploadSucces: () => void;
+}
+
+const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
   const [upldProState, setUpldProstate] = useState<string>('Subir');
 
   const productList = api.product.create.useMutation({});
@@ -95,6 +99,7 @@ const ProductForm = () => {
         },
         onSuccess() {
           setUpldProstate('Subida');
+          onUploadSucces();
           reset();
         },
       }
@@ -104,7 +109,7 @@ const ProductForm = () => {
   return (
     <div className="flex justify-around max-md:justify-between">
       <label htmlFor="my-modal-5" className="btn text-xs">
-        Subir Producto
+        Subir
       </label>
       <input type="checkbox" id="my-modal-5" className="modal-toggle" />
       <div className="modal">

@@ -21,27 +21,8 @@ const ProductTable: React.FC<{
     });
   }, []);
 
-  let dinamicProducts = api.product.getAll.useQuery().data!;
-  let dinamicCategories = api.category.getAll.useQuery().data!;
-  let dinamicImages = api.image.getAll.useQuery().data!;
-
-  // const [dinamicProducts, setDinamicProducts] = useState<Product[]>();
-  // const [dinamicCategories, setDinamicCategories] = useState<Category[]>();
-  // const [dinamicImages, setDinamicImages] = useState<Image[]>();
-
-  const refreshProductsTable = () => {
-    // dinamicProducts = api.product.getAll.useQuery().data!;
-    // dinamicCategories = api.category.getAll.useQuery().data!;
-    // dinamicImages = api.image.getAll.useQuery().data!;
-
-    // setDinamicProducts(fetchedProducts);
-    // setDinamicCategories(fetchedCategories);
-    // setDinamicImages(fetchedImages);
-
-    console.log(dinamicProducts);
-    console.log(dinamicCategories);
-    console.log(dinamicImages);
-  };
+  let { data: productData, refetch: refetchProducts } =
+    api.product.getAll.useQuery();
 
   return (
     <div className="overflow-x-auto w-full">
@@ -53,6 +34,7 @@ const ProductTable: React.FC<{
                 <input id="select-all" type="checkbox" className="checkbox" />
               </label>
             </th>
+            <th>Producto</th>
             <th>Nombre</th>
             <th>Categoría</th>
             <th>Disponibles</th>
@@ -61,88 +43,75 @@ const ProductTable: React.FC<{
         </thead>
         <tbody>
           {/* rows */}
-          {dinamicProducts &&
-            dinamicProducts?.map((dinamicProducts) => {
-              return (
-                <tr>
-                  <td>
-                    <div className="flex items-center space-x-3">
-                      <div className="avatar">
-                        <div className="mask mask-squircle w-12 h-12">
-                          <img
-                            src={
-                              dinamicImages &&
-                              dinamicImages.find(
-                                (dinamicImages) =>
-                                  dinamicImages.id ===
-                                  dinamicProducts.primaryImageId
-                              )?.url
-                            }
-                            alt="Avatar Tailwind CSS Component"
-                          />
-                        </div>
-                      </div>
-                      <div>
-                        <div className="font-bold">{dinamicProducts.name}</div>
-                        <div className="text-sm opacity-50">
-                          ${dinamicProducts.price}
-                        </div>
+          {productData?.map((product) => {
+            return (
+              <tr key={product.id}>
+                <th>
+                  <label>
+                    <input
+                      type="checkbox"
+                      className="checkbox checkbox-group"
+                    />
+                  </label>
+                </th>
+                <td>
+                  <div className="flex items-center space-x-3">
+                    <div className="avatar">
+                      <div className="mask mask-squircle w-12 h-12">
+                        <img
+                          src={product.imageUrl}
+                          alt="Avatar Tailwind CSS Component"
+                        />
                       </div>
                     </div>
-                  </td>
-                  <td>
-                    {dinamicCategories &&
-                      dinamicCategories.find(
-                        (dinamicCategories) =>
-                          dinamicCategories.id === dinamicProducts.categoryId
-                      )?.name}
-                    <br />
-                    <span className="badge badge-ghost badge-sm">
-                      ID:
-                      {dinamicProducts.priority}
-                    </span>
-                  </td>
-                  <td>{dinamicProducts.categoryName}</td>
-                  <td>
-                    <input type="checkbox" className="toggle" />
-                  </td>
-                  <th>
-                    <div className="collapse">
-                      <input type="checkbox" />
-                      <div className="collapse-title text-xl font-medium">
-                        Mostrar
-                      </div>
-                      <div className="collapse-content">
-                        <p>{dinamicProducts.description}</p>
-                      </div>
+                    <div>
+                      <div className="font-bold">{product.name}</div>
+                      <div className="text-sm opacity-50">${product.price}</div>
                     </div>
-                  </th>
-                </tr>
-              );
-            })}
+                  </div>
+                </td>
+                <td>
+                  {product.categoryName}
+                  <br />
+                  <span className="badge badge-ghost badge-sm">
+                    ID:
+                    {product.priority}
+                  </span>
+                </td>
+                <td>{product.categoryName}</td>
+                <td>
+                  <input type="checkbox" className="toggle" />
+                </td>
+                <th>
+                  <div className="collapse">
+                    <input type="checkbox" />
+                    <div className="collapse-title text-xl font-medium">
+                      Mostrar
+                    </div>
+                    <div className="collapse-content">
+                      <p>{product.description}</p>
+                    </div>
+                  </div>
+                </th>
+              </tr>
+            );
+          })}
           <tr>
             <th></th>
             <td>
               <div className="flex items-center space-x-3">
-                <ProductForm />
+                <ProductForm onUploadSucces={refetchProducts} />
               </div>
             </td>
             <td>
               <div className="flex items-center space-x-3">
                 <label
                   onClick={() => {
-                    const fetchedProducts = api.product.getAll.useQuery().data!;
-                    const fetchedCategories =
-                      api.category.getAll.useQuery().data!;
-                    const fetchedImages = api.image.getAll.useQuery().data!;
-
-                    console.log(fetchedProducts);
-                    console.log(fetchedCategories);
-                    console.log(fetchedImages);
+                    console.log('');
                   }}
                   className="btn text-xs"
                 >
-                  Subir Producto
+                  Borrar
                 </label>
               </div>
             </td>
@@ -155,6 +124,7 @@ const ProductTable: React.FC<{
         <tfoot>
           <tr>
             <th></th>
+            <th>Producto</th>
             <th>Nombre</th>
             <th>Categoría</th>
             <th>Disponibles</th>
