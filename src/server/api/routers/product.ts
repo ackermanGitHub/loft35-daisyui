@@ -84,6 +84,9 @@ export const productRouter = createTRPCRouter({
       where: {
         deleted: false,
       },
+      orderBy: {
+        priority: 'asc',
+      },
     });
   }),
 
