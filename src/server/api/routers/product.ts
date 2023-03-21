@@ -40,7 +40,7 @@ export const productRouter = createTRPCRouter({
 
   deleteMany: publicProcedure
     .input(z.object({ productIDs: z.array(z.number()) }))
-    .query(({ ctx, input }) => {
+    .mutation(({ ctx, input }) => {
       return ctx.prisma.product.updateMany({
         where: {
           id: {
@@ -82,7 +82,11 @@ export const productRouter = createTRPCRouter({
     }),
 
   getAll: publicProcedure.query(async ({ ctx }) => {
-    return await ctx.prisma.product.findMany();
+    return await ctx.prisma.product.findMany({
+      where: {
+        deleted: false,
+      },
+    });
   }),
 
   create: publicProcedure

@@ -8,6 +8,15 @@ const ProductTable: React.FC<{
   categories: Category[];
   images: Image[];
 }> = ({ products, categories, images }) => {
+  let { data: productsData, refetch: refetchProducts } =
+    api.product.getAll.useQuery();
+
+  const deleteProducts = api.product.deleteMany.useMutation({
+    onSuccess: () => {
+      void refetchProducts();
+    },
+  });
+
   useEffect(() => {
     const selectAll = document.getElementById('select-all') as HTMLInputElement;
     const checkboxes = document.querySelectorAll(
@@ -19,10 +28,7 @@ const ProductTable: React.FC<{
         checkboxes[i]!.checked = selectAll.checked;
       }
     });
-  }, []);
-
-  let { data: productData, refetch: refetchProducts } =
-    api.product.getAll.useQuery();
+  }, [productsData]);
 
   return (
     <div className="overflow-x-auto w-full">
@@ -39,11 +45,12 @@ const ProductTable: React.FC<{
             <th>Categoría</th>
             <th>Disponibles</th>
             <th>Descripción</th>
+            <th>Otro</th>
           </tr>
         </thead>
         <tbody>
           {/* rows */}
-          {productData?.map((product) => {
+          {productsData?.map((product) => {
             return (
               <tr key={product.id}>
                 <th>
@@ -88,11 +95,12 @@ const ProductTable: React.FC<{
                     <div className="collapse-title text-xl font-medium">
                       Mostrar
                     </div>
-                    <div className="collapse-content">
+                    <div className="collapse-content max-w-xs whitespace-pre-wrap">
                       <p>{product.description}</p>
                     </div>
                   </div>
                 </th>
+                <td></td>
               </tr>
             );
           })}
@@ -107,7 +115,22 @@ const ProductTable: React.FC<{
               <div className="flex items-center space-x-3">
                 <label
                   onClick={() => {
-                    console.log('');
+                    const checkboxes = document.querySelectorAll(
+                      '.checkbox-group'
+                    ) as NodeListOf<HTMLInputElement>;
+                    const checkedProducts = productsData?.filter(
+                      (product, index) => {
+                        return checkboxes[index]?.checked === true;
+                      }
+                    );
+                    const checkedProductsIds = checkedProducts?.map(
+                      (product) => product.id
+                    );
+                    if (!checkedProductsIds || checkedProductsIds?.length === 0)
+                      return;
+                    deleteProducts.mutate({
+                      productIDs: checkedProductsIds,
+                    });
                   }}
                   className="btn text-xs"
                 >
@@ -129,6 +152,7 @@ const ProductTable: React.FC<{
             <th>Categoría</th>
             <th>Disponibles</th>
             <th>Descripción</th>
+            <th>Otro</th>
           </tr>
         </tfoot>
       </table>
