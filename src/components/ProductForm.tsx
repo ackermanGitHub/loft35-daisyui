@@ -81,8 +81,6 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
         name: data.name,
         description: data.description,
         primaryImage: primaryImageBuffer,
-        deleted: false,
-        active: false,
         color: '',
         secondaryImages: metadataSecondaryImages,
         price: parseInt(data.price),

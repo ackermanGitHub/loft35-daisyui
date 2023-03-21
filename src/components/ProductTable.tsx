@@ -17,6 +17,12 @@ const ProductTable: React.FC<{
     },
   });
 
+  const toggleActive = api.product.toggleActive.useMutation({
+    onSuccess: () => {
+      void refetchProducts();
+    },
+  });
+
   useEffect(() => {
     const selectAll = document.getElementById('select-all') as HTMLInputElement;
     const checkboxes = document.querySelectorAll(
@@ -87,7 +93,16 @@ const ProductTable: React.FC<{
                 </td>
                 <td>{product.categoryName}</td>
                 <td>
-                  <input type="checkbox" className="toggle" />
+                  <input
+                    type="checkbox"
+                    className="toggle"
+                    checked={product.active}
+                    onChange={(e) => {
+                      toggleActive.mutate({
+                        productID: product.id,
+                      });
+                    }}
+                  />
                 </td>
                 <th>
                   <div className="collapse">

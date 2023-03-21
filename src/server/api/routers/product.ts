@@ -16,8 +16,6 @@ const createProductInput = z.object({
   description: z.string().optional(),
   primaryImage: z.instanceof(Buffer),
   secondaryImages: z.array(z.instanceof(Buffer)).optional(),
-  active: z.boolean(),
-  deleted: z.boolean(),
   price: z.number(),
   stock: z.number(),
   categoryName: z.string(),
@@ -55,18 +53,18 @@ export const productRouter = createTRPCRouter({
 
   toggleActive: publicProcedure
     .input(z.object({ productID: z.number() }))
-    .query(({ ctx, input }) => {
-      const currentState = ctx.prisma.product.findFirst({
+    .mutation(async ({ ctx, input }) => {
+      const currentState = await ctx.prisma.product.findFirst({
         where: {
           id: input.productID,
         },
       });
-      return ctx.prisma.product.update({
+      return await ctx.prisma.product.update({
         where: {
           id: input.productID,
         },
         data: {
-          deleted: !currentState,
+          active: !currentState?.active,
         },
       });
     }),
@@ -168,8 +166,8 @@ export const productRouter = createTRPCRouter({
             description: input.description,
             imageUrl: s3ResponsePrimaryImage.Location,
             primaryImageId: primaryImage.id,
-            deleted: input.deleted,
-            active: input.active,
+            deleted: false,
+            active: true,
             price: input.price,
             stock: input.stock,
             categoryName: input.categoryName,
