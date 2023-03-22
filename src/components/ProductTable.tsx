@@ -65,6 +65,7 @@ const ProductTable: React.FC<{
             <th>Categoría</th>
             <th>Disponibles</th>
             <th>Descripción</th>
+            <th>Image</th>
           </tr>
         </thead>
         <tbody>
@@ -101,19 +102,6 @@ const ProductTable: React.FC<{
                             product.active ? 'success' : 'warning'
                           } gap-2`}
                         >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            className="inline-block w-4 h-4 stroke-current"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M6 18L18 6M6 6l12 12"
-                            ></path>
-                          </svg>
                           {product.active ? 'active' : 'disabled'}
                         </div>
                       </div>
@@ -143,6 +131,10 @@ const ProductTable: React.FC<{
                       <p>{product.description}</p>
                     </div>
                   </div>
+                </th>
+                <th>
+                  {Math.round(product.primaryImage.sizeMb)}
+                  <span className="text-sm">kb</span>
                 </th>
               </tr>
             );
@@ -182,9 +174,6 @@ const ProductTable: React.FC<{
               </div>
             </td>
           </tr>
-          <tr>
-            <th></th>
-          </tr>
         </tbody>
         {/* foot */}
         <tfoot>
@@ -194,6 +183,7 @@ const ProductTable: React.FC<{
             <th>Categoría</th>
             <th>Disponibles</th>
             <th>Descripción</th>
+            <th>Image</th>
           </tr>
         </tfoot>
       </table>
