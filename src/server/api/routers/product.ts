@@ -100,6 +100,9 @@ export const productRouter = createTRPCRouter({
       orderBy: {
         priority: 'asc',
       },
+      include: {
+        primaryImage: true,
+      },
     });
   }),
 
