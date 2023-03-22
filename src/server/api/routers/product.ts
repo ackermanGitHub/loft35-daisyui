@@ -69,6 +69,19 @@ export const productRouter = createTRPCRouter({
       });
     }),
 
+  setActive: publicProcedure
+    .input(z.object({ productID: z.number(), active: z.boolean() }))
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.prisma.product.update({
+        where: {
+          id: input.productID,
+        },
+        data: {
+          active: input.active,
+        },
+      });
+    }),
+
   get: publicProcedure
     .input(z.object({ productID: z.number() }))
     .query(({ ctx, input }) => {

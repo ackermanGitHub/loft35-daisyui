@@ -17,21 +17,32 @@ const ProductTable: React.FC<{
     },
   });
 
-  const toggleActive = api.product.toggleActive.useMutation({
+  const toggleActive = api.product.setActive.useMutation({
     onSuccess: () => {
       void refetchProducts();
     },
   });
 
   useEffect(() => {
-    const selectAll = document.getElementById('select-all') as HTMLInputElement;
+    const selectCheckbox = document.getElementById(
+      'select-all-checkbox'
+    ) as HTMLInputElement;
     const checkboxes = document.querySelectorAll(
-      '.checkbox-group'
+      '.select-checkbox-group'
     ) as NodeListOf<HTMLInputElement>;
 
-    selectAll.addEventListener('click', () => {
+    const togglesActives = document.querySelectorAll(
+      '.toggle-active'
+    ) as NodeListOf<HTMLInputElement>;
+
+    togglesActives.forEach((toggle, index) => {
+      if (productsData && productsData[index]) {
+        toggle.checked = productsData[index]?.active || false;
+      }
+    });
+    selectCheckbox.addEventListener('click', () => {
       for (let i = 0; i < checkboxes.length; i++) {
-        checkboxes[i]!.checked = selectAll.checked;
+        checkboxes[i]!.checked = selectCheckbox.checked;
       }
     });
   }, [productsData]);
@@ -43,7 +54,11 @@ const ProductTable: React.FC<{
           <tr>
             <th>
               <label>
-                <input id="select-all" type="checkbox" className="checkbox" />
+                <input
+                  id="select-all-checkbox"
+                  type="checkbox"
+                  className="checkbox"
+                />
               </label>
             </th>
             <th>Producto</th>
@@ -56,14 +71,14 @@ const ProductTable: React.FC<{
         </thead>
         <tbody>
           {/* rows */}
-          {productsData?.map((product) => {
+          {productsData?.map((product, index) => {
             return (
               <tr key={product.id}>
                 <th>
                   <label>
                     <input
                       type="checkbox"
-                      className="checkbox checkbox-group"
+                      className="checkbox select-checkbox-group"
                     />
                   </label>
                 </th>
@@ -95,11 +110,11 @@ const ProductTable: React.FC<{
                 <td>
                   <input
                     type="checkbox"
-                    className="toggle"
-                    checked={product.active}
+                    className="toggle toggle-active"
                     onChange={(e) => {
                       toggleActive.mutate({
                         productID: product.id,
+                        active: !product.active,
                       });
                     }}
                   />
@@ -130,17 +145,17 @@ const ProductTable: React.FC<{
               <div className="flex items-center space-x-3">
                 <label
                   onClick={() => {
+                    // Getting checkboxes
                     const checkboxes = document.querySelectorAll(
-                      '.checkbox-group'
+                      '.select-checkbox-group'
                     ) as NodeListOf<HTMLInputElement>;
-                    const checkedProducts = productsData?.filter(
-                      (product, index) => {
+                    // Filter selected products ids
+                    const checkedProductsIds = productsData
+                      ?.filter((product, index) => {
                         return checkboxes[index]?.checked === true;
-                      }
-                    );
-                    const checkedProductsIds = checkedProducts?.map(
-                      (product) => product.id
-                    );
+                      })
+                      .map((product) => product.id);
+
                     if (!checkedProductsIds || checkedProductsIds?.length === 0)
                       return;
                     deleteProducts.mutate({
