@@ -62,11 +62,9 @@ const ProductTable: React.FC<{
               </label>
             </th>
             <th>Producto</th>
-            <th>Nombre</th>
             <th>Categoría</th>
             <th>Disponibles</th>
             <th>Descripción</th>
-            <th>Otro</th>
           </tr>
         </thead>
         <tbody>
@@ -87,24 +85,40 @@ const ProductTable: React.FC<{
                     <div className="avatar">
                       <div className="mask mask-squircle w-12 h-12">
                         <img
-                          src={product.imageUrl}
+                          src={product.primaryImage.url}
                           alt="Avatar Tailwind CSS Component"
                         />
                       </div>
                     </div>
-                    <div>
+                    <div className="w-full">
                       <div className="font-bold">{product.name}</div>
-                      <div className="text-sm opacity-50">${product.price}</div>
+                      <div className="flex justify-around items-center flex-row">
+                        <div className="text-sm opacity-50">
+                          ${product.price}
+                        </div>
+                        <div
+                          className={`badge badge-sm text-sm badge-${
+                            product.active ? 'success' : 'warning'
+                          } gap-2`}
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            className="inline-block w-4 h-4 stroke-current"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M6 18L18 6M6 6l12 12"
+                            ></path>
+                          </svg>
+                          {product.active ? 'active' : 'disabled'}
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </td>
-                <td>
-                  {product.categoryName}
-                  <br />
-                  <span className="badge badge-ghost badge-sm">
-                    ID:
-                    {product.priority}
-                  </span>
                 </td>
                 <td>{product.categoryName}</td>
                 <td>
@@ -125,12 +139,11 @@ const ProductTable: React.FC<{
                     <div className="collapse-title text-xl font-medium">
                       Mostrar
                     </div>
-                    <div className="collapse-content max-w-xs whitespace-pre-wrap">
+                    <div className="collapse-content whitespace-pre-wrap">
                       <p>{product.description}</p>
                     </div>
                   </div>
                 </th>
-                <td></td>
               </tr>
             );
           })}
@@ -178,11 +191,9 @@ const ProductTable: React.FC<{
           <tr>
             <th></th>
             <th>Producto</th>
-            <th>Nombre</th>
             <th>Categoría</th>
             <th>Disponibles</th>
             <th>Descripción</th>
-            <th>Otro</th>
           </tr>
         </tfoot>
       </table>
