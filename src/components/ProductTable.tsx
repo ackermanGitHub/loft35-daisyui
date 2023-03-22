@@ -2,6 +2,7 @@ import { Category, Image, Product } from '@prisma/client';
 import ProductForm from './ProductForm';
 import { useEffect, useState } from 'react';
 import { api } from '~/utils/api';
+import ModalConfirm from './ModalConfirm';
 
 const ProductTable: React.FC<{
   products: Product[];
@@ -141,14 +142,39 @@ const ProductTable: React.FC<{
           })}
           <tr>
             <th></th>
-            <td>
+            <td className="flex flex-row justify-around">
               <div className="flex items-center space-x-3">
                 <ProductForm onUploadSucces={refetchProducts} />
               </div>
+              <ModalConfirm
+                onOkFn={() => {
+                  // Getting checkboxes
+                  const checkboxes = document.querySelectorAll(
+                    '.select-checkbox-group'
+                  ) as NodeListOf<HTMLInputElement>;
+                  // Filter selected products ids
+                  const checkedProductsIds = productsData
+                    ?.filter((product, index) => {
+                      return checkboxes[index]?.checked === true;
+                    })
+                    .map((product) => product.id);
+
+                  if (!checkedProductsIds || checkedProductsIds?.length === 0)
+                    return;
+                  deleteProducts.mutate({
+                    productIDs: checkedProductsIds,
+                  });
+                }}
+                okBtnText="Eliminar"
+                openModalText="Eliminar"
+                title="Eliminando!"
+                description="Estás segura que deseas eliminar estos productos?"
+              />
             </td>
             <td>
               <div className="flex items-center space-x-3">
-                <label
+                {/* <label
+                  htmlFor="my-modal-6"
                   onClick={() => {
                     // Getting checkboxes
                     const checkboxes = document.querySelectorAll(
@@ -170,7 +196,7 @@ const ProductTable: React.FC<{
                   className="btn text-xs"
                 >
                   Borrar
-                </label>
+                </label> */}
               </div>
             </td>
           </tr>
