@@ -56,39 +56,40 @@ model VerificationToken {
 
   @@unique([identifier, token])
 }
+
 model Image {
-  id          Int   @id @default(autoincrement())
-  url         String
-  sizeMb      Float
-  color       String?
-  product     Product? 
-  productId   Int?
-  products    Product[] @relation("secondaryImages")
+  id        Int       @id @default(autoincrement())
+  url       String
+  sizeMb    Float
+  color     String?
+  productId Int?
+  product   Product?
+  products  Product[] @relation("secondaryImages")
 }
 
 model Product {
   id              Int      @id @default(autoincrement())
   name            String
   description     String?
-  primaryImage    Image    @relation(fields: [primaryImageId], references: [id])
-  primaryImageId  Int   @unique
+  primaryImageId  Int      @unique
   imageUrl        String
-  price           Float 
-  priority        Int @unique @default(autoincrement())
+  price           Float
+  priority        Int      @unique @default(autoincrement())
   active          Boolean
   deleted         Boolean
   stock           Int
   categoryName    String
-  category        Category @relation(fields: [categoryId], references: [id])
   categoryId      Int
-  secondaryImages Image[] @relation("secondaryImages")
+  category        Category @relation(fields: [categoryId], references: [id])
+  primaryImage    Image    @relation(fields: [primaryImageId], references: [id])
   orders          Order[]  @relation("Product-Orders")
+  secondaryImages Image[]  @relation("secondaryImages")
 }
 
 model Category {
   id       Int       @id @default(autoincrement())
   name     String
-  priority Int   @unique @default(autoincrement())
+  priority Int       @unique @default(autoincrement())
   products Product[]
 }
 
