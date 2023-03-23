@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import NavBar from './NavBar';
 
 const Drawer: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -13,10 +14,10 @@ const Drawer: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         <ul className="menu p-4 w-80 bg-base-100">
           {/* <!-- Sidebar content here --> */}
           <li>
-            <a>Productos</a>
+            <Link href="/">Productos</Link>
           </li>
           <li>
-            <a>Ordenes</a>
+            <Link href="/orders">Ordenes</Link>
           </li>
         </ul>
       </div>
