@@ -15,7 +15,7 @@ const ModalConfirm: React.FC<IProps> = ({
 }) => {
   return (
     <div className="flex justify-around max-md:justify-between">
-      <label htmlFor="my-modal-6" className="btn">
+      <label htmlFor="my-modal-6" className="btn text-xs btn-primary">
         {openModalText}
       </label>
 

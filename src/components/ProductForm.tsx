@@ -102,7 +102,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
 
   return (
     <div className="flex justify-around max-md:justify-between">
-      <label htmlFor="my-modal-5" className="btn text-xs">
+      <label htmlFor="my-modal-5" className="btn btn-primary text-xs">
         Subir
       </label>
       <input type="checkbox" id="my-modal-5" className="modal-toggle" />
@@ -320,7 +320,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
             <div className="h-6"></div>
           )}
 
-          <div className={`modal-action`}>
+          <div className={`modal-action mt-0`}>
             <button
               className={`btn ${upldProState === 'Cargando' ? 'loading' : ''} ${
                 upldProState === 'Subida' ? 'btn-success' : ''

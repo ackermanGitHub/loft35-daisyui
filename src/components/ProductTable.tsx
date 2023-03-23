@@ -31,7 +31,6 @@ const ProductTable: React.FC<{
     const checkboxes = document.querySelectorAll(
       '.select-checkbox-group'
     ) as NodeListOf<HTMLInputElement>;
-
     const togglesActives = document.querySelectorAll(
       '.toggle-active'
     ) as NodeListOf<HTMLInputElement>;
@@ -146,36 +145,9 @@ const ProductTable: React.FC<{
               <div className="flex items-center space-x-3">
                 <ProductForm onUploadSucces={refetchProducts} />
               </div>
-              <ModalConfirm
-                onOkFn={() => {
-                  // Getting checkboxes
-                  const checkboxes = document.querySelectorAll(
-                    '.select-checkbox-group'
-                  ) as NodeListOf<HTMLInputElement>;
-                  // Filter selected products ids
-                  const checkedProductsIds = productsData
-                    ?.filter((product, index) => {
-                      return checkboxes[index]?.checked === true;
-                    })
-                    .map((product) => product.id);
-
-                  if (!checkedProductsIds || checkedProductsIds?.length === 0)
-                    return;
-                  deleteProducts.mutate({
-                    productIDs: checkedProductsIds,
-                  });
-                }}
-                okBtnText="Eliminar"
-                openModalText="Eliminar"
-                title="Eliminando!"
-                description="Estás segura que deseas eliminar estos productos?"
-              />
-            </td>
-            <td>
-              <div className="flex items-center space-x-3">
-                {/* <label
-                  htmlFor="my-modal-6"
-                  onClick={() => {
+              <button disabled={true}>
+                <ModalConfirm
+                  onOkFn={() => {
                     // Getting checkboxes
                     const checkboxes = document.querySelectorAll(
                       '.select-checkbox-group'
@@ -193,11 +165,12 @@ const ProductTable: React.FC<{
                       productIDs: checkedProductsIds,
                     });
                   }}
-                  className="btn text-xs"
-                >
-                  Borrar
-                </label> */}
-              </div>
+                  okBtnText="Eliminar"
+                  openModalText="Eliminar"
+                  title="Eliminando!"
+                  description="Estás segura que deseas eliminar estos productos?"
+                />
+              </button>
             </td>
           </tr>
         </tbody>
@@ -213,6 +186,11 @@ const ProductTable: React.FC<{
           </tr>
         </tfoot>
       </table>
+      <div className="chat chat-end">
+        <div className="chat-bubble chat-bubble-warning">
+          To be on the Council at your age.
+        </div>
+      </div>
     </div>
   );
 };

@@ -11,17 +11,6 @@ const s3 = new S3({
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 });
 
-const createProductInput = z.object({
-  name: z.string(),
-  description: z.string().optional(),
-  primaryImage: z.instanceof(Buffer),
-  secondaryImages: z.array(z.instanceof(Buffer)).optional(),
-  price: z.number(),
-  stock: z.number(),
-  categoryName: z.string(),
-  color: z.string(),
-});
-
 export const productRouter = createTRPCRouter({
   delete: publicProcedure
     .input(z.object({ productID: z.number() }))
@@ -107,7 +96,18 @@ export const productRouter = createTRPCRouter({
   }),
 
   create: publicProcedure
-    .input(createProductInput)
+    .input(
+      z.object({
+        name: z.string(),
+        description: z.string().optional(),
+        primaryImage: z.instanceof(Buffer),
+        secondaryImages: z.array(z.instanceof(Buffer)).optional(),
+        price: z.number(),
+        stock: z.number(),
+        categoryName: z.string(),
+        color: z.string(),
+      })
+    )
     .mutation(async ({ ctx, input }) => {
       try {
         // Use Sharp to resize and optimize the primaryImage
