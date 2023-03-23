@@ -2,21 +2,26 @@ interface IProps {
   onOkFn: () => void;
   title: string;
   description: string;
-  openModalText: string;
+  children: React.ReactNode;
   okBtnText: string;
+  isDisabled: boolean;
 }
 
 const ModalConfirm: React.FC<IProps> = ({
   onOkFn,
   title,
   description,
-  openModalText,
+  children,
   okBtnText,
+  isDisabled,
 }) => {
   return (
     <div className="flex justify-around max-md:justify-between">
-      <label htmlFor="my-modal-6" className="btn text-xs btn-primary">
-        {openModalText}
+      <label
+        htmlFor={`${isDisabled ? 'my-modal-6' : ''}`}
+        className={`btn btn-${isDisabled ? 'ghost' : 'disabled'}`}
+      >
+        {children}
       </label>
 
       {/* Put this part before </body> tag */}
