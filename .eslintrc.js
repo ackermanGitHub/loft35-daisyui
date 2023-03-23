@@ -4,6 +4,7 @@ const config = {
   parser: '@typescript-eslint/parser',
   plugins: ['import'],
   extends: [
+    'next/core-web-vitals',
     'plugin:@typescript-eslint/recommended',
     'plugin:@typescript-eslint/recommended-requiring-type-checking',
   ],
