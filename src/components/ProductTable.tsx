@@ -1,16 +1,28 @@
-import { Category, Image, Product } from '@prisma/client';
+import {
+  type Category,
+  type Image as ProductImage,
+  type Product,
+} from '@prisma/client';
 import ProductForm from './ProductForm';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { api } from '~/utils/api';
 import ModalConfirm from './ModalConfirm';
+import Image from 'next/image';
 
 const ProductTable: React.FC<{
   products: Product[];
   categories: Category[];
-  images: Image[];
+  images: ProductImage[];
 }> = ({ products, categories, images }) => {
-  let { data: productsData, refetch: refetchProducts } =
-    api.product.getAll.useQuery();
+  console.log(products);
+  console.log(categories);
+  console.log(images);
+
+  const {
+    data: productsData,
+    refetch: refetchProducts,
+    isLoading: isProductsLoading,
+  } = api.product.getAll.useQuery();
 
   const deleteProducts = api.product.deleteMany.useMutation({
     onSuccess: () => {
@@ -36,16 +48,17 @@ const ProductTable: React.FC<{
     ) as NodeListOf<HTMLInputElement>;
 
     togglesActives.forEach((toggle, index) => {
-      if (productsData && productsData[index]) {
-        toggle.checked = productsData[index]?.active || false;
+      if (productsData && productsData[index] && !isProductsLoading) {
+        toggle.checked = productsData[index]?.active || toggle.checked;
       }
     });
+
     selectCheckbox.addEventListener('click', () => {
-      for (let i = 0; i < checkboxes.length; i++) {
-        checkboxes[i]!.checked = selectCheckbox.checked;
-      }
+      checkboxes.forEach((checkBox) => {
+        checkBox.checked = selectCheckbox.checked;
+      });
     });
-  }, [productsData]);
+  }, [isProductsLoading, productsData]);
 
   return (
     <div className="overflow-x-auto w-full">
@@ -70,7 +83,7 @@ const ProductTable: React.FC<{
         </thead>
         <tbody>
           {/* rows */}
-          {productsData?.map((product, index) => {
+          {productsData?.map((product) => {
             return (
               <tr key={product.id}>
                 <th>
@@ -85,9 +98,11 @@ const ProductTable: React.FC<{
                   <div className="flex items-center space-x-3">
                     <div className="avatar">
                       <div className="mask mask-squircle w-12 h-12">
-                        <img
+                        <Image
                           src={product.primaryImage.url}
                           alt="Avatar Tailwind CSS Component"
+                          width={48}
+                          height={48}
                         />
                       </div>
                     </div>
@@ -113,7 +128,7 @@ const ProductTable: React.FC<{
                   <input
                     type="checkbox"
                     className="toggle toggle-active"
-                    onChange={(e) => {
+                    onChange={() => {
                       toggleActive.mutate({
                         productID: product.id,
                         active: !product.active,
@@ -143,34 +158,36 @@ const ProductTable: React.FC<{
             <th></th>
             <td className="flex flex-row justify-around">
               <div className="flex items-center space-x-3">
-                <ProductForm onUploadSucces={refetchProducts} />
-              </div>
-              <button disabled={true}>
-                <ModalConfirm
-                  onOkFn={() => {
-                    // Getting checkboxes
-                    const checkboxes = document.querySelectorAll(
-                      '.select-checkbox-group'
-                    ) as NodeListOf<HTMLInputElement>;
-                    // Filter selected products ids
-                    const checkedProductsIds = productsData
-                      ?.filter((product, index) => {
-                        return checkboxes[index]?.checked === true;
-                      })
-                      .map((product) => product.id);
-
-                    if (!checkedProductsIds || checkedProductsIds?.length === 0)
-                      return;
-                    deleteProducts.mutate({
-                      productIDs: checkedProductsIds,
-                    });
+                <ProductForm
+                  onUploadSucces={() => {
+                    void refetchProducts();
                   }}
-                  okBtnText="Eliminar"
-                  openModalText="Eliminar"
-                  title="Eliminando!"
-                  description="Estás segura que deseas eliminar estos productos?"
                 />
-              </button>
+              </div>
+              <ModalConfirm
+                onOkFn={() => {
+                  // Getting checkboxes
+                  const checkboxes = document.querySelectorAll(
+                    '.select-checkbox-group'
+                  ) as NodeListOf<HTMLInputElement>;
+                  // Filter selected products ids
+                  const checkedProductsIds = productsData
+                    ?.filter((product, index) => {
+                      return checkboxes[index]?.checked === true;
+                    })
+                    .map((product) => product.id);
+
+                  if (!checkedProductsIds || checkedProductsIds?.length === 0)
+                    return;
+                  deleteProducts.mutate({
+                    productIDs: checkedProductsIds,
+                  });
+                }}
+                okBtnText="Eliminar"
+                openModalText="Eliminar"
+                title="Eliminando!"
+                description="Estás segura que deseas eliminar estos productos?"
+              />
             </td>
           </tr>
         </tbody>
@@ -186,7 +203,7 @@ const ProductTable: React.FC<{
           </tr>
         </tfoot>
       </table>
-      <div className="chat chat-end">
+      <div className="chat gap-4 chat-end absolute bottom-20 right-8 transition-opacity duration-700  opacity-0">
         <div className="chat-bubble chat-bubble-warning">
           To be on the Council at your age.
         </div>

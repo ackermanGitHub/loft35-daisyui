@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { api } from '../utils/api';
 // import sharp from 'sharp';
@@ -31,7 +31,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
 
   const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5 MB
 
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {};
+  // const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {};
 
   const onUpldProClick = async (data: FormValues) => {
     if (upldProState === 'Error') {
@@ -55,7 +55,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
     //       .toBuffer();
     //   });
 
-    let metadataSecondaryImages: Buffer[] = [];
+    const metadataSecondaryImages: Buffer[] = [];
     // data.secondaryImages.map(async (secondaryImage) => {
     //   const arrayBufferSecondaryImage = await secondaryImage[0]?.arrayBuffer();
     //   if (!arrayBufferSecondaryImage) return;

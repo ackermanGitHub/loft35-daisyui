@@ -1,4 +1,4 @@
-import { Category, Image, Product } from '@prisma/client';
+import { type Category, type Image, type Product } from '@prisma/client';
 import Drawer from '~/components/Drawer';
 import ProductTable from '~/components/ProductTable';
 

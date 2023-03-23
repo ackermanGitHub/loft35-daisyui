@@ -1,15 +1,16 @@
-import { Product, Category, Image } from '@prisma/client';
+import { type Product, type Category, type Image } from '@prisma/client';
 import Head from 'next/head';
 import Layout from '~/layout/Layout';
 // import { z } from 'zod';
 // import { prisma } from '~/server/db';
 
+// eslint-disable-next-line @typescript-eslint/require-await
 export async function getServerSideProps() {
   // const products = await prisma.product.findMany();
   // const categories = await prisma.category.findMany();
   // const images = await prisma.image.findMany();
 
-  let products: Product[] = [];
+  const products: Product[] = [];
   const categories: Category[] = [];
   const images: Image[] = [];
 
