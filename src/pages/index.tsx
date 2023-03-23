@@ -1,5 +1,6 @@
 import { type Product, type Category, type Image } from '@prisma/client';
 import Head from 'next/head';
+import ProductTable from '~/components/ProductTable';
 import Layout from '~/layout/Layout';
 // import { z } from 'zod';
 // import { prisma } from '~/server/db';
@@ -35,17 +36,18 @@ const Home = ({
   return (
     <>
       <Head>
-        <title>Loft 35</title>
+        <title>Loft 35 - Products</title>
         <meta name="description" content="Loft-35 Store" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Layout
-        products={products}
-        categories={categories}
-        images={images}
-        data-theme="coffee"
-      />
+      <Layout data-theme="coffee">
+        <ProductTable
+          products={products}
+          categories={categories}
+          images={images}
+        />
+      </Layout>
     </>
   );
 };
