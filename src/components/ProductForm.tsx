@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { api } from '../utils/api';
-// import sharp from 'sharp';
 
 interface FormValues {
   name: string;
@@ -18,7 +17,7 @@ interface IProps {
 }
 
 const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
-  const [upldProState, setUpldProstate] = useState<string>('Subir');
+  const [upldProState, setUpldProstate] = useState('Subir');
 
   const productList = api.product.create.useMutation({});
 
@@ -28,6 +27,8 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
     formState: { errors },
     reset,
     setError,
+    setValue,
+    clearErrors,
   } = useForm<FormValues>();
 
   const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5 MB
@@ -45,37 +46,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
 
     const arrayBufferPrimaryImage = await data.primaryImage[0].arrayBuffer();
     const primaryImageBuffer = Buffer.from(arrayBufferPrimaryImage);
-
-    // const sharpPrimaryImage = sharp(primaryImageBuffer);
-    // let metadataPrimaryImage = await sharpPrimaryImage
-    //   .metadata()
-    //   .then(function (metadata) {
-    //     return sharpPrimaryImage
-    //       .resize(Math.round(metadata.width! / 2))
-    //       .jpeg()
-    //       .toBuffer();
-    //   });
-
     const metadataSecondaryImages: Buffer[] = [];
-    // data.secondaryImages.map(async (secondaryImage) => {
-    //   const arrayBufferSecondaryImage = await secondaryImage[0]?.arrayBuffer();
-    //   if (!arrayBufferSecondaryImage) return;
-    //   const secondaryImageBuffer = Buffer.from(arrayBufferSecondaryImage);
-
-    //   // const sharpSecondaryImage = sharp(secondaryImageBuffer);
-    //   //
-    //   // // Devuelve una promesa resolviendo el objeto Sharp modificado
-    //   // let metadataSecondaryImage = await sharpSecondaryImage
-    //   //   .metadata()
-    //   //   .then(function (metadata) {
-    //   //     return sharpPrimaryImage
-    //   //       .resize(Math.round(metadata.width! / 2))
-    //   //       .jpeg()
-    //   //       .toBuffer();
-    //   //   });
-
-    //   metadataSecondaryImages.push(secondaryImageBuffer);
-    // });
 
     setTimeout(() => {
       Math.random() > 0.5
@@ -83,7 +54,6 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
         : setUpldProstate('Subida');
     }, 3000);
 
-    console.log('ProductForm', data);
     //  productList.mutate(
     //    {
     //      name: data.name,
@@ -173,7 +143,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
                     d="M6 18L18 6M6 6l12 12"
                   ></path>
                 </svg>
-                obligatorio
+                {errors.primaryImage.message || 'obligatorio'}
               </div>
             ) : (
               <div className="h-6"></div>
@@ -187,10 +157,10 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
               type="file"
               accept="image/*"
               multiple
+              onClick={() => {
+                clearErrors('secondaryImages');
+              }}
               {...register('secondaryImages', {
-                required: true,
-                maxLength: 3,
-                max: 3,
                 onChange(event) {
                   const files = event.target.files;
                   console.log('secondaryImages-onChange', files);
@@ -250,7 +220,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
                       d="M6 18L18 6M6 6l12 12"
                     ></path>
                   </svg>
-                  obligatorio
+                  {errors.name.message || 'obligatorio'}
                 </div>
               ) : (
                 <div className="h-6"></div>
@@ -258,7 +228,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
             </div>
             <div className="w-[47%] flex flex-col">
               <input
-                type="text"
+                type="number"
                 placeholder="Precio"
                 {...register('price', { required: true })}
                 className="input-bordered input w-full max-w-xs"
@@ -278,7 +248,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
                       d="M6 18L18 6M6 6l12 12"
                     ></path>
                   </svg>
-                  obligatorio
+                  {errors.price.message || 'obligatorio'}
                 </div>
               ) : (
                 <div className="h-6"></div>
@@ -290,7 +260,9 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
               <input
                 type="number"
                 placeholder="Cantidad"
-                {...register('stock', { required: true })}
+                {...register('stock', {
+                  required: true,
+                })}
                 className="input input-bordered"
               />
               {errors.stock ? (
@@ -308,19 +280,36 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
                       d="M6 18L18 6M6 6l12 12"
                     ></path>
                   </svg>
-                  obligatorio
+                  {errors.stock.message || 'obligatorio'}
                 </div>
               ) : (
                 <div className="h-6"></div>
               )}
             </div>
             <div className="flex flex-col w-[47%]">
+              <input
+                type="text"
+                className="hidden"
+                {...register('categoryName', {
+                  required: true,
+                  onChange: (e) => {
+                    console.log(e);
+                  },
+                })}
+              />
               <select
+                onChange={(e) => {
+                  setValue('categoryName', e.target.value);
+                  clearErrors('categoryName');
+                }}
                 className="select select-bordered"
-                {...register('categoryName', { required: true })}
               >
-                <option value={'<categoryId>'}>T-shirts</option>
-                <option value={'<categoryId>'}>Mugs</option>
+                <option disabled selected>
+                  Categoría
+                </option>
+                <option value={'Pullovers'}>Pullovers</option>
+                <option value={'T'}>T-shirts</option>
+                <option value={'Mugs'}>Mugs</option>
               </select>
               {errors.categoryName ? (
                 <div className="badge-warning badge my-[2px] gap-2">
@@ -337,7 +326,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
                       d="M6 18L18 6M6 6l12 12"
                     ></path>
                   </svg>
-                  obligatorio
+                  {errors.categoryName.message || 'obligatorio'}
                 </div>
               ) : (
                 <div className="h-6"></div>
@@ -347,7 +336,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
           <textarea
             className="textarea-bordered textarea w-full max-w-xs"
             placeholder="Descripción"
-            {...register('description', { required: true })}
+            {...register('description')}
           ></textarea>
           {errors.description ? (
             <div className="badge-warning badge my-[2px] gap-2">
@@ -364,7 +353,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
                   d="M6 18L18 6M6 6l12 12"
                 ></path>
               </svg>
-              obligatorio
+              {errors.description.message}
             </div>
           ) : (
             <div className="h-6"></div>

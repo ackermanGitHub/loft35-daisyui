@@ -196,7 +196,7 @@ const ProductTable: React.FC<{
                 }}
                 okBtnText="Eliminar"
                 isDisabled={
-                  !isAnyCheckboxSelected || productsData?.length !== 0
+                  !isAnyCheckboxSelected || productsData?.length === 0
                 }
                 title="Eliminando!"
                 description="Estás segura que deseas eliminar estos productos?"
