@@ -34,7 +34,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
   // const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {};
 
   const onUpldProClick = async (data: FormValues) => {
-    if (upldProState === 'Error') {
+    if (upldProState === 'Error' || upldProState === 'Subida') {
       setUpldProstate('Subir');
       return;
     }
