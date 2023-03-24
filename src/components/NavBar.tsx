@@ -1,4 +1,4 @@
-import ProductForm from './ProductForm';
+import Image from 'next/image';
 
 const NavBar: React.FC = () => {
   return (
@@ -58,7 +58,7 @@ const NavBar: React.FC = () => {
         <div className="dropdown dropdown-end">
           <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
             <div className="w-10 rounded-full">
-              <img src="/favicon.ico" />
+              <Image src="/favicon.ico" alt="avatar" width={40} height={40} />
             </div>
           </label>
           <ul
