@@ -364,12 +364,6 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
                 ${upldProState === 'Error' ? 'btn-error' : ''}
                 `}
               type="submit"
-              onClick={() => {
-                if (upldProState === 'Subida') {
-                  setUpldProstate('Subir');
-                  return;
-                }
-              }}
               disabled={upldProState === 'Cargando'}
             >
               {upldProState}
