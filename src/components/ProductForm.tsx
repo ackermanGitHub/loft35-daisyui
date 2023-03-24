@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, EventType } from 'react-hook-form';
 import { api } from '../utils/api';
 
 interface FormValues {
@@ -18,6 +18,8 @@ interface IProps {
 
 const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
   const [upldProState, setUpldProstate] = useState('Subir');
+  const [primaryImageSize, setPrimaryImageSize] = useState<number>();
+  const [secondaryImagesSize, setSecondaryImagesSize] = useState<number>();
 
   const productList = api.product.create.useMutation({});
 
@@ -31,7 +33,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
     clearErrors,
   } = useForm<FormValues>();
 
-  const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5 MB
+  const MAX_IMAGE_SIZE = 1 * 1024 * 1024; // 5 MB
 
   // const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {};
 
@@ -111,16 +113,29 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
           <div className="form-control w-full max-w-xs">
             <label className="label">
               <span className="label-text">Imágen Principal</span>
+              <span className="label-text-alt">
+                {primaryImageSize ? showSize(primaryImageSize) : ''}
+              </span>
             </label>
+
             <input
               type="file"
               accept="image/*"
+              onClick={() => {
+                clearErrors('primaryImage');
+                setPrimaryImageSize(undefined);
+              }}
               {...register('primaryImage', {
                 required: true,
-                onChange: (e) => {
+                onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+                  if (!e.target.files) return;
                   const file = e.target.files[0];
-                  if (file.size > MAX_IMAGE_SIZE) {
-                    alert('The selected image is too large');
+                  if (!file) return;
+                  setPrimaryImageSize(file?.size);
+                  if (file?.size > MAX_IMAGE_SIZE) {
+                    setError('primaryImage', {
+                      message: 'muy grande 😥',
+                    });
                     return;
                   }
                   // Use the file as needed
@@ -128,6 +143,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
               })}
               className="file-input-bordered file-input w-full max-w-xs"
             />
+
             {errors.primaryImage ? (
               <div className="badge-warning  badge my-[2px] gap-2">
                 <svg
@@ -152,6 +168,9 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
           <div className="form-control w-full max-w-xs">
             <label className="label">
               <span className="label-text">Imágenes Secundarias</span>
+              <span className="label-text">
+                {secondaryImagesSize ? showSize(secondaryImagesSize) : ''}
+              </span>
             </label>
             <input
               type="file"
@@ -159,13 +178,31 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
               multiple
               onClick={() => {
                 clearErrors('secondaryImages');
+                setSecondaryImagesSize(undefined);
               }}
               {...register('secondaryImages', {
-                onChange(event) {
+                onChange(event: React.ChangeEvent<HTMLInputElement>) {
                   const files = event.target.files;
-                  console.log('secondaryImages-onChange', files);
+                  if (!files) return;
+                  const imagesArr = Array.from(files);
 
-                  if (Array.from(files).length > 3) {
+                  if (imagesArr.length === 0) return;
+
+                  setSecondaryImagesSize(
+                    imagesArr.map((item) => item.size).reduce((a, b) => a + b)
+                  );
+
+                  const isAnyImageBig = imagesArr.some(
+                    (img) => img.size > MAX_IMAGE_SIZE
+                  );
+
+                  if (isAnyImageBig) {
+                    setError('secondaryImages', {
+                      message: 'una es muy grande 😥',
+                    });
+                  }
+
+                  if (imagesArr.length > 3) {
                     setError('secondaryImages', {
                       message: 'demasiadas',
                     });
@@ -387,5 +424,11 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
     </div>
   );
 };
+
+function showSize(sizeInBytes: number) {
+  const sizeInMb = sizeInBytes / 1024;
+  if (sizeInMb < 1000) return `${sizeInMb.toFixed(2)}Kb`;
+  else return `${(sizeInMb / 1024).toFixed(2)}Mb`;
+}
 
 export default ProductForm;
