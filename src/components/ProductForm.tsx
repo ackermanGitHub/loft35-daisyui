@@ -413,6 +413,8 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
               onClick={() => {
                 setUpldProstate('Subir');
                 reset();
+                setPrimaryImageSize(undefined);
+                setSecondaryImagesSize(undefined);
               }}
               htmlFor="my-modal-5"
               className="btn"
