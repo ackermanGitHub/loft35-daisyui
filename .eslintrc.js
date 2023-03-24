@@ -11,12 +11,7 @@ const config = {
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
-    tsconfigRootDir: __dirname,
-    project: [
-      './tsconfig.json',
-      './cli/tsconfig.eslint.json', // separate eslint config for the CLI since we want to lint and typecheck differently due to template files
-      './www/tsconfig.json',
-    ],
+    project: ['./tsconfig.json'],
   },
   rules: {
     '@typescript-eslint/restrict-template-expressions': 'off',
