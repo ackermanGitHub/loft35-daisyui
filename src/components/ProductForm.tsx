@@ -167,7 +167,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
                     d="M6 18L18 6M6 6l12 12"
                   ></path>
                 </svg>
-                This field is required
+                obligatorio
               </div>
             ) : (
               <div className="h-6"></div>
@@ -185,7 +185,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
               className="file-input-bordered file-input w-full max-w-xs"
             />
             {errors.secondaryImages ? (
-              <div className="badge-warning  badge my-[2px] gap-2">
+              <div className="badge-warning badge my-[2px] gap-2">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -199,70 +199,76 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
                     d="M6 18L18 6M6 6l12 12"
                   ></path>
                 </svg>
-                This field is required
+                obligatorio
               </div>
             ) : (
               <div className="h-6"></div>
             )}
           </div>
-          <input
-            type="text"
-            placeholder="Nombre"
-            {...register('name', { required: true })}
-            className="input-bordered input-secondary input  w-full max-w-xs"
-          />
-          {errors.name ? (
-            <div className="badge-warning  badge my-[2px] gap-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                className="inline-block h-4 w-4 stroke-current"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M6 18L18 6M6 6l12 12"
-                ></path>
-              </svg>
-              This field is required
+          <div className="flex justify-between max-w-xs">
+            <div className="w-[45%] flex flex-col">
+              <input
+                type="text"
+                placeholder="Nombre"
+                {...register('name', { required: true })}
+                className="input-bordered input w-full max-w-xs"
+              />
+              {errors.name ? (
+                <div className="badge-warning badge my-[2px] gap-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    className="inline-block h-4 w-4 stroke-current"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M6 18L18 6M6 6l12 12"
+                    ></path>
+                  </svg>
+                  obligatorio
+                </div>
+              ) : (
+                <div className="h-6"></div>
+              )}
             </div>
-          ) : (
-            <div className="h-6"></div>
-          )}
-          <input
-            type="text"
-            placeholder="Precio"
-            {...register('price', { required: true })}
-            className="input-bordered input-secondary input  w-full max-w-xs"
-          />
-          {errors.price ? (
-            <div className="badge-warning  badge my-[2px] gap-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                className="inline-block h-4 w-4 stroke-current"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M6 18L18 6M6 6l12 12"
-                ></path>
-              </svg>
-              This field is required
+            <div className="w-1/2 flex flex-col">
+              <input
+                type="text"
+                placeholder="Precio"
+                {...register('price', { required: true })}
+                className="input-bordered input w-full max-w-xs"
+              />
+              {errors.price ? (
+                <div className="badge-warning badge my-[2px] gap-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    className="inline-block h-4 w-4 stroke-current"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M6 18L18 6M6 6l12 12"
+                    ></path>
+                  </svg>
+                  obligatorio
+                </div>
+              ) : (
+                <div className="h-6"></div>
+              )}
             </div>
-          ) : (
-            <div className="h-6"></div>
-          )}
+          </div>
 
           <input
             type="text"
             placeholder="Cantidad Disponible"
             {...register('stock', { required: true })}
-            className="input-bordered input-secondary input  w-full max-w-xs"
+            className="input-bordered input w-full max-w-xs"
           />
           {errors.stock ? (
             <div className="badge-warning  badge my-[2px] gap-2">
@@ -279,7 +285,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
                   d="M6 18L18 6M6 6l12 12"
                 ></path>
               </svg>
-              This field is required
+              obligatorio
             </div>
           ) : (
             <div className="h-6"></div>
@@ -289,10 +295,10 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
             type="text"
             placeholder="Categoría"
             {...register('categoryName', { required: true })}
-            className="input-bordered input-secondary input  w-full max-w-xs"
+            className="input-bordered input w-full max-w-xs"
           />
           {errors.description ? (
-            <div className="badge-warning  badge my-[2px] gap-2">
+            <div className="badge-warning badge my-[2px] gap-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -306,18 +312,18 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
                   d="M6 18L18 6M6 6l12 12"
                 ></path>
               </svg>
-              This field is required
+              obligatorio
             </div>
           ) : (
             <div className="h-6"></div>
           )}
           <textarea
-            className="textarea-secondary textarea  w-full max-w-xs"
+            className="textarea-bordered textarea w-full max-w-xs"
             placeholder="Descripción"
             {...register('description', { required: true })}
           ></textarea>
           {errors.categoryName ? (
-            <div className="badge-warning  badge my-[2px] gap-2">
+            <div className="badge-warning badge my-[2px] gap-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -331,7 +337,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
                   d="M6 18L18 6M6 6l12 12"
                 ></path>
               </svg>
-              This field is required
+              obligatorio
             </div>
           ) : (
             <div className="h-6"></div>
