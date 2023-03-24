@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useForm, EventType } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { api } from '../utils/api';
 
 interface FormValues {
@@ -39,6 +39,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
 
   const onUpldProClick = async (data: FormValues) => {
     if (upldProState === 'Error' || upldProState === 'Subida') {
+      reset();
       setUpldProstate('Subir');
       return;
     }

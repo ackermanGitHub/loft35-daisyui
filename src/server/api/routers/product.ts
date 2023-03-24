@@ -114,7 +114,7 @@ export const productRouter = createTRPCRouter({
         const primaryImageInput = sharp(input.primaryImage);
         const optimizedPrimaryImage = await primaryImageInput
           .resize({ width: 800 })
-          .jpeg({ quality: 80 })
+          .jpeg({ quality: 60 })
           .toBuffer();
 
         // Upload the image to the S3 bucket

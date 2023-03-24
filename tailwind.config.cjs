@@ -6,7 +6,7 @@ const config = {
   },
   plugins: [require('daisyui')],
   daisyui: {
-    themes: ['cofee', 'autumn', 'pastel', 'winter'],
+    themes: ['coffee', 'winter', 'autumn', 'pastel'],
   },
 };
 
