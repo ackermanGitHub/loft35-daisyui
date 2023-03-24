@@ -58,7 +58,13 @@ const NavBar: React.FC = () => {
         <div className="dropdown dropdown-end">
           <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
             <div className="w-10 rounded-full">
-              <Image src="/favicon.ico" alt="avatar" width={40} height={40} />
+              <Image
+                src="/favicon.ico"
+                priority
+                alt="avatar"
+                width={40}
+                height={40}
+              />
             </div>
           </label>
           <ul
