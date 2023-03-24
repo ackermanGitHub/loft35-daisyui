@@ -27,6 +27,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
     register,
     formState: { errors },
     reset,
+    setError,
   } = useForm<FormValues>();
 
   const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5 MB
@@ -186,7 +187,23 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
               type="file"
               accept="image/*"
               multiple
-              {...register('secondaryImages', { required: true })}
+              {...register('secondaryImages', {
+                required: true,
+                maxLength: 3,
+                max: 3,
+                onChange(event) {
+                  const files = event.target.files;
+                  console.log('secondaryImages-onChange', files);
+
+                  if (Array.from(files).length > 3) {
+                    setError('secondaryImages', {
+                      message: 'demasiadas',
+                    });
+                    console.log(errors);
+                  }
+                  // Use the file as needed
+                },
+              })}
               className="file-input-bordered file-input w-full max-w-xs"
             />
             {errors.secondaryImages ? (
@@ -204,7 +221,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
                     d="M6 18L18 6M6 6l12 12"
                   ></path>
                 </svg>
-                obligatorio
+                {errors.secondaryImages.message || 'obligatorio'}
               </div>
             ) : (
               <div className="h-6"></div>
@@ -302,11 +319,8 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
                 className="select select-bordered"
                 {...register('categoryName', { required: true })}
               >
-                <option disabled selected>
-                  Seleccionar
-                </option>
-                <option>T-shirts</option>
-                <option>Mugs</option>
+                <option value={'<categoryId>'}>T-shirts</option>
+                <option value={'<categoryId>'}>Mugs</option>
               </select>
               {errors.categoryName ? (
                 <div className="badge-warning badge my-[2px] gap-2">
