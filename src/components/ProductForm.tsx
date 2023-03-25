@@ -42,8 +42,6 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
     if (upldProState === 'Error' || upldProState === 'Subida') {
       reset();
       setPrimaryImageSize(undefined);
-      setSecondaryImagesSize(undefined);
-      setUpldProstate('Subir');
       return;
     }
 
