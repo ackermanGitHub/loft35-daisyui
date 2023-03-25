@@ -459,10 +459,10 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
             </button>
             <label
               onClick={() => {
-                setUpldProstate('Subir');
-                reset();
                 setPrimaryImageSize(undefined);
                 setSecondaryImagesSize(undefined);
+                setUpldProstate('Subir');
+                reset();
               }}
               htmlFor="my-modal-5"
               className="btn"
