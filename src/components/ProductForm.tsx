@@ -43,6 +43,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
       reset();
       setPrimaryImageSize(undefined);
       setSecondaryImagesSize(undefined);
+      setUpldProstate('Subir');
       return;
     }
 
@@ -58,6 +59,8 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
         ? setUpldProstate('Error')
         : setUpldProstate('Subida');
     }, 3000);
+
+    console.log(data);
 
     //  productList.mutate(
     //    {
