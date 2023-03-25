@@ -91,19 +91,21 @@ const ProductTable: React.FC<{
 
   return (
     <div className="relative overflow-x-auto w-full">
-      <div>
-        <input
-          style={{
-            left: editInputProperties?.left,
-            top: editInputProperties?.top,
-            height: editInputProperties?.height,
-            width: editInputProperties?.width,
-            display: `${editInputProperties?.active ? 'block' : 'none'}`,
-          }}
-          defaultValue={editInputProperties.default}
-          className="absolute input input-primary z-50"
-        />
-      </div>
+      {editInputProperties?.active && (
+        <div>
+          <input
+            style={{
+              left: editInputProperties?.left,
+              top: editInputProperties?.top,
+              height: editInputProperties?.height,
+              width: editInputProperties?.width,
+              display: `${editInputProperties?.active ? 'block' : 'none'}`,
+            }}
+            defaultValue={editInputProperties.default}
+            className="absolute input input-primary z-50"
+          />
+        </div>
+      )}
       <table className="table w-full">
         <thead>
           <tr>

@@ -13,7 +13,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <SessionProvider session={session}>
-      <Analytics mode={'production'} />;
+      <Analytics mode={'production'} />
       <Component {...pageProps} />
     </SessionProvider>
   );
