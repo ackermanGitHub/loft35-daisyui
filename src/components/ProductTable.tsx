@@ -19,9 +19,24 @@ const ProductTable: React.FC<{
   console.log(images);
 
   const [isAnyCheckboxSelected, setIsAnyCheckboxSelected] = useState(false);
-  const [editInputleft, setEditInputleft] = useState(0);
-  const [editInputRight, setEditInputRight] = useState(0);
-  const [isEditInputActive, setEditInputActive] = useState(false);
+  const [editInputProperties, setEditInputProperties] = useState<{
+    left: number;
+    top: number;
+    width: number;
+    height: number;
+    active: boolean;
+    default: string;
+  }>({
+    left: 0,
+    top: 0,
+    width: 0,
+    height: 0,
+    active: false,
+    default: '',
+  });
+  // const [editInputleft, setEditInputleft] = useState(0);
+  // const [editInputRight, setEditInputRight] = useState(0);
+  // const [isEditInputActive, setEditInputActive] = useState(false);
 
   const {
     data: productsData,
@@ -79,10 +94,13 @@ const ProductTable: React.FC<{
       <div>
         <input
           style={{
-            left: editInputleft,
-            right: editInputRight,
-            display: `${isEditInputActive ? 'block' : 'none'}`,
+            left: editInputProperties?.left,
+            top: editInputProperties?.top,
+            height: editInputProperties?.height,
+            width: editInputProperties?.width,
+            display: `${editInputProperties?.active ? 'block' : 'none'}`,
           }}
+          defaultValue={editInputProperties.default}
           className="absolute input input-primary z-50"
         />
       </div>
@@ -183,11 +201,39 @@ const ProductTable: React.FC<{
                   />
                 </td>
                 <th>
-                  <th>
+                  <th className="flex justify-between items-center">
                     <p>{product.name}</p>
                     <span
-                      onClick={() => {
-                        console.log('aaa');
+                      onClick={(event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        const target = event.currentTarget as HTMLSpanElement;
+                        const parent =
+                          target.parentElement as HTMLTableCellElement;
+
+                        const position = {
+                          x: parent?.offsetLeft,
+                          y: parent?.offsetTop,
+                        };
+                        const size = {
+                          width: parent?.offsetWidth,
+                          height: parent?.offsetHeight,
+                        };
+
+                        console.log('position&size', {
+                          event,
+                          position,
+                          size,
+                        });
+
+                        setEditInputProperties({
+                          left: position.x,
+                          top: position.y,
+                          height: size.height,
+                          width: size.width,
+                          default: product.name,
+                          active: !editInputProperties.active,
+                        });
                       }}
                       className="label-text"
                     >
