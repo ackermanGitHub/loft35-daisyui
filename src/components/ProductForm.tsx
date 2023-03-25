@@ -24,6 +24,12 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
   const productList = api.product.create.useMutation({});
 
   const {
+    data: categoriesData,
+    refetch: refetchCategories,
+    isLoading: isCategoriesLoading,
+  } = api.category.getAll.useQuery();
+
+  const {
     handleSubmit,
     register,
     formState: { errors },
