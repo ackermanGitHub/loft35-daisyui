@@ -19,7 +19,7 @@ interface IProps {
 const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
   const [upldProState, setUpldProstate] = useState('Subir');
   const [primaryImageSize, setPrimaryImageSize] = useState<number>();
-  const [secondaryImagesSize, setSecondaryImagesSize] = useState<number>();
+  const [secondaryImagesSize, setSecondaryImagesSize] = useState<number[]>();
 
   const productList = api.product.create.useMutation({});
 
@@ -31,6 +31,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
     setError,
     setValue,
     clearErrors,
+    resetField,
   } = useForm<FormValues>();
 
   const MAX_IMAGE_SIZE = 1 * 1024 * 1024; // 5 MB
@@ -40,6 +41,8 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
   const onUpldProClick = async (data: FormValues) => {
     if (upldProState === 'Error' || upldProState === 'Subida') {
       reset();
+      setPrimaryImageSize(undefined);
+      setSecondaryImagesSize(undefined);
       setUpldProstate('Subir');
       return;
     }
@@ -123,7 +126,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
               type="file"
               accept="image/*"
               onClick={() => {
-                clearErrors('primaryImage');
+                resetField('primaryImage');
                 setPrimaryImageSize(undefined);
               }}
               {...register('primaryImage', {
@@ -162,6 +165,23 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
                 </svg>
                 {errors.primaryImage.message || 'obligatorio'}
               </div>
+            ) : primaryImageSize && primaryImageSize > 1 * 1024 * 1024 ? (
+              <div className="badge-warning  badge my-[2px] gap-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  className="inline-block h-4 w-4 stroke-current"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  ></path>
+                </svg>
+                {'muy grande 😥'}
+              </div>
             ) : (
               <div className="h-6"></div>
             )}
@@ -170,7 +190,9 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
             <label className="label">
               <span className="label-text">Imágenes Secundarias</span>
               <span className="label-text">
-                {secondaryImagesSize ? showSize(secondaryImagesSize) : ''}
+                {secondaryImagesSize
+                  ? showSize(secondaryImagesSize.reduce((a, b) => a + b))
+                  : ''}
               </span>
             </label>
             <input
@@ -178,7 +200,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
               accept="image/*"
               multiple
               onClick={() => {
-                clearErrors('secondaryImages');
+                resetField('secondaryImages');
                 setSecondaryImagesSize(undefined);
               }}
               {...register('secondaryImages', {
@@ -189,9 +211,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
 
                   if (imagesArr.length === 0) return;
 
-                  setSecondaryImagesSize(
-                    imagesArr.map((item) => item.size).reduce((a, b) => a + b)
-                  );
+                  setSecondaryImagesSize(imagesArr.map((item) => item.size));
 
                   const isAnyImageBig = imagesArr.some(
                     (img) => img.size > MAX_IMAGE_SIZE
@@ -230,6 +250,26 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
                   ></path>
                 </svg>
                 {errors.secondaryImages.message || 'obligatorio'}
+              </div>
+            ) : secondaryImagesSize &&
+              secondaryImagesSize.some(
+                (imgSize) => imgSize > 1 * 1024 * 1024
+              ) ? (
+              <div className="badge-warning  badge my-[2px] gap-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  className="inline-block h-4 w-4 stroke-current"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  ></path>
+                </svg>
+                {'una es muy grande 😥'}
               </div>
             ) : (
               <div className="h-6"></div>
