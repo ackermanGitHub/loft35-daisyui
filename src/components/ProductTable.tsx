@@ -232,11 +232,6 @@ const ProductTable: React.FC<{
           </tr>
         </tfoot>
       </table>
-      <div className="chat gap-4 chat-end absolute bottom-20 right-8 transition-opacity duration-700  opacity-0">
-        <div className="chat-bubble chat-bubble-warning">
-          To be on the Council at your age.
-        </div>
-      </div>
     </div>
   );
 };
