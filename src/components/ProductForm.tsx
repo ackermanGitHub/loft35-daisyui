@@ -342,35 +342,49 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
             </div>
           </div>
           <div className="flex justify-between max-w-xs">
-            <div className="flex flex-col w-[47%]">
-              <input
-                type="number"
-                placeholder="Cantidad"
-                {...register('stock', {
-                  required: true,
-                })}
-                className="input input-bordered"
-              />
-              {errors.stock ? (
-                <div className="badge-warning  badge my-[2px] gap-2">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    className="inline-block h-4 w-4 stroke-current"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M6 18L18 6M6 6l12 12"
-                    ></path>
-                  </svg>
-                  {errors.stock.message || 'obligatorio'}
-                </div>
-              ) : (
-                <div className="h-6"></div>
-              )}
+            <div className="flex flex-col w-[47%] justify-around">
+              <div className="flex flex-row items-center justify-between">
+                <input
+                  type="number"
+                  placeholder="Cantidad"
+                  {...register('stock')}
+                  className="hidden"
+                />
+                <label htmlFor="stock-select">Cantidad: </label>
+                <select
+                  id="stock-select"
+                  onChange={(e) => {
+                    setValue('stock', e.target.value);
+                  }}
+                  className="select select-bordered w-[65px]"
+                >
+                  <option>1</option>
+                  <option>2</option>
+                  <option>3</option>
+                  <option>
+                    Otro{' '}
+                    <svg
+                      width={20}
+                      height={20}
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <g>
+                        <path
+                          d="M6 12H12M12 12H18M12 12V18M12 12V6"
+                          stroke="#000000"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </g>
+                    </svg>
+                  </option>
+                </select>
+              </div>
+
+              <div className="h-6"></div>
             </div>
             <div className="flex flex-col w-[47%]">
               <input
@@ -378,9 +392,6 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
                 className="hidden"
                 {...register('categoryName', {
                   required: true,
-                  onChange: (e) => {
-                    console.log(e);
-                  },
                 })}
               />
               <select
@@ -396,6 +407,10 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
                 <option value={'Pullovers'}>Pullovers</option>
                 <option value={'T'}>T-shirts</option>
                 <option value={'Mugs'}>Mugs</option>
+                <button className="btn btn-ghost"></button>
+                <option value={'Añadir'} className="btn" disabled>
+                  + Añadir
+                </option>
               </select>
               {errors.categoryName ? (
                 <div className="badge-warning badge my-[2px] gap-2">
