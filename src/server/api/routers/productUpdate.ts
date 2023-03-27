@@ -4,7 +4,7 @@ import { createTRPCRouter, publicProcedure } from '../trpc';
 export const productUpdateRouter = createTRPCRouter({
   updateName: publicProcedure
     .input(z.object({ productID: z.number(), newName: z.string() }))
-    .query(({ ctx, input }) => {
+    .mutation(({ ctx, input }) => {
       return ctx.prisma.product.update({
         where: {
           id: input.productID,
