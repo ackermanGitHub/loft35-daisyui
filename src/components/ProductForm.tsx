@@ -21,6 +21,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
   const [primaryImageSize, setPrimaryImageSize] = useState<number>();
   const [secondaryImagesSize, setSecondaryImagesSize] = useState<number[]>();
   const [isAddCategorySelected, setAddCategorySelected] = useState(false);
+  const [isOtherStockSelected, setOtherStockSelected] = useState(false);
 
   const productList = api.product.create.useMutation({});
 
@@ -342,24 +343,37 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
           <div className="flex justify-between max-w-xs">
             <div className="flex flex-col w-[47%] justify-around">
               <div className="flex flex-row items-center justify-between">
+                <label htmlFor="stock-select">Cantidad: </label>
                 <input
                   type="number"
                   placeholder="Cantidad"
                   {...register('stock')}
-                  className="hidden"
+                  className={`${
+                    !isOtherStockSelected ? 'hidden' : ''
+                  } input-bordered input w-[65px]`}
                 />
-                <label htmlFor="stock-select">Cantidad: </label>
-                <select
-                  id="stock-select"
-                  onChange={(e) => {
-                    setValue('stock', e.target.value);
-                  }}
-                  className="select select-bordered w-[65px]"
-                >
-                  <option>1</option>
-                  <option>2</option>
-                  <option>3</option>
-                </select>
+                {!isOtherStockSelected && (
+                  <select
+                    id="stock-select"
+                    onChange={(e) => {
+                      if (e.target.value === 'Otro') {
+                        setValue('stock', '4');
+                        setOtherStockSelected(true);
+                        clearErrors('stock');
+                        return;
+                      }
+
+                      setValue('stock', e.target.value);
+                      clearErrors('stock');
+                    }}
+                    className="select select-bordered w-[65px]"
+                  >
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option value={'Otro'}>Otro</option>
+                  </select>
+                )}
               </div>
 
               <div className="h-6"></div>
@@ -378,7 +392,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
                 <select
                   onChange={(e) => {
                     if (e.target.value === 'Añadir') {
-                      setValue('categoryName', '4');
+                      setValue('categoryName', '');
                       setAddCategorySelected(true);
                       clearErrors('categoryName');
                       return;
@@ -465,6 +479,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
                 setSecondaryImagesSize(undefined);
                 setUpldProstate('Subir');
                 setAddCategorySelected(false);
+                setOtherStockSelected(false);
                 reset();
               }}
               htmlFor="my-modal-5"
