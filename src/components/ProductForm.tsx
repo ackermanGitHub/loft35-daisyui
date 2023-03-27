@@ -381,6 +381,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
             <div className="flex flex-col w-[47%]">
               <input
                 type="text"
+                placeholder="Categoría"
                 className={`${
                   !isAddCategorySelected ? 'hidden' : ''
                 } input-bordered input w-full max-w-xs`}

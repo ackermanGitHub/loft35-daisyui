@@ -35,6 +35,7 @@ const Home = ({
         <title>Loft 35 - Products</title>
         <meta name="description" content="Loft-35 Store" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#ffffff" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
