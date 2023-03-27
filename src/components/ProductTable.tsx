@@ -34,9 +34,6 @@ const ProductTable: React.FC<{
     active: false,
     default: '',
   });
-  // const [editInputleft, setEditInputleft] = useState(0);
-  // const [editInputRight, setEditInputRight] = useState(0);
-  // const [isEditInputActive, setEditInputActive] = useState(false);
 
   const {
     data: productsData,
@@ -49,6 +46,8 @@ const ProductTable: React.FC<{
       void refetchProducts();
     },
   });
+
+  const updateProduct = api.updateProduct.updateName.useMutation();
 
   const toggleActive = api.product.setActive.useMutation({
     onSuccess: () => {
@@ -92,7 +91,7 @@ const ProductTable: React.FC<{
   return (
     <div className="relative overflow-x-auto w-full">
       {editInputProperties?.active && (
-        <div>
+        <div className="relative">
           <input
             style={{
               left: editInputProperties?.left,
@@ -102,8 +101,22 @@ const ProductTable: React.FC<{
               display: `${editInputProperties?.active ? 'block' : 'none'}`,
             }}
             defaultValue={editInputProperties.default}
-            className="absolute input input-primary z-50"
+            className="absolute input input-primary z-20"
           />
+          <h2
+            style={{
+              left: editInputProperties?.left + editInputProperties?.width - 35,
+              top:
+                editInputProperties?.top + editInputProperties?.height / 2 - 12,
+              display: `${editInputProperties?.active ? 'block' : 'none'}`,
+            }}
+            onClick={() => {
+              setEditInputProperties({ ...editInputProperties, active: false });
+            }}
+            className="absolute z-30"
+          >
+            ❌
+          </h2>
         </div>
       )}
       <table className="table w-full">
@@ -164,10 +177,7 @@ const ProductTable: React.FC<{
                           {product.active ? 'active' : 'disabled'}
                         </div>
 
-                        <span
-                          onClick={() => {
-                            console.log('aaa');
-                          }}
+                        {/* <span
                           className="label-text"
                         >
                           <svg
@@ -184,7 +194,7 @@ const ProductTable: React.FC<{
                           >
                             <path d="M14.7881 2.5752L15.3008 2.04199C15.5605 1.76855 15.5742 1.39941 15.3213 1.13965L15.1436 0.955078C14.9111 0.722656 14.5283 0.763672 14.2754 1.00977L13.749 1.5293L14.7881 2.5752ZM6.68066 9.87598L8.0752 9.28809L14.2891 3.06738L13.25 2.03516L7.03613 8.25586L6.4209 9.60254C6.35254 9.75977 6.52344 9.9375 6.68066 9.87598ZM4.09668 14.4355H12.0674C13.373 14.4355 14.1387 13.6768 14.1387 12.2207V4.99512L12.7988 6.33496V12.1045C12.7988 12.7676 12.4434 13.1025 11.9854 13.1025H4.17871C3.54297 13.1025 3.19434 12.7676 3.19434 12.1045V4.49609C3.19434 3.83301 3.54297 3.49805 4.17871 3.49805H10.0234L11.3633 2.1582H4.09668C2.62695 2.1582 1.85449 2.91699 1.85449 4.37988V12.2207C1.85449 13.6836 2.62695 14.4355 4.09668 14.4355Z"></path>
                           </svg>
-                        </span>
+                        </span> */}
                       </div>
                     </div>
                   </div>
@@ -234,21 +244,16 @@ const ProductTable: React.FC<{
                           height: size.height,
                           width: size.width,
                           default: product.name,
-                          active: !editInputProperties.active,
+                          active: true,
                         });
                       }}
-                      className="label-text"
+                      className="label-text relative"
                     >
                       <svg
                         viewBox="0 0 16 16"
                         stroke="currentColor"
-                        style={{
-                          width: '16px',
-                          height: '16px',
-                          display: 'block',
-                          flexShrink: 0,
-                          backfaceVisibility: 'hidden',
-                        }}
+                        width={20}
+                        height={20}
                       >
                         <path d="M14.7881 2.5752L15.3008 2.04199C15.5605 1.76855 15.5742 1.39941 15.3213 1.13965L15.1436 0.955078C14.9111 0.722656 14.5283 0.763672 14.2754 1.00977L13.749 1.5293L14.7881 2.5752ZM6.68066 9.87598L8.0752 9.28809L14.2891 3.06738L13.25 2.03516L7.03613 8.25586L6.4209 9.60254C6.35254 9.75977 6.52344 9.9375 6.68066 9.87598ZM4.09668 14.4355H12.0674C13.373 14.4355 14.1387 13.6768 14.1387 12.2207V4.99512L12.7988 6.33496V12.1045C12.7988 12.7676 12.4434 13.1025 11.9854 13.1025H4.17871C3.54297 13.1025 3.19434 12.7676 3.19434 12.1045V4.49609C3.19434 3.83301 3.54297 3.49805 4.17871 3.49805H10.0234L11.3633 2.1582H4.09668C2.62695 2.1582 1.85449 2.91699 1.85449 4.37988V12.2207C1.85449 13.6836 2.62695 14.4355 4.09668 14.4355Z"></path>
                       </svg>
