@@ -203,7 +203,6 @@ const ProductTable: React.FC<{
                   <th>
                     <div className="flex justify-between items-center">
                       <p>{product.name}</p>
-                      <div className="badge badge-sm text-sm">{product.id}</div>
                       {editInputProperties.active &&
                         editInputProperties.productID === product.id && (
                           <div
