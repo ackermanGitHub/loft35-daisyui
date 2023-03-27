@@ -20,6 +20,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
   const [upldProState, setUpldProstate] = useState('Subir');
   const [primaryImageSize, setPrimaryImageSize] = useState<number>();
   const [secondaryImagesSize, setSecondaryImagesSize] = useState<number[]>();
+  const [isAddCategorySelected, setAddCategorySelected] = useState(false);
 
   const productList = api.product.create.useMutation({});
 
@@ -366,28 +367,38 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
             <div className="flex flex-col w-[47%]">
               <input
                 type="text"
-                className="hidden"
+                className={`${
+                  !isAddCategorySelected ? 'hidden' : ''
+                } input-bordered input w-full max-w-xs`}
                 {...register('categoryName', {
                   required: true,
                 })}
               />
-              <select
-                onChange={(e) => {
-                  setValue('categoryName', e.target.value);
-                  clearErrors('categoryName');
-                }}
-                className="select select-bordered"
-              >
-                <option disabled selected>
-                  Categoría
-                </option>
-                <option value={'Pullovers'}>Pullovers</option>
-                <option value={'T'}>T-shirts</option>
-                <option value={'Mugs'}>Mugs</option>
-                <option value={'Añadir'} className="btn" disabled>
-                  + Añadir
-                </option>
-              </select>
+              {!isAddCategorySelected && (
+                <select
+                  onChange={(e) => {
+                    if (e.target.value === 'Añadir') {
+                      setValue('categoryName', '4');
+                      setAddCategorySelected(true);
+                      clearErrors('categoryName');
+                      return;
+                    }
+                    setValue('categoryName', e.target.value);
+                    clearErrors('categoryName');
+                  }}
+                  className="select select-bordered"
+                >
+                  <option disabled selected>
+                    Categoría
+                  </option>
+                  <option value={'Pullovers'}>Pullovers</option>
+                  <option value={'T'}>T-shirts</option>
+                  <option value={'Mugs'}>Mugs</option>
+                  <option value={'Añadir'} className="btn">
+                    + Añadir
+                  </option>
+                </select>
+              )}
               {errors.categoryName ? (
                 <div className="badge-warning badge my-[2px] gap-2">
                   <svg
@@ -453,6 +464,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
                 setPrimaryImageSize(undefined);
                 setSecondaryImagesSize(undefined);
                 setUpldProstate('Subir');
+                setAddCategorySelected(false);
                 reset();
               }}
               htmlFor="my-modal-5"
