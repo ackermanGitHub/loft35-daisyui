@@ -361,26 +361,6 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
                   <option>1</option>
                   <option>2</option>
                   <option>3</option>
-                  <option>
-                    Otro{' '}
-                    <svg
-                      width={20}
-                      height={20}
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <g>
-                        <path
-                          d="M6 12H12M12 12H18M12 12V18M12 12V6"
-                          stroke="#000000"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </g>
-                    </svg>
-                  </option>
                 </select>
               </div>
 
@@ -407,7 +387,6 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
                 <option value={'Pullovers'}>Pullovers</option>
                 <option value={'T'}>T-shirts</option>
                 <option value={'Mugs'}>Mugs</option>
-                <button className="btn btn-ghost"></button>
                 <option value={'Añadir'} className="btn" disabled>
                   + Añadir
                 </option>
