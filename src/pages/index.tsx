@@ -29,10 +29,6 @@ const Home = ({
   categories: Category[];
   images: Image[];
 }) => {
-  console.log(products);
-  console.log(categories);
-  console.log(images);
-
   return (
     <>
       <Head>

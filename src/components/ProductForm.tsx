@@ -66,8 +66,6 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
         : setUpldProstate('Subida');
     }, 3000);
 
-    console.log(data);
-
     //  productList.mutate(
     //    {
     //      name: data.name,
@@ -235,7 +233,6 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
                     setError('secondaryImages', {
                       message: 'demasiadas',
                     });
-                    console.log(errors);
                   }
                   // Use the file as needed
                 },
