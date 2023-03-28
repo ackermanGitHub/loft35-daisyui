@@ -189,7 +189,7 @@ export const productRouter = createTRPCRouter({
             active: true,
             price: input.price,
             stock: input.stock,
-            categoryName: input.categoryName,
+            categoryName: category.name,
             categoryId: category.id,
           },
         });

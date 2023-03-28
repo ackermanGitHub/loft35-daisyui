@@ -54,32 +54,32 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
 
     console.log(data);
 
-    // const arrayBufferPrimaryImage = await data.primaryImage[0].arrayBuffer();
-    // const primaryImageBuffer = Buffer.from(arrayBufferPrimaryImage);
-    // const metadataSecondaryImages: Buffer[] = [];
+    const arrayBufferPrimaryImage = await data.primaryImage[0].arrayBuffer();
+    const primaryImageBuffer = Buffer.from(arrayBufferPrimaryImage);
+    const metadataSecondaryImages: Buffer[] = [];
 
-    // productList.mutate(
-    //   {
-    //     name: data.name,
-    //     description: data.description,
-    //     primaryImage: primaryImageBuffer,
-    //     color: '',
-    //     secondaryImages: metadataSecondaryImages,
-    //     price: parseInt(data.price),
-    //     stock: parseInt(data.stock),
-    //     categoryName: data.categoryName,
-    //   },
-    //   {
-    //     onError: () => {
-    //       setUpldProstate('Error');
-    //     },
-    //     onSuccess() {
-    //       setUpldProstate('Subida');
-    //       onUploadSucces();
-    //       reset();
-    //     },
-    //   }
-    // );
+    productList.mutate(
+      {
+        name: data.name,
+        description: data.description,
+        primaryImage: primaryImageBuffer,
+        color: '',
+        secondaryImages: metadataSecondaryImages,
+        price: parseInt(data.price),
+        stock: parseInt(data.stock),
+        categoryName: data.categoryName,
+      },
+      {
+        onError: () => {
+          setUpldProstate('Error');
+        },
+        onSuccess() {
+          setUpldProstate('Subida');
+          onUploadSucces();
+          reset();
+        },
+      }
+    );
   };
 
   return (
@@ -394,7 +394,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
                     setValue('categoryName', e.target.value);
                     clearErrors('categoryName');
                   }}
-                  value={'category-default'}
+                  defaultValue={'category-default'}
                   className="select select-bordered"
                 >
                   <option value={'category-default'} disabled>

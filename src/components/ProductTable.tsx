@@ -45,12 +45,11 @@ const ProductTable: React.FC = () => {
     },
   });
 
-  const updateCategory = api.updateProduct.updateCategory.useMutation({
-    onSuccess: () => {
-      void refetchProducts();
-    },
-  });
-  updateCategory;
+  // const updateCategory = api.updateProduct.updateCategory.useMutation({
+  //   onSuccess: () => {
+  //     void refetchProducts();
+  //   },
+  // });
 
   const toggleActive = api.product.setActive.useMutation({
     onSuccess: () => {
@@ -199,7 +198,7 @@ const ProductTable: React.FC = () => {
                             value: e.target.value,
                           });
                         }}
-                        defaultValue={product.categoryId}
+                        value={product.categoryId}
                         className="select w-full h-full absolute inset-0"
                       >
                         {categoriesData?.map((category) => (
@@ -207,7 +206,15 @@ const ProductTable: React.FC = () => {
                             {category.name}
                           </option>
                         ))}
-                        <option value={'Añadir'} className="btn">
+                        <option
+                          onClick={() => {
+                            console.log(
+                              'El usuario quiere cambiar la categoría'
+                            );
+                          }}
+                          value={'Añadir'}
+                          className="btn"
+                        >
                           + Añadir
                         </option>
                       </select>
