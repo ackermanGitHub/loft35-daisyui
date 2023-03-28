@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 const NavBar: React.FC = () => {
@@ -124,13 +125,13 @@ const NavBar: React.FC = () => {
             className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
           >
             <li>
-              <a className="justify-between">
+              <Link href={'/profile'} className="justify-between">
                 Profile
                 <span className="badge">New</span>
-              </a>
+              </Link>
             </li>
             <li>
-              <a>Settings</a>
+              <Link href={'/settings'}>Settings</Link>
             </li>
             <li>
               <a>Logout</a>

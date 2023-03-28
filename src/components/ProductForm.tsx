@@ -54,7 +54,17 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
 
     const arrayBufferPrimaryImage = await data.primaryImage[0].arrayBuffer();
     const primaryImageBuffer = Buffer.from(arrayBufferPrimaryImage);
+
     const metadataSecondaryImages: Buffer[] = [];
+
+    for (const secondaryFile of Array.from(data.secondaryImages)) {
+      if (!secondaryFile) continue;
+      const arrayBufferSecondaryImage = await (
+        secondaryFile as unknown as File
+      ).arrayBuffer();
+      const secondaryImageBuffer = Buffer.from(arrayBufferSecondaryImage);
+      metadataSecondaryImages.push(secondaryImageBuffer);
+    }
 
     productList.mutate(
       {
@@ -74,7 +84,6 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
         onSuccess() {
           setUpldProstate('Subida');
           onUploadSucces();
-          reset();
         },
       }
     );
@@ -399,7 +408,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
                     Categoría
                   </option>
                   {categoriesData?.map((category) => (
-                    <option key={category.id} value={category.id}>
+                    <option key={category.id} value={category.name}>
                       {category.name}
                     </option>
                   ))}

@@ -134,33 +134,37 @@ export const productRouter = createTRPCRouter({
             color: input.color,
           },
         });
+        console.log(input.secondaryImages);
+        const secondaryImagesIds: number[] = [];
+        if (input.secondaryImages) {
+          for (const [index, element] of input.secondaryImages.entries()) {
+            const secondaryImageInput = sharp(element);
+            const optimizedSecondaryImage = await secondaryImageInput
+              .resize({ width: 800 })
+              .jpeg({ quality: 80 })
+              .toBuffer();
 
-        // let secondaryImagesIds: number[];
-        // input.secondaryImages?.map(async (element, index) => {
-        //   const secondaryImageInput = sharp(element);
-        //   const optimizedSecondaryImage = await secondaryImageInput
-        //     .resize({ width: 800 })
-        //     .jpeg({ quality: 80 })
-        //     .toBuffer();
+            // Upload the image to the S3 bucket
+            const s3Params = {
+              Bucket: bucketName,
+              Key: `${Date.now()}-${input.name}-${index}.jpg`,
+              Body: optimizedSecondaryImage,
+              ContentType: 'image/jpeg',
+            };
+            const s3ResponseSecondaryImage = await s3
+              .upload(s3Params)
+              .promise();
 
-        //   // Upload the image to the S3 bucket
-        //   const s3Params = {
-        //     Bucket: bucketName,
-        //     Key: `${Date.now()}-${input.name + '-' + index}.jpg`,
-        //     Body: optimizedSecondaryImage,
-        //     ContentType: 'image/jpeg',
-        //   };
-        //   const s3ResponseSecondaryImage = await s3.upload(s3Params).promise();
-
-        //   const secondaryImage = await ctx.prisma.image.create({
-        //     data: {
-        //       url: s3ResponsePrimaryImage.Location,
-        //       sizeMb: (optimizedSecondaryImage.length || 0) / 1000,
-        //       color: input.color,
-        //     },
-        //   });
-        //   secondaryImagesIds.push(secondaryImage.id);
-        // });
+            const secondaryImage = await ctx.prisma.image.create({
+              data: {
+                url: s3ResponseSecondaryImage.Location,
+                sizeMb: (optimizedSecondaryImage.length || 0) / 1000,
+                color: input.color,
+              },
+            });
+            secondaryImagesIds.push(secondaryImage.id);
+          }
+        }
 
         // checking if the category named exists
         let category = await ctx.prisma.category.findFirst({
@@ -184,6 +188,9 @@ export const productRouter = createTRPCRouter({
             name: input.name,
             description: input.description,
             imageUrl: s3ResponsePrimaryImage.Location,
+            secondaryImages: {
+              connect: secondaryImagesIds.map((id) => ({ id })),
+            },
             primaryImageId: primaryImage.id,
             deleted: false,
             active: true,
