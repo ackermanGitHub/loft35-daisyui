@@ -197,7 +197,7 @@ const ProductTable: React.FC = () => {
                           });
                         }}
                         value={product.categoryId}
-                        className="select w-full h-full absolute inset-0"
+                        className="select w-full h-[75px] absolute inset-0"
                       >
                         {categoriesData?.map((category) => (
                           <option key={category.id} value={category.id}>
