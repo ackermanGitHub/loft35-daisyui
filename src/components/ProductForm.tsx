@@ -368,9 +368,11 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
                     }}
                     className="select select-bordered w-[65px]"
                   >
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
+                    {[1, 2, 3].map((num) => (
+                      <option key={num} value={num}>
+                        num
+                      </option>
+                    ))}
                     <option value={'Otro'}>Otro</option>
                   </select>
                 )}
@@ -406,9 +408,11 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
                   <option disabled selected>
                     Categoría
                   </option>
-                  <option value={'Pullovers'}>Pullovers</option>
-                  <option value={'T'}>T-shirts</option>
-                  <option value={'Mugs'}>Mugs</option>
+                  {categoriesData?.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
                   <option value={'Añadir'} className="btn">
                     + Añadir
                   </option>
