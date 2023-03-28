@@ -53,6 +53,19 @@ export const productUpdateRouter = createTRPCRouter({
         },
       });
     }),
+
+  updateStock: publicProcedure
+    .input(z.object({ productID: z.number(), newStock: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.prisma.product.update({
+        where: {
+          id: input.productID,
+        },
+        data: {
+          stock: input.newStock,
+        },
+      });
+    }),
 });
 
 /* 

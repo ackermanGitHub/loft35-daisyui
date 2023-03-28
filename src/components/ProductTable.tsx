@@ -16,7 +16,6 @@ const ProductTable: React.FC = () => {
     productID: -1,
     type: '',
     column: '',
-    hidden: false,
   });
 
   const {
@@ -40,6 +39,12 @@ const ProductTable: React.FC = () => {
   });
 
   const updatePrice = api.updateProduct.updatePrice.useMutation({
+    onSuccess: () => {
+      void refetchProducts();
+    },
+  });
+
+  const updateStock = api.updateProduct.updateStock.useMutation({
     onSuccess: () => {
       void refetchProducts();
     },
@@ -111,9 +116,7 @@ const ProductTable: React.FC = () => {
                 display: `${editInputProperties?.active ? 'block' : 'none'}`,
               }}
               defaultValue={editInputProperties.value}
-              className={`${
-                editInputProperties.hidden ? 'hidden' : ''
-              } absolute input input-primary z-20`}
+              className="absolute input input-primary z-20"
             />
           </div>
         )}
@@ -194,6 +197,10 @@ const ProductTable: React.FC = () => {
                             }
                             setEditInputProperties({
                               ...editInputProperties,
+                              active: false,
+                              productID: product.id,
+                              column: 'category',
+                              type: 'text',
                               value: e.target.value,
                             });
                           }}
@@ -263,7 +270,6 @@ const ProductTable: React.FC = () => {
                               productID: product.id,
                               type: 'text',
                               column: 'name',
-                              hidden: false,
                             });
                           }}
                         >
@@ -323,7 +329,6 @@ const ProductTable: React.FC = () => {
                               productID: product.id,
                               type: 'number',
                               column: 'price',
-                              hidden: false,
                             });
                           }}
                         >
@@ -357,7 +362,68 @@ const ProductTable: React.FC = () => {
                       </div>
                     </th>
                     <th>
-                      <div>{product.stock}</div>
+                      <div className="flex justify-between">
+                        <p
+                          onClick={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            const target =
+                              event.currentTarget as HTMLSpanElement;
+                            const parent =
+                              target.parentElement as HTMLTableCellElement;
+                            const grandParent =
+                              parent.parentElement as HTMLTableCellElement;
+
+                            const position = {
+                              x: grandParent?.offsetLeft,
+                              y: grandParent?.offsetTop,
+                            };
+                            const size = {
+                              width: grandParent?.offsetWidth,
+                              height: grandParent?.offsetHeight,
+                            };
+
+                            setEditInputProperties({
+                              left: position.x,
+                              top: position.y,
+                              height: size.height,
+                              width: size.width,
+                              value: product.stock.toString(),
+                              active: true,
+                              productID: product.id,
+                              type: 'number',
+                              column: 'stock',
+                            });
+                          }}
+                        >
+                          {product.stock}
+                        </p>
+                        {editInputProperties.active &&
+                          editInputProperties.productID === product.id &&
+                          editInputProperties.column === 'stock' && (
+                            <div
+                              onClick={() => {
+                                setEditInputProperties({
+                                  ...editInputProperties,
+                                  active: false,
+                                });
+                                if (
+                                  product.stock.toString() ===
+                                  editInputProperties.value
+                                )
+                                  return;
+                                updateStock.mutate({
+                                  productID: product.id,
+                                  newStock: parseInt(editInputProperties.value),
+                                });
+                                product.stock = parseInt(
+                                  editInputProperties.value
+                                );
+                              }}
+                              className="fixed inset-0 w-[100vw] h-[100vh] opacity-30 stroke-slate-600"
+                            ></div>
+                          )}
+                      </div>
                     </th>
                   </tr>
                 );
