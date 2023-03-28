@@ -40,6 +40,19 @@ export const productUpdateRouter = createTRPCRouter({
         },
       });
     }),
+
+  updateCategory: publicProcedure
+    .input(z.object({ productID: z.number(), newCategory: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.prisma.product.update({
+        where: {
+          id: input.productID,
+        },
+        data: {
+          categoryName: input.newCategory,
+        },
+      });
+    }),
 });
 
 /* 

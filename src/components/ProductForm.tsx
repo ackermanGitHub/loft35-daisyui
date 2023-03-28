@@ -16,18 +16,14 @@ interface IProps {
   onUploadSucces: () => void;
 }
 
-const ProductForm: React.FC<IProps> = (
-  {
-    /* onUploadSucces */
-  }
-) => {
+const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
   const [upldProState, setUpldProstate] = useState('Subir');
   const [primaryImageSize, setPrimaryImageSize] = useState<number>();
   const [secondaryImagesSize, setSecondaryImagesSize] = useState<number[]>();
   const [isAddCategorySelected, setAddCategorySelected] = useState(false);
   const [isOtherStockSelected, setOtherStockSelected] = useState(false);
 
-  // const productList = api.product.create.useMutation({});
+  const productList = api.product.create.useMutation({});
 
   const { data: categoriesData } = api.category.getAll.useQuery();
 
@@ -44,9 +40,7 @@ const ProductForm: React.FC<IProps> = (
 
   const MAX_IMAGE_SIZE = 1 * 1024 * 1024; // 5 MB
 
-  // const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {};
-
-  const onUpldProClick = (data: FormValues) => {
+  const onUpldProClick = async (data: FormValues) => {
     if (upldProState === 'Error' || upldProState === 'Subida') {
       reset();
       setPrimaryImageSize(undefined);
@@ -58,38 +52,34 @@ const ProductForm: React.FC<IProps> = (
     if (!data.primaryImage[0]) return;
     setUpldProstate('Cargando');
 
+    console.log(data);
+
     // const arrayBufferPrimaryImage = await data.primaryImage[0].arrayBuffer();
     // const primaryImageBuffer = Buffer.from(arrayBufferPrimaryImage);
     // const metadataSecondaryImages: Buffer[] = [];
 
-    setTimeout(() => {
-      Math.random() > 0.5
-        ? setUpldProstate('Error')
-        : setUpldProstate('Subida');
-    }, 3000);
-
-    //  productList.mutate(
-    //    {
-    //      name: data.name,
-    //      description: data.description,
-    //      primaryImage: primaryImageBuffer,
-    //      color: '',
-    //      secondaryImages: metadataSecondaryImages,
-    //      price: parseInt(data.price),
-    //      stock: parseInt(data.stock),
-    //      categoryName: data.categoryName,
-    //    },
-    //    {
-    //      onError: () => {
-    //        setUpldProstate('Error');
-    //      },
-    //      onSuccess() {
-    //        setUpldProstate('Subida');
-    //        onUploadSucces();
-    //        reset();
-    //      },
-    //    }
-    //  );
+    // productList.mutate(
+    //   {
+    //     name: data.name,
+    //     description: data.description,
+    //     primaryImage: primaryImageBuffer,
+    //     color: '',
+    //     secondaryImages: metadataSecondaryImages,
+    //     price: parseInt(data.price),
+    //     stock: parseInt(data.stock),
+    //     categoryName: data.categoryName,
+    //   },
+    //   {
+    //     onError: () => {
+    //       setUpldProstate('Error');
+    //     },
+    //     onSuccess() {
+    //       setUpldProstate('Subida');
+    //       onUploadSucces();
+    //       reset();
+    //     },
+    //   }
+    // );
   };
 
   return (
@@ -348,6 +338,7 @@ const ProductForm: React.FC<IProps> = (
                   type="number"
                   placeholder="Cantidad"
                   {...register('stock')}
+                  defaultValue={'1'}
                   className={`${
                     !isOtherStockSelected ? 'hidden' : ''
                   } input-bordered input w-[65px]`}
@@ -403,9 +394,10 @@ const ProductForm: React.FC<IProps> = (
                     setValue('categoryName', e.target.value);
                     clearErrors('categoryName');
                   }}
+                  value={'category-default'}
                   className="select select-bordered"
                 >
-                  <option disabled selected>
+                  <option value={'category-default'} disabled>
                     Categoría
                   </option>
                   {categoriesData?.map((category) => (
