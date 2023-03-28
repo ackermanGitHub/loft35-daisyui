@@ -140,8 +140,8 @@ export const productRouter = createTRPCRouter({
           for (const [index, element] of input.secondaryImages.entries()) {
             const secondaryImageInput = sharp(element);
             const optimizedSecondaryImage = await secondaryImageInput
-              .resize({ width: 800 })
-              .jpeg({ quality: 80 })
+              .resize(800, 800, { fit: 'inside', withoutEnlargement: true })
+              .jpeg({ quality: 70 })
               .toBuffer();
 
             // Upload the image to the S3 bucket

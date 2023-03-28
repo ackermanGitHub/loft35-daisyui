@@ -23,9 +23,10 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
   const [isAddCategorySelected, setAddCategorySelected] = useState(false);
   const [isOtherStockSelected, setOtherStockSelected] = useState(false);
 
-  const productList = api.product.create.useMutation({});
+  const productList = api.product.create.useMutation();
 
-  const { data: categoriesData } = api.category.getAll.useQuery();
+  const { data: categoriesData, refetch: refetchCategories } =
+    api.category.getAll.useQuery();
 
   const {
     handleSubmit,
@@ -42,10 +43,10 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
 
   const onUpldProClick = async (data: FormValues) => {
     if (upldProState === 'Error' || upldProState === 'Subida') {
-      reset();
       setPrimaryImageSize(undefined);
       setSecondaryImagesSize(undefined);
       setUpldProstate('Subir');
+      reset();
       return;
     }
 
@@ -83,6 +84,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
         },
         onSuccess() {
           setUpldProstate('Subida');
+          if (isAddCategorySelected) void refetchCategories();
           onUploadSucces();
         },
       }
