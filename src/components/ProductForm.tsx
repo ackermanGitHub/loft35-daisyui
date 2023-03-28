@@ -52,8 +52,6 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
     if (!data.primaryImage[0]) return;
     setUpldProstate('Cargando');
 
-    console.log(data);
-
     const arrayBufferPrimaryImage = await data.primaryImage[0].arrayBuffer();
     const primaryImageBuffer = Buffer.from(arrayBufferPrimaryImage);
     const metadataSecondaryImages: Buffer[] = [];

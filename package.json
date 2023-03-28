@@ -41,6 +41,7 @@
     "autoprefixer": "^10.4.7",
     "daisyui": "^2.51.3",
     "eslint": "^8.36.0",
+    "eslint-config-next": "^13.2.4",
     "eslint-plugin-react": "^7.32.2",
     "postcss": "^8.4.14",
     "prisma": "^4.11.0",
