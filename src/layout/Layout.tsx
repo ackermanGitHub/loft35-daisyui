@@ -1,4 +1,4 @@
-import Drawer from '~/components/Drawer';
+import Drawer from '~/layout/Drawer';
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (

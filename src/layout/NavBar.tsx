@@ -10,13 +10,9 @@ const NavBar: React.FC = () => {
       window.matchMedia('(prefers-color-scheme: dark)').matches;
 
     if (prefersDarkMode) {
-      console.log('User prefers dark mode.');
-
       document.querySelector('html')?.setAttribute('data-theme', 'dracula');
       setCurrentTheme('dracula');
     } else {
-      console.log('User prefers light mode.');
-
       document.querySelector('html')?.setAttribute('data-theme', 'pastel');
       setCurrentTheme('pastel');
     }
@@ -51,7 +47,6 @@ const NavBar: React.FC = () => {
           viewBox="0 0 24 24"
           onClick={() => {
             if (currentTheme === 'dracula') {
-              console.log('dracula');
               document
                 .querySelector('html')
                 ?.setAttribute('data-theme', 'pastel');
@@ -68,7 +63,6 @@ const NavBar: React.FC = () => {
           viewBox="0 0 24 24"
           onClick={() => {
             if (currentTheme === 'pastel') {
-              console.log('pastel');
               document
                 .querySelector('html')
                 ?.setAttribute('data-theme', 'dracula');

@@ -1,19 +1,10 @@
-import {
-  type Category,
-  type Image as ProductImage,
-  type Product,
-} from '@prisma/client';
 import ProductForm from './ProductForm';
 import { useEffect, useState } from 'react';
 import { api } from '~/utils/api';
 import ModalConfirm from './ModalConfirm';
 import Image from 'next/image';
 
-const ProductTable: React.FC<{
-  products: Product[];
-  categories: Category[];
-  images: ProductImage[];
-}> = ({ products, categories, images }) => {
+const ProductTable: React.FC = () => {
   const [isAnyCheckboxSelected, setIsAnyCheckboxSelected] = useState(false);
   const [editInputProperties, setEditInputProperties] = useState({
     left: 0,
@@ -24,6 +15,8 @@ const ProductTable: React.FC<{
     value: '',
     productID: -1,
     type: '',
+    column: '',
+    hidden: false,
   });
 
   const {
@@ -31,6 +24,8 @@ const ProductTable: React.FC<{
     refetch: refetchProducts,
     isLoading: isProductsLoading,
   } = api.product.getAll.useQuery();
+
+  const { data: categoriesData } = api.category.getAll.useQuery();
 
   const deleteProducts = api.product.deleteMany.useMutation({
     onSuccess: () => {
@@ -109,22 +104,10 @@ const ProductTable: React.FC<{
               display: `${editInputProperties?.active ? 'block' : 'none'}`,
             }}
             defaultValue={editInputProperties.value}
-            className="absolute input input-primary z-20"
+            className={`${
+              editInputProperties.hidden ? 'hidden' : ''
+            } absolute input input-primary z-20`}
           />
-          <h2
-            style={{
-              left: editInputProperties?.left + editInputProperties?.width - 35,
-              top:
-                editInputProperties?.top + editInputProperties?.height / 2 - 12,
-              display: `${editInputProperties?.active ? 'block' : 'none'}`,
-            }}
-            onClick={() => {
-              setEditInputProperties({ ...editInputProperties, active: false });
-            }}
-            className="absolute z-30"
-          >
-            ❌
-          </h2>
         </div>
       )}
       <table className="table w-full">
@@ -191,7 +174,111 @@ const ProductTable: React.FC<{
                       </div>
                     </div>
                   </td>
-                  <td>{product.categoryName}</td>
+                  <td>
+                    <div className="flex justify-between items-center">
+                      {product.categoryName}
+
+                      {editInputProperties.active &&
+                        editInputProperties.productID === product.id &&
+                        editInputProperties.column === 'category' && (
+                          <div
+                            onClick={() => {
+                              // setEditInputProperties({
+                              //   ...editInputProperties,
+                              //   active: false,
+                              // });
+                              // if (
+                              //   product.price.toString() ===
+                              //   editInputProperties.value
+                              // )
+                              //   return;
+                              // updatePrice.mutate({
+                              //   productID: product.id,
+                              //   newPrice: parseInt(editInputProperties.value),
+                              // });
+                              // product.price = parseInt(
+                              //   editInputProperties.value
+                              // );
+                            }}
+                            className="fixed inset-0 w-[100vw] h-[100vh] opacity-30 stroke-slate-600"
+                          ></div>
+                        )}
+                      {editInputProperties.hidden && (
+                        <select
+                          id="stock-select"
+                          onChange={(e) => {
+                            if (e.target.value === 'Añadir') {
+                              setEditInputProperties({
+                                ...editInputProperties,
+                                hidden: false,
+                                value: '',
+                              });
+                              return;
+                            }
+
+                            setEditInputProperties({
+                              ...editInputProperties,
+                              value: e.target.value,
+                            });
+                          }}
+                          defaultValue={product.categoryId}
+                          className="select select-bordered w-[65px]"
+                        >
+                          {categoriesData?.map((category) => (
+                            <option key={category.id} value={category.id}>
+                              {category.name}
+                            </option>
+                          ))}
+                          <option value={'Añadir'} className="btn">
+                            + Añadir
+                          </option>
+                        </select>
+                      )}
+                      <span
+                        onClick={(event) => {
+                          event.preventDefault();
+                          event.stopPropagation();
+                          const target = event.currentTarget as HTMLSpanElement;
+                          const parent =
+                            target.parentElement as HTMLTableCellElement;
+                          const grandParent =
+                            parent.parentElement as HTMLTableCellElement;
+
+                          const position = {
+                            x: grandParent?.offsetLeft,
+                            y: grandParent?.offsetTop,
+                          };
+                          const size = {
+                            width: grandParent?.offsetWidth,
+                            height: grandParent?.offsetHeight,
+                          };
+
+                          setEditInputProperties({
+                            left: position.x,
+                            top: position.y,
+                            height: size.height,
+                            width: size.width,
+                            value: product.categoryName,
+                            active: true,
+                            productID: product.id,
+                            type: 'text',
+                            column: 'category',
+                            hidden: true,
+                          });
+                        }}
+                        className="label-text relative"
+                      >
+                        <svg
+                          viewBox="0 0 16 16"
+                          stroke="currentColor"
+                          width={20}
+                          height={20}
+                        >
+                          <path d="M14.7881 2.5752L15.3008 2.04199C15.5605 1.76855 15.5742 1.39941 15.3213 1.13965L15.1436 0.955078C14.9111 0.722656 14.5283 0.763672 14.2754 1.00977L13.749 1.5293L14.7881 2.5752ZM6.68066 9.87598L8.0752 9.28809L14.2891 3.06738L13.25 2.03516L7.03613 8.25586L6.4209 9.60254C6.35254 9.75977 6.52344 9.9375 6.68066 9.87598ZM4.09668 14.4355H12.0674C13.373 14.4355 14.1387 13.6768 14.1387 12.2207V4.99512L12.7988 6.33496V12.1045C12.7988 12.7676 12.4434 13.1025 11.9854 13.1025H4.17871C3.54297 13.1025 3.19434 12.7676 3.19434 12.1045V4.49609C3.19434 3.83301 3.54297 3.49805 4.17871 3.49805H10.0234L11.3633 2.1582H4.09668C2.62695 2.1582 1.85449 2.91699 1.85449 4.37988V12.2207C1.85449 13.6836 2.62695 14.4355 4.09668 14.4355Z"></path>
+                        </svg>
+                      </span>
+                    </div>
+                  </td>
                   <td>
                     <input
                       type="checkbox"
@@ -206,27 +293,7 @@ const ProductTable: React.FC<{
                   </td>
                   <th>
                     <div className="flex justify-between">
-                      <p>{product.name}</p>
-                      {editInputProperties.active &&
-                        editInputProperties.productID === product.id && (
-                          <div
-                            onClick={() => {
-                              setEditInputProperties({
-                                ...editInputProperties,
-                                active: false,
-                              });
-                              if (product.name === editInputProperties.value)
-                                return;
-                              updateName.mutate({
-                                productID: product.id,
-                                newName: editInputProperties.value,
-                              });
-                              product.name = editInputProperties.value;
-                            }}
-                            className="fixed inset-0 w-[100vw] h-[100vh] opacity-30 stroke-slate-600"
-                          ></div>
-                        )}
-                      <span
+                      <p
                         onClick={(event) => {
                           event.preventDefault();
                           event.stopPropagation();
@@ -254,50 +321,38 @@ const ProductTable: React.FC<{
                             active: true,
                             productID: product.id,
                             type: 'text',
+                            column: 'name',
+                            hidden: false,
                           });
                         }}
-                        className="label-text relative"
                       >
-                        <svg
-                          viewBox="0 0 16 16"
-                          stroke="currentColor"
-                          width={20}
-                          height={20}
-                        >
-                          <path d="M14.7881 2.5752L15.3008 2.04199C15.5605 1.76855 15.5742 1.39941 15.3213 1.13965L15.1436 0.955078C14.9111 0.722656 14.5283 0.763672 14.2754 1.00977L13.749 1.5293L14.7881 2.5752ZM6.68066 9.87598L8.0752 9.28809L14.2891 3.06738L13.25 2.03516L7.03613 8.25586L6.4209 9.60254C6.35254 9.75977 6.52344 9.9375 6.68066 9.87598ZM4.09668 14.4355H12.0674C13.373 14.4355 14.1387 13.6768 14.1387 12.2207V4.99512L12.7988 6.33496V12.1045C12.7988 12.7676 12.4434 13.1025 11.9854 13.1025H4.17871C3.54297 13.1025 3.19434 12.7676 3.19434 12.1045V4.49609C3.19434 3.83301 3.54297 3.49805 4.17871 3.49805H10.0234L11.3633 2.1582H4.09668C2.62695 2.1582 1.85449 2.91699 1.85449 4.37988V12.2207C1.85449 13.6836 2.62695 14.4355 4.09668 14.4355Z"></path>
-                        </svg>
-                      </span>
-                    </div>
-                  </th>
-                  <th>
-                    <div className="flex justify-between">
-                      {product.price}
-
+                        {product.name}
+                      </p>
                       {editInputProperties.active &&
-                        editInputProperties.productID === product.id && (
+                        editInputProperties.productID === product.id &&
+                        editInputProperties.column === 'name' && (
                           <div
                             onClick={() => {
                               setEditInputProperties({
                                 ...editInputProperties,
                                 active: false,
                               });
-                              if (
-                                product.price.toString() ===
-                                editInputProperties.value
-                              )
+                              if (product.name === editInputProperties.value)
                                 return;
-                              updatePrice.mutate({
+                              updateName.mutate({
                                 productID: product.id,
-                                newPrice: parseInt(editInputProperties.value),
+                                newName: editInputProperties.value,
                               });
-                              product.price = parseInt(
-                                editInputProperties.value
-                              );
+                              product.name = editInputProperties.value;
                             }}
                             className="fixed inset-0 w-[100vw] h-[100vh] opacity-30 stroke-slate-600"
                           ></div>
                         )}
-                      <span
+                    </div>
+                  </th>
+                  <th>
+                    <div className="flex justify-between">
+                      <p
                         onClick={(event) => {
                           event.preventDefault();
                           event.stopPropagation();
@@ -325,19 +380,38 @@ const ProductTable: React.FC<{
                             active: true,
                             productID: product.id,
                             type: 'number',
+                            column: 'price',
+                            hidden: false,
                           });
                         }}
-                        className="label-text relative"
                       >
-                        <svg
-                          viewBox="0 0 16 16"
-                          stroke="currentColor"
-                          width={20}
-                          height={20}
-                        >
-                          <path d="M14.7881 2.5752L15.3008 2.04199C15.5605 1.76855 15.5742 1.39941 15.3213 1.13965L15.1436 0.955078C14.9111 0.722656 14.5283 0.763672 14.2754 1.00977L13.749 1.5293L14.7881 2.5752ZM6.68066 9.87598L8.0752 9.28809L14.2891 3.06738L13.25 2.03516L7.03613 8.25586L6.4209 9.60254C6.35254 9.75977 6.52344 9.9375 6.68066 9.87598ZM4.09668 14.4355H12.0674C13.373 14.4355 14.1387 13.6768 14.1387 12.2207V4.99512L12.7988 6.33496V12.1045C12.7988 12.7676 12.4434 13.1025 11.9854 13.1025H4.17871C3.54297 13.1025 3.19434 12.7676 3.19434 12.1045V4.49609C3.19434 3.83301 3.54297 3.49805 4.17871 3.49805H10.0234L11.3633 2.1582H4.09668C2.62695 2.1582 1.85449 2.91699 1.85449 4.37988V12.2207C1.85449 13.6836 2.62695 14.4355 4.09668 14.4355Z"></path>
-                        </svg>
-                      </span>
+                        {product.price}
+                      </p>
+                      {editInputProperties.active &&
+                        editInputProperties.productID === product.id &&
+                        editInputProperties.column === 'price' && (
+                          <div
+                            onClick={() => {
+                              setEditInputProperties({
+                                ...editInputProperties,
+                                active: false,
+                              });
+                              if (
+                                product.price.toString() ===
+                                editInputProperties.value
+                              )
+                                return;
+                              updatePrice.mutate({
+                                productID: product.id,
+                                newPrice: parseInt(editInputProperties.value),
+                              });
+                              product.price = parseInt(
+                                editInputProperties.value
+                              );
+                            }}
+                            className="fixed inset-0 w-[100vw] h-[100vh] opacity-30 stroke-slate-600"
+                          ></div>
+                        )}
                     </div>
                   </th>
                   <th>

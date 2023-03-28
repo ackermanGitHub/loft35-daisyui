@@ -16,20 +16,20 @@ interface IProps {
   onUploadSucces: () => void;
 }
 
-const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
+const ProductForm: React.FC<IProps> = (
+  {
+    /* onUploadSucces */
+  }
+) => {
   const [upldProState, setUpldProstate] = useState('Subir');
   const [primaryImageSize, setPrimaryImageSize] = useState<number>();
   const [secondaryImagesSize, setSecondaryImagesSize] = useState<number[]>();
   const [isAddCategorySelected, setAddCategorySelected] = useState(false);
   const [isOtherStockSelected, setOtherStockSelected] = useState(false);
 
-  const productList = api.product.create.useMutation({});
+  // const productList = api.product.create.useMutation({});
 
-  const {
-    data: categoriesData,
-    refetch: refetchCategories,
-    isLoading: isCategoriesLoading,
-  } = api.category.getAll.useQuery();
+  const { data: categoriesData } = api.category.getAll.useQuery();
 
   const {
     handleSubmit,
@@ -46,7 +46,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
 
   // const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {};
 
-  const onUpldProClick = async (data: FormValues) => {
+  const onUpldProClick = (data: FormValues) => {
     if (upldProState === 'Error' || upldProState === 'Subida') {
       reset();
       setPrimaryImageSize(undefined);
@@ -58,9 +58,9 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
     if (!data.primaryImage[0]) return;
     setUpldProstate('Cargando');
 
-    const arrayBufferPrimaryImage = await data.primaryImage[0].arrayBuffer();
-    const primaryImageBuffer = Buffer.from(arrayBufferPrimaryImage);
-    const metadataSecondaryImages: Buffer[] = [];
+    // const arrayBufferPrimaryImage = await data.primaryImage[0].arrayBuffer();
+    // const primaryImageBuffer = Buffer.from(arrayBufferPrimaryImage);
+    // const metadataSecondaryImages: Buffer[] = [];
 
     setTimeout(() => {
       Math.random() > 0.5
@@ -370,7 +370,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
                   >
                     {[1, 2, 3].map((num) => (
                       <option key={num} value={num}>
-                        num
+                        {num}
                       </option>
                     ))}
                     <option value={'Otro'}>Otro</option>
