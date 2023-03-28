@@ -134,8 +134,8 @@ const ProductTable: React.FC<{
             <th>Producto</th>
             <th>Categoría</th>
             <th>Disponibles</th>
-            <th>Descripción</th>
-            <th>Image</th>
+            <th>Nombre</th>
+            <th>ImageSize</th>
           </tr>
         </thead>
         <tbody>
@@ -156,12 +156,7 @@ const ProductTable: React.FC<{
                   <td>
                     <div className="flex items-center space-x-3">
                       <div className="avatar">
-                        <div
-                          onClick={() => {
-                            console.log(product);
-                          }}
-                          className="mask mask-squircle w-12 h-12"
-                        >
+                        <div className="mask mask-squircle w-12 h-12">
                           <Image
                             src={product.primaryImage.url}
                             alt="Avatar Tailwind CSS Component"
@@ -207,16 +202,10 @@ const ProductTable: React.FC<{
                         editInputProperties.productID === product.id && (
                           <div
                             onClick={() => {
-                              console.log(product);
-
-                              console.log('onClick-UpdateName', {
-                                productID: product.id,
-                                editInputProperties,
-                              }),
-                                setEditInputProperties({
-                                  ...editInputProperties,
-                                  active: false,
-                                });
+                              setEditInputProperties({
+                                ...editInputProperties,
+                                active: false,
+                              });
                               if (product.name === editInputProperties.value)
                                 return;
                               updateProduct.mutate({
@@ -339,8 +328,8 @@ const ProductTable: React.FC<{
             <th>Producto</th>
             <th>Categoría</th>
             <th>Disponibles</th>
-            <th>Descripción</th>
-            <th>Image</th>
+            <th>Nombre</th>
+            <th>ImageSize</th>
           </tr>
         </tfoot>
       </table>
