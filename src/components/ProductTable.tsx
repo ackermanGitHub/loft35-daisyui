@@ -183,12 +183,10 @@ const ProductTable: React.FC = () => {
                   <td className="relative">
                     <div className="flex justify-between items-center w-24">
                       <select
-                        id="stock-select"
                         onChange={(e) => {
                           if (e.target.value === 'Añadir') {
                             setEditInputProperties({
                               ...editInputProperties,
-                              active: true,
                               value: e.target.value,
                             });
                             return;
