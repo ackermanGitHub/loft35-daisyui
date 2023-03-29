@@ -169,7 +169,47 @@ const ProductTable: React.FC = () => {
                 </label>
               </th>
               <th>Producto</th>
-              <th>Categoría</th>
+              <th
+                onClick={() => {
+                  if (orderedOptions?.column === 'category') {
+                    setOrderedOptions({
+                      column: 'category',
+                      reverse: !orderedOptions?.reverse,
+                    });
+                    setProducts(products?.reverse());
+                  } else {
+                    setProducts(
+                      products?.sort((a, b) =>
+                        a.categoryName.localeCompare(b.categoryName)
+                      )
+                    );
+                    setOrderedOptions({
+                      column: 'category',
+                      reverse: false,
+                    });
+                  }
+                }}
+              >
+                <div className="flex justify-around ">
+                  Categoría
+                  {orderedOptions?.column === 'category' && (
+                    <span className="swap swap-rotate">
+                      <svg
+                        viewBox="0 0 30 30"
+                        height={18}
+                        width={18}
+                        fill="currentColor"
+                        stroke="currentColor"
+                        className={`${
+                          orderedOptions.reverse ? 'rotate-180' : ''
+                        } swap-active`}
+                      >
+                        <polygon points="15,17.4 4.8,7 2,9.8 15,23 28,9.8 25.2,7 "></polygon>
+                      </svg>
+                    </span>
+                  )}
+                </div>
+              </th>
               <th>Disponibles</th>
               <th
                 onClick={() => {
@@ -210,9 +250,119 @@ const ProductTable: React.FC = () => {
                   )}
                 </div>
               </th>
-              <th>Precio CUP</th>
-              <th>Cantidad</th>
-              <th>Prioridad</th>
+              <th
+                onClick={() => {
+                  if (orderedOptions?.column === 'price') {
+                    setOrderedOptions({
+                      column: 'price',
+                      reverse: !orderedOptions?.reverse,
+                    });
+                    setProducts(products?.reverse());
+                  } else {
+                    setProducts(products?.sort((a, b) => a.price - b.price));
+                    setOrderedOptions({
+                      column: 'price',
+                      reverse: false,
+                    });
+                  }
+                }}
+              >
+                <div className="flex justify-around ">
+                  Precio
+                  {orderedOptions?.column === 'price' && (
+                    <span className="swap swap-rotate">
+                      <svg
+                        viewBox="0 0 30 30"
+                        height={18}
+                        width={18}
+                        fill="currentColor"
+                        stroke="currentColor"
+                        className={`${
+                          orderedOptions.reverse ? 'rotate-180' : ''
+                        } swap-active`}
+                      >
+                        <polygon points="15,17.4 4.8,7 2,9.8 15,23 28,9.8 25.2,7 "></polygon>
+                      </svg>
+                    </span>
+                  )}
+                </div>
+              </th>
+              <th
+                onClick={() => {
+                  if (orderedOptions?.column === 'stock') {
+                    setOrderedOptions({
+                      column: 'stock',
+                      reverse: !orderedOptions?.reverse,
+                    });
+                    setProducts(products?.reverse());
+                  } else {
+                    setProducts(products?.sort((a, b) => a.stock - b.stock));
+                    setOrderedOptions({
+                      column: 'stock',
+                      reverse: false,
+                    });
+                  }
+                }}
+              >
+                <div className="flex justify-around ">
+                  Cantidad
+                  {orderedOptions?.column === 'stock' && (
+                    <span className="swap swap-rotate">
+                      <svg
+                        viewBox="0 0 30 30"
+                        height={18}
+                        width={18}
+                        fill="currentColor"
+                        stroke="currentColor"
+                        className={`${
+                          orderedOptions.reverse ? 'rotate-180' : ''
+                        } swap-active`}
+                      >
+                        <polygon points="15,17.4 4.8,7 2,9.8 15,23 28,9.8 25.2,7 "></polygon>
+                      </svg>
+                    </span>
+                  )}
+                </div>
+              </th>
+              <th
+                onClick={() => {
+                  if (orderedOptions?.column === 'priority') {
+                    setOrderedOptions({
+                      column: 'priority',
+                      reverse: !orderedOptions?.reverse,
+                    });
+                    setProducts(products?.reverse());
+                  } else {
+                    setProducts(
+                      products?.sort((a, b) => a.priority - b.priority)
+                    );
+                    setOrderedOptions({
+                      column: 'priority',
+                      reverse: false,
+                    });
+                  }
+                }}
+              >
+                <div className="flex justify-around ">
+                  Prioridad
+                  {orderedOptions?.column === 'priority' && (
+                    <span className="swap swap-rotate">
+                      <svg
+                        viewBox="0 0 30 30"
+                        height={18}
+                        width={18}
+                        fill="currentColor"
+                        stroke="currentColor"
+                        className={`${
+                          orderedOptions.reverse ? 'rotate-180' : ''
+                        } swap-active`}
+                      >
+                        <polygon points="15,17.4 4.8,7 2,9.8 15,23 28,9.8 25.2,7 "></polygon>
+                      </svg>
+                    </span>
+                  )}
+                </div>
+              </th>
             </tr>
           </thead>
           <tbody>
