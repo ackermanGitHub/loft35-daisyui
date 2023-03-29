@@ -21,6 +21,12 @@
       "~/*": ["./src/*"]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx", ".eslintrc.js", "tailwind.config.cjs"],
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".eslintrc.js",
+    "tailwind.config.cjs",
+    "next.config.mjs"
+  ],
   "exclude": ["node_modules"]
 }
