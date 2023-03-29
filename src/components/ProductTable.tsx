@@ -190,14 +190,14 @@ const ProductTable: React.FC = () => {
                   }
                 }}
               >
-                <div className="flex justify-around ">
+                <div className="flex justify-between ">
                   Categoría
                   {orderedOptions?.column === 'category' && (
                     <span className="swap swap-rotate">
                       <svg
                         viewBox="0 0 30 30"
-                        height={18}
-                        width={18}
+                        height={12}
+                        width={12}
                         fill="currentColor"
                         stroke="currentColor"
                         className={`${
@@ -230,14 +230,14 @@ const ProductTable: React.FC = () => {
                   }
                 }}
               >
-                <div className="flex justify-around ">
+                <div className="flex justify-between ">
                   Nombre
                   {orderedOptions?.column === 'name' && (
                     <span className="swap swap-rotate">
                       <svg
                         viewBox="0 0 30 30"
-                        height={18}
-                        width={18}
+                        height={12}
+                        width={12}
                         fill="currentColor"
                         stroke="currentColor"
                         className={`${
@@ -267,14 +267,14 @@ const ProductTable: React.FC = () => {
                   }
                 }}
               >
-                <div className="flex justify-around ">
+                <div className="flex justify-between ">
                   Precio
                   {orderedOptions?.column === 'price' && (
                     <span className="swap swap-rotate">
                       <svg
                         viewBox="0 0 30 30"
-                        height={18}
-                        width={18}
+                        height={12}
+                        width={12}
                         fill="currentColor"
                         stroke="currentColor"
                         className={`${
@@ -304,14 +304,14 @@ const ProductTable: React.FC = () => {
                   }
                 }}
               >
-                <div className="flex justify-around ">
+                <div className="flex justify-between ">
                   Cantidad
                   {orderedOptions?.column === 'stock' && (
                     <span className="swap swap-rotate">
                       <svg
                         viewBox="0 0 30 30"
-                        height={18}
-                        width={18}
+                        height={12}
+                        width={12}
                         fill="currentColor"
                         stroke="currentColor"
                         className={`${
@@ -343,14 +343,14 @@ const ProductTable: React.FC = () => {
                   }
                 }}
               >
-                <div className="flex justify-around ">
+                <div className="flex justify-between ">
                   Prioridad
                   {orderedOptions?.column === 'priority' && (
                     <span className="swap swap-rotate">
                       <svg
                         viewBox="0 0 30 30"
-                        height={18}
-                        width={18}
+                        height={12}
+                        width={12}
                         fill="currentColor"
                         stroke="currentColor"
                         className={`${
