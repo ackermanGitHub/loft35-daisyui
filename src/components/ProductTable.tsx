@@ -110,8 +110,8 @@ const ProductTable: React.FC = () => {
     ) as NodeListOf<HTMLInputElement>;
 
     togglesActives.forEach((toggle, index) => {
-      if (productsData && productsData[index] && !isProductsLoading) {
-        toggle.checked = productsData[index]?.active || toggle.checked;
+      if (products && products[index] && !isProductsLoading) {
+        toggle.checked = products[index]?.active || toggle.checked;
       }
     });
 
@@ -129,7 +129,7 @@ const ProductTable: React.FC = () => {
         );
       });
     });
-  }, [isProductsLoading, productsData]);
+  }, [isProductsLoading, products]);
 
   return (
     <div>
