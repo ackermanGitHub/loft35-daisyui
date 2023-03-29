@@ -1,3 +1,4 @@
+import { type Product, type Image as ProductImage } from '@prisma/client';
 import ProductForm from './ProductForm';
 import { useEffect, useState } from 'react';
 import { api } from '~/utils/api';
@@ -6,6 +7,15 @@ import Image from 'next/image';
 
 const ProductTable: React.FC = () => {
   const [isAnyCheckboxSelected, setIsAnyCheckboxSelected] = useState(false);
+  const [orderedOptions, setOrderedOptions] = useState<{
+    column: string;
+    reverse: boolean;
+  }>();
+  const [products, setProducts] = useState<
+    (Product & {
+      primaryImage: ProductImage;
+    })[]
+  >();
   const [editInputProperties, setEditInputProperties] = useState({
     left: 0,
     top: 0,
@@ -22,7 +32,33 @@ const ProductTable: React.FC = () => {
     data: productsData,
     refetch: refetchProducts,
     isLoading: isProductsLoading,
-  } = api.product.getAll.useQuery();
+  } = api.product.getAll.useQuery(undefined, {
+    onSuccess: (data) => {
+      if (orderedOptions) {
+        switch (orderedOptions.column) {
+          case 'name':
+            setProducts(data.sort((a, b) => a.name.localeCompare(b.name)));
+            break;
+          case 'category':
+            setProducts(
+              data.sort((a, b) => a.categoryName.localeCompare(b.categoryName))
+            );
+            break;
+          case 'price':
+            setProducts(data.sort((a, b) => a.price - b.price));
+            break;
+          default:
+            if (orderedOptions.reverse) {
+              setProducts(products?.reverse());
+              setOrderedOptions({ ...orderedOptions, reverse: true });
+            }
+            break;
+        }
+      } else {
+        setProducts(data);
+      }
+    },
+  });
 
   const { data: categoriesData } = api.category.getAll.useQuery();
 
@@ -135,299 +171,337 @@ const ProductTable: React.FC = () => {
               <th>Producto</th>
               <th>Categoría</th>
               <th>Disponibles</th>
-              <th>Nombre</th>
+              <th
+                onClick={() => {
+                  if (orderedOptions?.column === 'name') {
+                    setOrderedOptions({
+                      column: 'name',
+                      reverse: !orderedOptions?.reverse,
+                    });
+                    setProducts(products?.reverse());
+                  } else {
+                    setProducts(
+                      products?.sort((a, b) => a.name.localeCompare(b.name))
+                    );
+                    setOrderedOptions({
+                      column: 'name',
+                      reverse: false,
+                    });
+                  }
+                }}
+              >
+                <div className="flex justify-around ">
+                  Nombre
+                  {orderedOptions?.column === 'name' && (
+                    <span className="swap swap-rotate">
+                      <svg
+                        viewBox="0 0 30 30"
+                        height={18}
+                        width={18}
+                        fill="currentColor"
+                        stroke="currentColor"
+                        className={`${
+                          orderedOptions.reverse ? 'rotate-180' : ''
+                        } swap-active`}
+                      >
+                        <polygon points="15,17.4 4.8,7 2,9.8 15,23 28,9.8 25.2,7 "></polygon>
+                      </svg>
+                    </span>
+                  )}
+                </div>
+              </th>
               <th>Precio CUP</th>
               <th>Cantidad</th>
+              <th>Prioridad</th>
             </tr>
           </thead>
           <tbody>
             {/* rows */}
-            {productsData
-              ?.sort((a, b) => a.priority - b.priority)
-              .map((product) => {
-                return (
-                  <tr key={product.id}>
-                    <th>
-                      <label>
-                        <input
-                          type="checkbox"
-                          className="checkbox select-checkbox-group"
-                        />
-                      </label>
-                    </th>
-                    <td>
-                      <div className="flex items-center space-x-3">
-                        <div className="avatar">
-                          <div className="mask mask-squircle w-12 h-12">
-                            <Image
-                              src={product.primaryImage.url}
-                              alt="Avatar Tailwind CSS Component"
-                              width={48}
-                              height={48}
-                            />
-                          </div>
-                        </div>
-                        <div className="w-full">
-                          <div className="font-bold">{product.name}</div>
-                          <div className="flex justify-around items-center flex-row">
-                            <div className="text-sm opacity-50">
-                              ${product.price}
-                            </div>
-                            <div
-                              className={`badge badge-sm text-sm badge-${
-                                product.active ? 'success' : 'warning'
-                              } gap-2`}
-                            >
-                              {product.active ? 'active' : 'disabled'}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="relative">
-                      <div className="flex justify-between items-center w-24">
-                        <select
-                          onChange={(e) => {
-                            if (e.target.value === 'Añadir') {
-                              setEditInputProperties({
-                                ...editInputProperties,
-                                value: e.target.value,
-                              });
-                              return;
-                            }
-                            setEditInputProperties({
-                              ...editInputProperties,
-                              active: false,
-                              productID: product.id,
-                              column: 'category',
-                              type: 'text',
-                              value: e.target.value,
-                            });
-                          }}
-                          value={product.categoryId}
-                          className="select w-full h-[75px] absolute inset-0"
-                        >
-                          {categoriesData?.map((category) => (
-                            <option key={category.id} value={category.id}>
-                              {category.name}
-                            </option>
-                          ))}
-                          <option
-                            onClick={() => {
-                              console.log(
-                                'El usuario quiere cambiar la categoría'
-                              );
-                            }}
-                            value={'Añadir'}
-                            className="btn"
-                          >
-                            + Añadir
-                          </option>
-                        </select>
-                      </div>
-                    </td>
-                    <td>
+            {products?.map((product) => {
+              return (
+                <tr key={product.id}>
+                  <th>
+                    <label>
                       <input
                         type="checkbox"
-                        className="toggle toggle-active"
-                        onChange={() => {
-                          toggleActive.mutate({
+                        className="checkbox select-checkbox-group"
+                      />
+                    </label>
+                  </th>
+                  <td>
+                    <div className="flex items-center space-x-3">
+                      <div className="avatar">
+                        <div className="mask mask-squircle w-12 h-12">
+                          <Image
+                            src={product.primaryImage.url}
+                            alt="Avatar Tailwind CSS Component"
+                            width={48}
+                            height={48}
+                          />
+                        </div>
+                      </div>
+                      <div className="w-full">
+                        <div className="font-bold">{product.name}</div>
+                        <div className="flex justify-around items-center flex-row">
+                          <div className="text-sm opacity-50">
+                            ${product.price}
+                          </div>
+                          <div
+                            className={`badge badge-sm text-sm badge-${
+                              product.active ? 'success' : 'warning'
+                            } gap-2`}
+                          >
+                            {product.active ? 'active' : 'disabled'}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="relative">
+                    <div className="flex justify-between items-center w-24">
+                      <select
+                        onChange={(e) => {
+                          if (e.target.value === 'Añadir') {
+                            setEditInputProperties({
+                              ...editInputProperties,
+                              value: e.target.value,
+                            });
+                            return;
+                          }
+                          setEditInputProperties({
+                            ...editInputProperties,
+                            active: false,
                             productID: product.id,
-                            active: !product.active,
+                            column: 'category',
+                            type: 'text',
+                            value: e.target.value,
                           });
                         }}
-                      />
-                    </td>
-                    <th>
-                      <div className="flex justify-between">
-                        <p
-                          onClick={(event) => {
-                            event.preventDefault();
-                            event.stopPropagation();
-                            const target =
-                              event.currentTarget as HTMLSpanElement;
-                            const parent =
-                              target.parentElement as HTMLTableCellElement;
-                            const grandParent =
-                              parent.parentElement as HTMLTableCellElement;
-
-                            const position = {
-                              x: grandParent?.offsetLeft,
-                              y: grandParent?.offsetTop,
-                            };
-                            const size = {
-                              width: grandParent?.offsetWidth,
-                              height: grandParent?.offsetHeight,
-                            };
-
-                            setEditInputProperties({
-                              left: position.x,
-                              top: position.y,
-                              height: size.height,
-                              width: size.width,
-                              value: product.name,
-                              active: true,
-                              productID: product.id,
-                              type: 'text',
-                              column: 'name',
-                            });
+                        value={product.categoryId}
+                        className="select w-full h-[75px] absolute inset-0"
+                      >
+                        {categoriesData?.map((category) => (
+                          <option key={category.id} value={category.id}>
+                            {category.name}
+                          </option>
+                        ))}
+                        <option
+                          onClick={() => {
+                            console.log(
+                              'El usuario quiere cambiar la categoría'
+                            );
                           }}
+                          value={'Añadir'}
+                          className="btn"
                         >
-                          {product.name}
-                        </p>
-                        {editInputProperties.active &&
-                          editInputProperties.productID === product.id &&
-                          editInputProperties.column === 'name' && (
-                            <div
-                              onClick={() => {
-                                setEditInputProperties({
-                                  ...editInputProperties,
-                                  active: false,
-                                });
-                                if (product.name === editInputProperties.value)
-                                  return;
-                                updateName.mutate({
-                                  productID: product.id,
-                                  newName: editInputProperties.value,
-                                });
-                                product.name = editInputProperties.value;
-                              }}
-                              className="fixed inset-0 w-[100vw] h-[100vh] opacity-30 stroke-slate-600"
-                            ></div>
-                          )}
-                      </div>
-                    </th>
-                    <th>
-                      <div className="flex justify-between">
-                        <p
-                          onClick={(event) => {
-                            event.preventDefault();
-                            event.stopPropagation();
-                            const target =
-                              event.currentTarget as HTMLSpanElement;
-                            const parent =
-                              target.parentElement as HTMLTableCellElement;
-                            const grandParent =
-                              parent.parentElement as HTMLTableCellElement;
+                          + Añadir
+                        </option>
+                      </select>
+                    </div>
+                  </td>
+                  <td>
+                    <input
+                      type="checkbox"
+                      className="toggle toggle-active"
+                      defaultChecked={product.active}
+                      onChange={() => {
+                        toggleActive.mutate({
+                          productID: product.id,
+                          active: !product.active,
+                        });
+                      }}
+                    />
+                  </td>
+                  <th>
+                    <div className="flex justify-between">
+                      <p
+                        onClick={(event) => {
+                          event.preventDefault();
+                          event.stopPropagation();
+                          const target = event.currentTarget as HTMLSpanElement;
+                          const parent =
+                            target.parentElement as HTMLTableCellElement;
+                          const grandParent =
+                            parent.parentElement as HTMLTableCellElement;
 
-                            const position = {
-                              x: grandParent?.offsetLeft,
-                              y: grandParent?.offsetTop,
-                            };
-                            const size = {
-                              width: grandParent?.offsetWidth,
-                              height: grandParent?.offsetHeight,
-                            };
+                          const position = {
+                            x: grandParent?.offsetLeft,
+                            y: grandParent?.offsetTop,
+                          };
+                          const size = {
+                            width: grandParent?.offsetWidth,
+                            height: grandParent?.offsetHeight,
+                          };
 
-                            setEditInputProperties({
-                              left: position.x,
-                              top: position.y,
-                              height: size.height,
-                              width: size.width,
-                              value: product.price.toString(),
-                              active: true,
-                              productID: product.id,
-                              type: 'number',
-                              column: 'price',
-                            });
-                          }}
-                        >
-                          {product.price}
-                        </p>
-                        {editInputProperties.active &&
-                          editInputProperties.productID === product.id &&
-                          editInputProperties.column === 'price' && (
-                            <div
-                              onClick={() => {
-                                setEditInputProperties({
-                                  ...editInputProperties,
-                                  active: false,
-                                });
-                                if (
-                                  product.price.toString() ===
-                                  editInputProperties.value
-                                )
-                                  return;
-                                updatePrice.mutate({
-                                  productID: product.id,
-                                  newPrice: parseInt(editInputProperties.value),
-                                });
-                                product.price = parseInt(
-                                  editInputProperties.value
-                                );
-                              }}
-                              className="fixed inset-0 w-[100vw] h-[100vh] opacity-30 stroke-slate-600"
-                            ></div>
-                          )}
-                      </div>
-                    </th>
-                    <th>
-                      <div className="flex justify-between">
-                        <p
-                          onClick={(event) => {
-                            event.preventDefault();
-                            event.stopPropagation();
-                            const target =
-                              event.currentTarget as HTMLSpanElement;
-                            const parent =
-                              target.parentElement as HTMLTableCellElement;
-                            const grandParent =
-                              parent.parentElement as HTMLTableCellElement;
+                          setEditInputProperties({
+                            left: position.x,
+                            top: position.y,
+                            height: size.height,
+                            width: size.width,
+                            value: product.name,
+                            active: true,
+                            productID: product.id,
+                            type: 'text',
+                            column: 'name',
+                          });
+                        }}
+                      >
+                        {product.name}
+                      </p>
+                      {editInputProperties.active &&
+                        editInputProperties.productID === product.id &&
+                        editInputProperties.column === 'name' && (
+                          <div
+                            onClick={() => {
+                              setEditInputProperties({
+                                ...editInputProperties,
+                                active: false,
+                              });
+                              if (product.name === editInputProperties.value)
+                                return;
+                              updateName.mutate({
+                                productID: product.id,
+                                newName: editInputProperties.value,
+                              });
+                              product.name = editInputProperties.value;
+                            }}
+                            className="fixed inset-0 w-[100vw] h-[100vh] opacity-30 stroke-slate-600"
+                          ></div>
+                        )}
+                    </div>
+                  </th>
+                  <th>
+                    <div className="flex justify-between">
+                      <p
+                        onClick={(event) => {
+                          event.preventDefault();
+                          event.stopPropagation();
+                          const target = event.currentTarget as HTMLSpanElement;
+                          const parent =
+                            target.parentElement as HTMLTableCellElement;
+                          const grandParent =
+                            parent.parentElement as HTMLTableCellElement;
 
-                            const position = {
-                              x: grandParent?.offsetLeft,
-                              y: grandParent?.offsetTop,
-                            };
-                            const size = {
-                              width: grandParent?.offsetWidth,
-                              height: grandParent?.offsetHeight,
-                            };
+                          const position = {
+                            x: grandParent?.offsetLeft,
+                            y: grandParent?.offsetTop,
+                          };
+                          const size = {
+                            width: grandParent?.offsetWidth,
+                            height: grandParent?.offsetHeight,
+                          };
 
-                            setEditInputProperties({
-                              left: position.x,
-                              top: position.y,
-                              height: size.height,
-                              width: size.width,
-                              value: product.stock.toString(),
-                              active: true,
-                              productID: product.id,
-                              type: 'number',
-                              column: 'stock',
-                            });
-                          }}
-                        >
-                          {product.stock}
-                        </p>
-                        {editInputProperties.active &&
-                          editInputProperties.productID === product.id &&
-                          editInputProperties.column === 'stock' && (
-                            <div
-                              onClick={() => {
-                                setEditInputProperties({
-                                  ...editInputProperties,
-                                  active: false,
-                                });
-                                if (
-                                  product.stock.toString() ===
-                                  editInputProperties.value
-                                )
-                                  return;
-                                updateStock.mutate({
-                                  productID: product.id,
-                                  newStock: parseInt(editInputProperties.value),
-                                });
-                                product.stock = parseInt(
-                                  editInputProperties.value
-                                );
-                              }}
-                              className="fixed inset-0 w-[100vw] h-[100vh] opacity-30 stroke-slate-600"
-                            ></div>
-                          )}
-                      </div>
-                    </th>
-                  </tr>
-                );
-              })}
+                          setEditInputProperties({
+                            left: position.x,
+                            top: position.y,
+                            height: size.height,
+                            width: size.width,
+                            value: product.price.toString(),
+                            active: true,
+                            productID: product.id,
+                            type: 'number',
+                            column: 'price',
+                          });
+                        }}
+                      >
+                        {product.price}
+                      </p>
+                      {editInputProperties.active &&
+                        editInputProperties.productID === product.id &&
+                        editInputProperties.column === 'price' && (
+                          <div
+                            onClick={() => {
+                              setEditInputProperties({
+                                ...editInputProperties,
+                                active: false,
+                              });
+                              if (
+                                product.price.toString() ===
+                                editInputProperties.value
+                              )
+                                return;
+                              updatePrice.mutate({
+                                productID: product.id,
+                                newPrice: parseInt(editInputProperties.value),
+                              });
+                              product.price = parseInt(
+                                editInputProperties.value
+                              );
+                            }}
+                            className="fixed inset-0 w-[100vw] h-[100vh] opacity-30 stroke-slate-600"
+                          ></div>
+                        )}
+                    </div>
+                  </th>
+                  <th>
+                    <div className="flex justify-between">
+                      <p
+                        onClick={(event) => {
+                          event.preventDefault();
+                          event.stopPropagation();
+                          const target = event.currentTarget as HTMLSpanElement;
+                          const parent =
+                            target.parentElement as HTMLTableCellElement;
+                          const grandParent =
+                            parent.parentElement as HTMLTableCellElement;
+
+                          const position = {
+                            x: grandParent?.offsetLeft,
+                            y: grandParent?.offsetTop,
+                          };
+                          const size = {
+                            width: grandParent?.offsetWidth,
+                            height: grandParent?.offsetHeight,
+                          };
+
+                          setEditInputProperties({
+                            left: position.x,
+                            top: position.y,
+                            height: size.height,
+                            width: size.width,
+                            value: product.stock.toString(),
+                            active: true,
+                            productID: product.id,
+                            type: 'number',
+                            column: 'stock',
+                          });
+                        }}
+                      >
+                        {product.stock}
+                      </p>
+                      {editInputProperties.active &&
+                        editInputProperties.productID === product.id &&
+                        editInputProperties.column === 'stock' && (
+                          <div
+                            onClick={() => {
+                              setEditInputProperties({
+                                ...editInputProperties,
+                                active: false,
+                              });
+                              if (
+                                product.stock.toString() ===
+                                editInputProperties.value
+                              )
+                                return;
+                              updateStock.mutate({
+                                productID: product.id,
+                                newStock: parseInt(editInputProperties.value),
+                              });
+                              product.stock = parseInt(
+                                editInputProperties.value
+                              );
+                            }}
+                            className="fixed inset-0 w-[100vw] h-[100vh] opacity-30 stroke-slate-600"
+                          ></div>
+                        )}
+                    </div>
+                  </th>
+                  <th>
+                    <p>{product.priority}</p>
+                  </th>
+                </tr>
+              );
+            })}
           </tbody>
           {/* foot */}
           <tfoot>
@@ -439,6 +513,7 @@ const ProductTable: React.FC = () => {
               <th>Nombre</th>
               <th>Precio CUP</th>
               <th>Cantidad</th>
+              <th>Prioridad</th>
             </tr>
           </tfoot>
         </table>
