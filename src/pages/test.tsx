@@ -18,7 +18,10 @@ const Test = () => {
   const [orderedOptions, setOrderedOptions] = useState<{
     column: string;
     reverse: boolean;
-  }>();
+  }>({
+    column: 'priority',
+    reverse: false,
+  });
   const [products, setProducts] = useState<
     (Product & {
       primaryImage: ProductImage;
@@ -54,6 +57,9 @@ const Test = () => {
             break;
           case 'price':
             setProducts(data.sort((a, b) => a.price - b.price));
+            break;
+          case 'priority':
+            setProducts(data.sort((a, b) => a.priority - b.priority));
             break;
           default:
             if (orderedOptions.reverse) {
@@ -189,10 +195,10 @@ const Test = () => {
                   <th>Producto</th>
                   <th
                     onClick={() => {
-                      if (orderedOptions?.column === 'category') {
+                      if (orderedOptions.column === 'category') {
                         setOrderedOptions({
                           column: 'category',
-                          reverse: !orderedOptions?.reverse,
+                          reverse: !orderedOptions.reverse,
                         });
                         setProducts(products?.reverse());
                       } else {
@@ -210,7 +216,7 @@ const Test = () => {
                   >
                     <div className="flex justify-between ">
                       Categoría
-                      {orderedOptions?.column === 'category' && (
+                      {orderedOptions.column === 'category' && (
                         <span className="swap swap-rotate">
                           <svg
                             viewBox="0 0 30 30"
@@ -231,10 +237,10 @@ const Test = () => {
                   <th>Disponibles</th>
                   <th
                     onClick={() => {
-                      if (orderedOptions?.column === 'name') {
+                      if (orderedOptions.column === 'name') {
                         setOrderedOptions({
                           column: 'name',
-                          reverse: !orderedOptions?.reverse,
+                          reverse: !orderedOptions.reverse,
                         });
                         setProducts(products?.reverse());
                       } else {
@@ -250,7 +256,7 @@ const Test = () => {
                   >
                     <div className="flex justify-between ">
                       Nombre
-                      {orderedOptions?.column === 'name' && (
+                      {orderedOptions.column === 'name' && (
                         <span className="swap swap-rotate">
                           <svg
                             viewBox="0 0 30 30"
@@ -270,10 +276,10 @@ const Test = () => {
                   </th>
                   <th
                     onClick={() => {
-                      if (orderedOptions?.column === 'price') {
+                      if (orderedOptions.column === 'price') {
                         setOrderedOptions({
                           column: 'price',
-                          reverse: !orderedOptions?.reverse,
+                          reverse: !orderedOptions.reverse,
                         });
                         setProducts(products?.reverse());
                       } else {
@@ -289,7 +295,7 @@ const Test = () => {
                   >
                     <div className="flex justify-between ">
                       Precio
-                      {orderedOptions?.column === 'price' && (
+                      {orderedOptions.column === 'price' && (
                         <span className="swap swap-rotate">
                           <svg
                             viewBox="0 0 30 30"
@@ -309,10 +315,10 @@ const Test = () => {
                   </th>
                   <th
                     onClick={() => {
-                      if (orderedOptions?.column === 'stock') {
+                      if (orderedOptions.column === 'stock') {
                         setOrderedOptions({
                           column: 'stock',
-                          reverse: !orderedOptions?.reverse,
+                          reverse: !orderedOptions.reverse,
                         });
                         setProducts(products?.reverse());
                       } else {
@@ -328,7 +334,7 @@ const Test = () => {
                   >
                     <div className="flex justify-between ">
                       Cantidad
-                      {orderedOptions?.column === 'stock' && (
+                      {orderedOptions.column === 'stock' && (
                         <span className="swap swap-rotate">
                           <svg
                             viewBox="0 0 30 30"
@@ -348,10 +354,10 @@ const Test = () => {
                   </th>
                   <th
                     onClick={() => {
-                      if (orderedOptions?.column === 'priority') {
+                      if (orderedOptions.column === 'priority') {
                         setOrderedOptions({
                           column: 'priority',
-                          reverse: !orderedOptions?.reverse,
+                          reverse: !orderedOptions.reverse,
                         });
                         setProducts(products?.reverse());
                       } else {
@@ -367,7 +373,7 @@ const Test = () => {
                   >
                     <div className="flex justify-between ">
                       Prioridad
-                      {orderedOptions?.column === 'priority' && (
+                      {orderedOptions.column === 'priority' && (
                         <span className="swap swap-rotate">
                           <svg
                             viewBox="0 0 30 30"
@@ -387,7 +393,29 @@ const Test = () => {
                   </th>
                 </tr>
               </thead>
-              <DragDropContext>
+              <DragDropContext
+                onDragEnd={(result) => {
+                  if (
+                    result.destination &&
+                    products &&
+                    orderedOptions.column === 'priority' &&
+                    !orderedOptions.reverse
+                  ) {
+                    const modifiedProducts = products;
+                    const reorderedProduct = modifiedProducts.splice(
+                      result.source.index,
+                      1
+                    );
+                    if (!reorderedProduct[0]) return;
+                    modifiedProducts.splice(
+                      result.destination.index,
+                      0,
+                      reorderedProduct[0]
+                    );
+                    setProducts(modifiedProducts);
+                  }
+                }}
+              >
                 <Droppable droppableId="productTable">
                   {(provided: DroppableProvided) => (
                     <tbody {...provided.droppableProps} ref={provided.innerRef}>
