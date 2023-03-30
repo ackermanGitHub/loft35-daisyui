@@ -19,6 +19,9 @@ const Drawer: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           <li>
             <Link href="/orders">Ordenes</Link>
           </li>
+          <li>
+            <Link href="/test">Pruebas</Link>
+          </li>
         </ul>
       </div>
     </div>
