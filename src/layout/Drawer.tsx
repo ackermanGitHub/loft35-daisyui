@@ -14,7 +14,7 @@ const Drawer: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         <ul className="menu p-4 w-80 bg-base-100">
           {/* <!-- Sidebar content here --> */}
           <li>
-            <Link href="/">Productos</Link>
+            <Link href="/products">Productos</Link>
           </li>
           <li>
             <Link href="/orders">Ordenes</Link>

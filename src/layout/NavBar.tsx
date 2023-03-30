@@ -37,7 +37,7 @@ const NavBar: React.FC = () => {
         </svg>
       </label>
       <div className="flex-1">
-        <a className="btn btn-ghost normal-case text-xl">Loft35</a>
+        <Link href="./" className="btn btn-ghost normal-case text-xl">Loft35</Link>
       </div>
       <label className="swap swap-rotate">
         <input type="checkbox" />
