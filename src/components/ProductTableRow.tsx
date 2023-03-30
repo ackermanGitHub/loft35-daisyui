@@ -40,7 +40,6 @@ interface IProps {
     productID: number;
     newName: string;
   }) => void;
-
   onUpdatePrice: (checkBoxToggle: {
     productID: number;
     newPrice: number;
@@ -62,7 +61,7 @@ const ProductTableRow: React.FC<IProps> = ({
   onUpdateStock,
 }) => {
   return (
-    <tr key={product.id}>
+    <tr>
       <th>
         <label>
           <input type="checkbox" className="checkbox select-checkbox-group" />
