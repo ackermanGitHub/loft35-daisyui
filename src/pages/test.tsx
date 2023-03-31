@@ -100,6 +100,18 @@ const Test = () => {
     },
   });
 
+  const changePriorityUp = api.updateProduct.changePriorityUp.useMutation({
+    onSuccess: () => {
+      void refetchProducts();
+    },
+  });
+
+  const changePriorityDown = api.updateProduct.changePriorityDown.useMutation({
+    onSuccess: () => {
+      void refetchProducts();
+    },
+  });
+
   // const updateCategory = api.updateProduct.updateCategory.useMutation({
   //   onSuccess: () => {
   //     void refetchProducts();
@@ -401,6 +413,41 @@ const Test = () => {
                     orderedOptions.column === 'priority' &&
                     !orderedOptions.reverse
                   ) {
+                    console.log('onDragEnd', {
+                      result: result,
+                    });
+
+                    const sourceProductPriority =
+                      products[result.source.index]?.priority;
+                    const targetProductPriority =
+                      products[result.destination.index]?.priority;
+
+                    const sourceProductId = products[result.source.index]?.id;
+                    const targetProductId =
+                      products[result.destination.index]?.id;
+
+                    console.log('onDragEnd', {
+                      sourceProductPriority,
+                      targetProductPriority,
+                    });
+
+                    if (!sourceProductPriority || !targetProductPriority)
+                      return;
+
+                    if (!sourceProductId || !targetProductId) return;
+
+                    if (sourceProductPriority < targetProductPriority) {
+                      changePriorityUp.mutate({
+                        productId: sourceProductId,
+                        targetId: targetProductId,
+                      });
+                    } else if (sourceProductPriority > targetProductPriority) {
+                      changePriorityDown.mutate({
+                        productId: sourceProductId,
+                        targetId: targetProductId,
+                      });
+                    }
+
                     const modifiedProducts = products;
                     const reorderedProduct = modifiedProducts.splice(
                       result.source.index,
@@ -470,6 +517,11 @@ const Test = () => {
                                           {product.active
                                             ? 'active'
                                             : 'disabled'}
+                                        </div>
+                                        <div
+                                          className={`badge badge-sm text-sm badge-info gap-2`}
+                                        >
+                                          {product.id}
                                         </div>
                                       </div>
                                     </div>

@@ -66,6 +66,228 @@ export const productUpdateRouter = createTRPCRouter({
         },
       });
     }),
+
+  changePriorityUp: publicProcedure
+    .input(
+      z.object({
+        productId: z.number(),
+        targetId: z.number(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { productId, targetId } = input;
+      console.log('input', input);
+
+      const product = await ctx.prisma.product.findUnique({
+        where: {
+          id: productId,
+        },
+      });
+
+      const targetProduct = await ctx.prisma.product.findUnique({
+        where: {
+          id: targetId,
+        },
+      });
+      console.log('product', product);
+      console.log('targetProduct', targetProduct);
+
+      if (!product) {
+        throw new Error(`No se encontró el producto con id ${productId}`);
+      }
+      if (!targetProduct) {
+        throw new Error(`No se encontró el producto con id ${targetId}`);
+      }
+
+      const productsBetween = await ctx.prisma.product.findMany({
+        where: {
+          AND: [
+            { priority: { gte: product.priority + 1 } },
+            { priority: { lte: targetProduct.priority } },
+          ],
+        },
+        orderBy: {
+          priority: 'asc',
+        },
+      });
+
+      console.log('productsBetween', productsBetween);
+
+      const firstPriorityProduct = await ctx.prisma.product.findFirst({
+        orderBy: {
+          priority: 'asc',
+        },
+      });
+
+      console.log('firstPriorityProduct', firstPriorityProduct);
+
+      if (!firstPriorityProduct) {
+        throw new Error(`No se encontró el primer producto en prioridad`);
+      }
+      await ctx.prisma.product.update({
+        where: {
+          id: productId,
+        },
+        data: {
+          priority: firstPriorityProduct.priority - 5,
+        },
+      });
+      console.log('product-update', product);
+
+      if (product.priority < targetProduct.priority) {
+        const destinatioProduct = await ctx.prisma.product.findUnique({
+          where: {
+            priority: targetProduct.priority + 1,
+          },
+        });
+
+        console.log('destinatioProduct', destinatioProduct);
+        if (!destinatioProduct) {
+          console.log('!destinatioProduct-if', destinatioProduct);
+          return await ctx.prisma.product.update({
+            where: {
+              id: product.id,
+            },
+            data: {
+              priority: targetProduct.priority + 1,
+            },
+          });
+        }
+
+        for (const betweenProduct of productsBetween) {
+          console.log(betweenProduct);
+
+          await ctx.prisma.product.update({
+            where: {
+              id: betweenProduct.id,
+            },
+            data: {
+              priority: betweenProduct.priority - 1,
+            },
+          });
+        }
+        // Cambiar la prioridad del producto original
+        return await ctx.prisma.product.update({
+          where: {
+            id: productId,
+          },
+          data: {
+            priority: targetProduct.priority,
+          },
+        });
+      }
+    }),
+
+  changePriorityDown: publicProcedure
+    .input(
+      z.object({
+        productId: z.number(),
+        targetId: z.number(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { productId, targetId } = input;
+      console.log('input', input);
+
+      const product = await ctx.prisma.product.findUnique({
+        where: {
+          id: productId,
+        },
+      });
+
+      const targetProduct = await ctx.prisma.product.findUnique({
+        where: {
+          id: targetId,
+        },
+      });
+      console.log('product', product);
+      console.log('targetProduct', targetProduct);
+
+      if (!product) {
+        throw new Error(`No se encontró el producto con id ${productId}`);
+      }
+      if (!targetProduct) {
+        throw new Error(`No se encontró el producto con id ${targetId}`);
+      }
+
+      const productsBetween = await ctx.prisma.product.findMany({
+        where: {
+          AND: [
+            { priority: { gte: targetProduct.priority } },
+            { priority: { lte: product.priority - 1 } },
+          ],
+        },
+        orderBy: {
+          priority: 'desc',
+        },
+      });
+
+      console.log('productsBetween', productsBetween);
+
+      const firstPriorityProduct = await ctx.prisma.product.findFirst({
+        orderBy: {
+          priority: 'asc',
+        },
+      });
+
+      console.log('firstPriorityProduct', firstPriorityProduct);
+
+      if (!firstPriorityProduct) {
+        throw new Error(`No se encontró el primer producto en prioridad`);
+      }
+      await ctx.prisma.product.update({
+        where: {
+          id: productId,
+        },
+        data: {
+          priority: firstPriorityProduct.priority - 5,
+        },
+      });
+      console.log('product-update', product);
+
+      if (product.priority > targetProduct.priority) {
+        const destinatioProduct = await ctx.prisma.product.findUnique({
+          where: {
+            priority: targetProduct.priority - 1,
+          },
+        });
+
+        console.log('destinatioProduct', destinatioProduct);
+        if (!destinatioProduct) {
+          console.log('!destinatioProduct-if', destinatioProduct);
+          return await ctx.prisma.product.update({
+            where: {
+              id: product.id,
+            },
+            data: {
+              priority: targetProduct.priority - 1,
+            },
+          });
+        }
+
+        for (const betweenProduct of productsBetween) {
+          console.log(betweenProduct);
+
+          await ctx.prisma.product.update({
+            where: {
+              id: betweenProduct.id,
+            },
+            data: {
+              priority: betweenProduct.priority + 1,
+            },
+          });
+        }
+        // Cambiar la prioridad del producto original
+        return await ctx.prisma.product.update({
+          where: {
+            id: productId,
+          },
+          data: {
+            priority: targetProduct.priority,
+          },
+        });
+      }
+    }),
 });
 
 /* 
