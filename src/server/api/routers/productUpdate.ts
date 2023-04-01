@@ -76,7 +76,6 @@ export const productUpdateRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { productId, targetId } = input;
-      console.log('input', input);
 
       const product = await ctx.prisma.product.findUnique({
         where: {
@@ -89,8 +88,6 @@ export const productUpdateRouter = createTRPCRouter({
           id: targetId,
         },
       });
-      console.log('product', product);
-      console.log('targetProduct', targetProduct);
 
       if (!product) {
         throw new Error(`No se encontró el producto con id ${productId}`);
@@ -111,15 +108,11 @@ export const productUpdateRouter = createTRPCRouter({
         },
       });
 
-      console.log('productsBetween', productsBetween);
-
       const firstPriorityProduct = await ctx.prisma.product.findFirst({
         orderBy: {
           priority: 'asc',
         },
       });
-
-      console.log('firstPriorityProduct', firstPriorityProduct);
 
       if (!firstPriorityProduct) {
         throw new Error(`No se encontró el primer producto en prioridad`);
@@ -132,7 +125,6 @@ export const productUpdateRouter = createTRPCRouter({
           priority: firstPriorityProduct.priority - 5,
         },
       });
-      console.log('product-update', product);
 
       if (product.priority < targetProduct.priority) {
         const destinatioProduct = await ctx.prisma.product.findUnique({
@@ -141,9 +133,7 @@ export const productUpdateRouter = createTRPCRouter({
           },
         });
 
-        console.log('destinatioProduct', destinatioProduct);
         if (!destinatioProduct) {
-          console.log('!destinatioProduct-if', destinatioProduct);
           return await ctx.prisma.product.update({
             where: {
               id: product.id,
@@ -155,8 +145,6 @@ export const productUpdateRouter = createTRPCRouter({
         }
 
         for (const betweenProduct of productsBetween) {
-          console.log(betweenProduct);
-
           await ctx.prisma.product.update({
             where: {
               id: betweenProduct.id,
@@ -187,7 +175,6 @@ export const productUpdateRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { productId, targetId } = input;
-      console.log('input', input);
 
       const product = await ctx.prisma.product.findUnique({
         where: {
@@ -200,8 +187,6 @@ export const productUpdateRouter = createTRPCRouter({
           id: targetId,
         },
       });
-      console.log('product', product);
-      console.log('targetProduct', targetProduct);
 
       if (!product) {
         throw new Error(`No se encontró el producto con id ${productId}`);
@@ -222,15 +207,11 @@ export const productUpdateRouter = createTRPCRouter({
         },
       });
 
-      console.log('productsBetween', productsBetween);
-
       const firstPriorityProduct = await ctx.prisma.product.findFirst({
         orderBy: {
           priority: 'asc',
         },
       });
-
-      console.log('firstPriorityProduct', firstPriorityProduct);
 
       if (!firstPriorityProduct) {
         throw new Error(`No se encontró el primer producto en prioridad`);
@@ -243,7 +224,6 @@ export const productUpdateRouter = createTRPCRouter({
           priority: firstPriorityProduct.priority - 5,
         },
       });
-      console.log('product-update', product);
 
       if (product.priority > targetProduct.priority) {
         const destinatioProduct = await ctx.prisma.product.findUnique({
@@ -252,9 +232,7 @@ export const productUpdateRouter = createTRPCRouter({
           },
         });
 
-        console.log('destinatioProduct', destinatioProduct);
         if (!destinatioProduct) {
-          console.log('!destinatioProduct-if', destinatioProduct);
           return await ctx.prisma.product.update({
             where: {
               id: product.id,
@@ -266,8 +244,6 @@ export const productUpdateRouter = createTRPCRouter({
         }
 
         for (const betweenProduct of productsBetween) {
-          console.log(betweenProduct);
-
           await ctx.prisma.product.update({
             where: {
               id: betweenProduct.id,
