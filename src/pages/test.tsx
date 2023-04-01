@@ -2,7 +2,7 @@ import Head from 'next/head';
 import Layout from '~/layout/Layout';
 import { type Product, type Image as ProductImage } from '@prisma/client';
 import ProductForm from '~/components/ProductForm';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { api } from '~/utils/api';
 import ModalConfirm from '~/components/ModalConfirm';
 import Image from 'next/image';
@@ -12,6 +12,14 @@ import {
   type DroppableProvided,
 } from 'react-beautiful-dnd';
 import { StrictModeDroppable as Droppable } from '~/helpers/DroppableStrictMode';
+import Error from 'next/error';
+import { ChatContext } from '~/context/ChatBubbles';
+
+// Define the action types
+enum ActionType {
+  ADD_MESSAGE = 'ADD_MESSAGE',
+  REMOVE_MESSAGE = 'REMOVE_MESSAGE',
+}
 
 const Test = () => {
   const [isAnyCheckboxSelected, setIsAnyCheckboxSelected] = useState(false);
@@ -22,6 +30,33 @@ const Test = () => {
     column: 'priority',
     reverse: false,
   });
+  const { stateMessages, dispatchMessage } = useContext(ChatContext);
+
+  const handleAddMessage = ({
+    message,
+    type,
+  }: {
+    message: string;
+    type: string;
+  }) => {
+    let id: number;
+    if (stateMessages.messages.length === 0) id = 0;
+    else {
+      id = stateMessages.messages[stateMessages.messages.length - 1]?.id || -1;
+      if (id === -1) {
+        return;
+      }
+    }
+    dispatchMessage({
+      payload: {
+        id: id + 1,
+        text: message,
+        type: type,
+      },
+      type: ActionType.ADD_MESSAGE,
+    });
+  };
+
   const [products, setProducts] = useState<
     (Product & {
       primaryImage: ProductImage;
@@ -407,6 +442,22 @@ const Test = () => {
               </thead>
               <DragDropContext
                 onDragEnd={(result) => {
+                  if (
+                    orderedOptions.column !== 'priority' ||
+                    orderedOptions.reverse
+                  ) {
+                    handleAddMessage({
+                      message:
+                        'Tiene que estar ordenado por prioridad y descendentemente',
+                      type: 'error',
+                    });
+                    throw new Error({
+                      title:
+                        'Tiene que estar ordenado por prioridad y descendentemente',
+                      statusCode: 1002,
+                    });
+                  }
+
                   if (
                     result.destination &&
                     products &&

@@ -4,7 +4,7 @@ import { SessionProvider } from 'next-auth/react';
 import { Analytics } from '@vercel/analytics/react';
 
 import { api } from '~/utils/api';
-
+import ChatBubblesProvider from '~/context/ChatBubbles';
 import '~/styles/globals.css';
 
 const MyApp: AppType<{ session: Session | null }> = ({
@@ -14,7 +14,9 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <SessionProvider session={session}>
       <Analytics mode={'production'} />
-      <Component {...pageProps} />
+      <ChatBubblesProvider>
+        <Component {...pageProps} />
+      </ChatBubblesProvider>
     </SessionProvider>
   );
 };
