@@ -458,12 +458,7 @@ const Test = () => {
                     });
                   }
 
-                  if (
-                    result.destination &&
-                    products &&
-                    orderedOptions.column === 'priority' &&
-                    !orderedOptions.reverse
-                  ) {
+                  if (result.destination && products) {
                     const sourceProductPriority =
                       products[result.source.index]?.priority;
                     const targetProductPriority =
@@ -487,8 +482,11 @@ const Test = () => {
                         {
                           onSuccess: () => {
                             handleAddMessage({
-                              message:
-                                'Tiene que estar ordenado por prioridad y descendentemente',
+                              message: `Se ha colocado "${
+                                products[result.source.index]?.name
+                              }" luego de "${
+                                products[result.destination?.index || 0]?.name
+                              }"`,
                               type: 'succes',
                             });
                           },
@@ -503,8 +501,11 @@ const Test = () => {
                         {
                           onSuccess: () => {
                             handleAddMessage({
-                              message:
-                                'Tiene que estar ordenado por prioridad y descendentemente',
+                              message: `Se ha colocado "${
+                                products[result.source.index]?.name
+                              }" luego de "${
+                                products[result.destination?.index || 0]?.name
+                              }"`,
                               type: 'succes',
                             });
                           },
