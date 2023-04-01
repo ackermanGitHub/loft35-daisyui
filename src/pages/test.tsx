@@ -464,10 +464,6 @@ const Test = () => {
                     orderedOptions.column === 'priority' &&
                     !orderedOptions.reverse
                   ) {
-                    console.log('onDragEnd', {
-                      result: result,
-                    });
-
                     const sourceProductPriority =
                       products[result.source.index]?.priority;
                     const targetProductPriority =
@@ -477,26 +473,43 @@ const Test = () => {
                     const targetProductId =
                       products[result.destination.index]?.id;
 
-                    console.log('onDragEnd', {
-                      sourceProductPriority,
-                      targetProductPriority,
-                    });
-
                     if (!sourceProductPriority || !targetProductPriority)
                       return;
 
                     if (!sourceProductId || !targetProductId) return;
 
                     if (sourceProductPriority < targetProductPriority) {
-                      changePriorityUp.mutate({
-                        productId: sourceProductId,
-                        targetId: targetProductId,
-                      });
+                      changePriorityUp.mutate(
+                        {
+                          productId: sourceProductId,
+                          targetId: targetProductId,
+                        },
+                        {
+                          onSuccess: () => {
+                            handleAddMessage({
+                              message:
+                                'Tiene que estar ordenado por prioridad y descendentemente',
+                              type: 'succes',
+                            });
+                          },
+                        }
+                      );
                     } else if (sourceProductPriority > targetProductPriority) {
-                      changePriorityDown.mutate({
-                        productId: sourceProductId,
-                        targetId: targetProductId,
-                      });
+                      changePriorityDown.mutate(
+                        {
+                          productId: sourceProductId,
+                          targetId: targetProductId,
+                        },
+                        {
+                          onSuccess: () => {
+                            handleAddMessage({
+                              message:
+                                'Tiene que estar ordenado por prioridad y descendentemente',
+                              type: 'succes',
+                            });
+                          },
+                        }
+                      );
                     }
 
                     const modifiedProducts = products;
