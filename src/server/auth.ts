@@ -5,12 +5,10 @@ import {
   type DefaultSession,
 } from 'next-auth';
 import DiscordProvider from 'next-auth/providers/discord';
-import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { env } from '~/env.mjs';
 import { prisma } from '~/server/db';
-import Error from 'next/error';
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -58,35 +56,6 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
-    }),
-    CredentialsProvider({
-      name: 'Loft35-Provider',
-      credentials: {
-        email: {
-          type: 'email',
-          label: 'label de email',
-          placeholder: 'email',
-        },
-        password: {
-          type: 'password',
-          label: 'label de password',
-          placeholder: 'password',
-        },
-      },
-      async authorize(credentials, _req) {
-        const user = await prisma.user.findUnique({
-          where: {
-            email: credentials?.email,
-          },
-        });
-        if (!user) {
-          throw new Error({
-            statusCode: 401,
-            title: 'No se encontró el usuario solicitado',
-          });
-        }
-        return user;
-      },
     }),
     /**
      * ...add more providers here.
