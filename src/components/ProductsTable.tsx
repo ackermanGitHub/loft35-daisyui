@@ -95,7 +95,7 @@ enum ActionType {
   REMOVE_MESSAGE = 'REMOVE_MESSAGE',
 }
 
-const ProductTable: React.FC<IProps> = ({
+const ProductsTable: React.FC<IProps> = ({
   productsData,
   setProductsData,
   refetchProducts,
@@ -451,7 +451,7 @@ const ProductTable: React.FC<IProps> = ({
               }
             }}
           >
-            <Droppable droppableId="productTable">
+            <Droppable droppableId="productsTable">
               {(provided: DroppableProvided) => (
                 <tbody {...provided.droppableProps} ref={provided.innerRef}>
                   {productsData?.map((product, index) => {
@@ -483,7 +483,7 @@ const ProductTable: React.FC<IProps> = ({
                                   width: '14px',
                                   height: '14px',
                                   display: 'block',
-                                  fill: 'inherit',
+                                  fill: 'currentColor',
                                   flexShrink: '0',
                                   backfaceVisibility: 'hidden',
                                 }}
@@ -819,4 +819,4 @@ const ProductTable: React.FC<IProps> = ({
   );
 };
 
-export default ProductTable;
+export default ProductsTable;

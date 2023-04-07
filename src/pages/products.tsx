@@ -3,7 +3,7 @@ import Head from 'next/head';
 import { type Product, type Image as ProductImage } from '@prisma/client';
 import { api } from '~/utils/api';
 import Layout from '~/layout/Layout';
-import ProductTable from '~/components/ProductTable';
+import ProductsTable from '~/components/ProductsTable';
 
 const Products = () => {
   const [isAnyCheckboxSelected, setIsAnyCheckboxSelected] = useState(false);
@@ -158,7 +158,7 @@ const Products = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
-        <ProductTable
+        <ProductsTable
           productsData={products ?? []}
           setProductsData={setProducts}
           refetchProducts={() => {
