@@ -3,11 +3,11 @@ import { createTRPCRouter, publicProcedure } from '../trpc';
 
 export const productUpdateRouter = createTRPCRouter({
   updateName: publicProcedure
-    .input(z.object({ productID: z.number(), newName: z.string() }))
+    .input(z.object({ productId: z.number(), newName: z.string() }))
     .mutation(({ ctx, input }) => {
       return ctx.prisma.product.update({
         where: {
-          id: input.productID,
+          id: input.productId,
         },
         data: {
           name: input.newName,
@@ -16,11 +16,11 @@ export const productUpdateRouter = createTRPCRouter({
     }),
 
   updateDescription: publicProcedure
-    .input(z.object({ productID: z.number(), newDescription: z.string() }))
+    .input(z.object({ productId: z.number(), newDescription: z.string() }))
     .mutation(async ({ ctx, input }) => {
       return await ctx.prisma.product.update({
         where: {
-          id: input.productID,
+          id: input.productId,
         },
         data: {
           description: input.newDescription,
@@ -29,11 +29,11 @@ export const productUpdateRouter = createTRPCRouter({
     }),
 
   updatePrice: publicProcedure
-    .input(z.object({ productID: z.number(), newPrice: z.number() }))
+    .input(z.object({ productId: z.number(), newPrice: z.number() }))
     .mutation(async ({ ctx, input }) => {
       return await ctx.prisma.product.update({
         where: {
-          id: input.productID,
+          id: input.productId,
         },
         data: {
           price: input.newPrice,
@@ -42,11 +42,11 @@ export const productUpdateRouter = createTRPCRouter({
     }),
 
   updateCategory: publicProcedure
-    .input(z.object({ productID: z.number(), newCategory: z.string() }))
+    .input(z.object({ productId: z.number(), newCategory: z.string() }))
     .mutation(async ({ ctx, input }) => {
       return await ctx.prisma.product.update({
         where: {
-          id: input.productID,
+          id: input.productId,
         },
         data: {
           categoryName: input.newCategory,
@@ -55,11 +55,11 @@ export const productUpdateRouter = createTRPCRouter({
     }),
 
   updateStock: publicProcedure
-    .input(z.object({ productID: z.number(), newStock: z.number() }))
+    .input(z.object({ productId: z.number(), newStock: z.number() }))
     .mutation(async ({ ctx, input }) => {
       return await ctx.prisma.product.update({
         where: {
-          id: input.productID,
+          id: input.productId,
         },
         data: {
           stock: input.newStock,

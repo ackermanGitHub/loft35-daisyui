@@ -13,11 +13,11 @@ const s3 = new S3({
 
 export const productRouter = createTRPCRouter({
   delete: publicProcedure
-    .input(z.object({ productID: z.number() }))
+    .input(z.object({ productId: z.number() }))
     .query(({ ctx, input }) => {
       return ctx.prisma.product.update({
         where: {
-          id: input.productID,
+          id: input.productId,
         },
         data: {
           deleted: true,
@@ -26,12 +26,12 @@ export const productRouter = createTRPCRouter({
     }),
 
   deleteMany: publicProcedure
-    .input(z.object({ productIDs: z.array(z.number()) }))
+    .input(z.object({ productIds: z.array(z.number()) }))
     .mutation(({ ctx, input }) => {
       return ctx.prisma.product.updateMany({
         where: {
           id: {
-            in: input.productIDs,
+            in: input.productIds,
           },
         },
         data: {
@@ -41,16 +41,16 @@ export const productRouter = createTRPCRouter({
     }),
 
   toggleActive: publicProcedure
-    .input(z.object({ productID: z.number() }))
+    .input(z.object({ productId: z.number() }))
     .mutation(async ({ ctx, input }) => {
       const currentState = await ctx.prisma.product.findFirst({
         where: {
-          id: input.productID,
+          id: input.productId,
         },
       });
       return await ctx.prisma.product.update({
         where: {
-          id: input.productID,
+          id: input.productId,
         },
         data: {
           active: !currentState?.active,
@@ -59,11 +59,11 @@ export const productRouter = createTRPCRouter({
     }),
 
   setActive: publicProcedure
-    .input(z.object({ productID: z.number(), active: z.boolean() }))
+    .input(z.object({ productId: z.number(), active: z.boolean() }))
     .mutation(async ({ ctx, input }) => {
       return await ctx.prisma.product.update({
         where: {
-          id: input.productID,
+          id: input.productId,
         },
         data: {
           active: input.active,
@@ -72,11 +72,11 @@ export const productRouter = createTRPCRouter({
     }),
 
   get: publicProcedure
-    .input(z.object({ productID: z.number() }))
+    .input(z.object({ productId: z.number() }))
     .query(({ ctx, input }) => {
       return ctx.prisma.product.findUnique({
         where: {
-          id: input.productID,
+          id: input.productId,
         },
       });
     }),

@@ -1,102 +1,119 @@
-import { type Product, type Image as ProductImage } from '@prisma/client';
-import ProductForm from './ProductForm';
-import { useEffect, useState } from 'react';
-import { api } from '~/utils/api';
-import ModalConfirm from './ModalConfirm';
+import { useContext, useEffect } from 'react';
 import Image from 'next/image';
+import Error from 'next/error';
+import {
+  type Category,
+  type Product,
+  type Image as ProductImage,
+} from '@prisma/client';
+import ProductForm from '~/components/ProductForm';
+import ModalConfirm from '~/components/ModalConfirm';
+import {
+  DragDropContext,
+  Draggable,
+  type DroppableProvided,
+} from 'react-beautiful-dnd';
+import { StrictModeDroppable as Droppable } from '~/helpers/DroppableStrictMode';
+import { ChatContext } from '~/context/ChatBubbles';
 
-const ProductTable: React.FC = () => {
-  const [isAnyCheckboxSelected, setIsAnyCheckboxSelected] = useState(false);
-  const [orderedOptions, setOrderedOptions] = useState<{
-    column: string;
-    reverse: boolean;
-  }>();
-  const [products, setProducts] = useState<
-    (Product & {
+interface IProps {
+  categoriesData: Category[];
+  productsData: (Product & {
+    primaryImage: ProductImage;
+  })[];
+  setProductsData: (
+    products: (Product & {
       primaryImage: ProductImage;
     })[]
-  >();
-  const [editInputProperties, setEditInputProperties] = useState({
-    left: 0,
-    top: 0,
-    width: 0,
-    height: 0,
-    active: false,
-    value: '',
-    productID: -1,
-    type: '',
-    column: '',
-  });
+  ) => void;
+  refetchProducts: () => void;
+  isProductsLoading: boolean;
+  orderedOptions: {
+    column: string;
+    reverse: boolean;
+  };
+  setOrderedOptions: (orderedOptions: {
+    column: string;
+    reverse: boolean;
+  }) => void;
+  deleteProducts: ({ productIds }: { productIds: number[] }) => void;
+  updateName: (productId: number) => void;
+  updatePrice: (productId: number) => void;
+  updateStock: (productId: number) => void;
+  changePriorityUp: ({
+    productId,
+    targetId,
+  }: {
+    productId: number;
+    targetId: number;
+  }) => void;
+  changePriorityDown: ({
+    productId,
+    targetId,
+  }: {
+    productId: number;
+    targetId: number;
+  }) => void;
+  toggleActive: ({
+    productId,
+    active,
+  }: {
+    productId: number;
+    active: boolean;
+  }) => void;
+  isAnyProductSelected: boolean;
+  setIsAnyProductSelected: (isAnyProductSelected: boolean) => void;
+  editInputProperties: {
+    left: number;
+    top: number;
+    width: number;
+    height: number;
+    active: boolean;
+    value: string;
+    productId: number;
+    type: string;
+    column: string;
+  };
+  setEditInputProperties: (editInputProperties: {
+    left: number;
+    top: number;
+    width: number;
+    height: number;
+    active: boolean;
+    value: string;
+    productId: number;
+    type: string;
+    column: string;
+  }) => void;
+}
 
-  const {
-    data: productsData,
-    refetch: refetchProducts,
-    isLoading: isProductsLoading,
-  } = api.product.getAll.useQuery(undefined, {
-    onSuccess: (data) => {
-      if (orderedOptions) {
-        switch (orderedOptions.column) {
-          case 'name':
-            setProducts(data.sort((a, b) => a.name.localeCompare(b.name)));
-            break;
-          case 'category':
-            setProducts(
-              data.sort((a, b) => a.categoryName.localeCompare(b.categoryName))
-            );
-            break;
-          case 'price':
-            setProducts(data.sort((a, b) => a.price - b.price));
-            break;
-          default:
-            if (orderedOptions.reverse) {
-              setProducts(products?.reverse());
-              setOrderedOptions({ ...orderedOptions, reverse: true });
-            }
-            break;
-        }
-      } else {
-        setProducts(data);
-      }
-    },
-  });
+// Define the action types
+enum ActionType {
+  ADD_MESSAGE = 'ADD_MESSAGE',
+  REMOVE_MESSAGE = 'REMOVE_MESSAGE',
+}
 
-  const { data: categoriesData } = api.category.getAll.useQuery();
-
-  const deleteProducts = api.product.deleteMany.useMutation({
-    onSuccess: () => {
-      void refetchProducts();
-    },
-  });
-
-  const updateName = api.updateProduct.updateName.useMutation({
-    onSuccess: () => {
-      void refetchProducts();
-    },
-  });
-
-  const updatePrice = api.updateProduct.updatePrice.useMutation({
-    onSuccess: () => {
-      void refetchProducts();
-    },
-  });
-
-  const updateStock = api.updateProduct.updateStock.useMutation({
-    onSuccess: () => {
-      void refetchProducts();
-    },
-  });
-
-  // const updateCategory = api.updateProduct.updateCategory.useMutation({
-  //   onSuccess: () => {
-  //     void refetchProducts();
-  //   },
-  // });
-
-  const toggleActive = api.product.setActive.useMutation({
-    onSuccess: () => {
-      void refetchProducts();
-    },
-  });
+const ProductTable: React.FC<IProps> = ({
+  productsData,
+  setProductsData,
+  refetchProducts,
+  isProductsLoading,
+  orderedOptions,
+  setOrderedOptions,
+  categoriesData,
+  deleteProducts,
+  updateName,
+  updatePrice,
+  updateStock,
+  changePriorityUp,
+  changePriorityDown,
+  toggleActive,
+  isAnyProductSelected,
+  setIsAnyProductSelected,
+  editInputProperties,
+  setEditInputProperties,
+}) => {
+  const { dispatchMessage } = useContext(ChatContext);
 
   useEffect(() => {
     const selectCheckbox = document.getElementById(
@@ -110,8 +127,8 @@ const ProductTable: React.FC = () => {
     ) as NodeListOf<HTMLInputElement>;
 
     togglesActives.forEach((toggle, index) => {
-      if (products && products[index] && !isProductsLoading) {
-        toggle.checked = products[index]?.active || toggle.checked;
+      if (productsData && productsData[index] && !isProductsLoading) {
+        toggle.checked = productsData[index]?.active || toggle.checked;
       }
     });
 
@@ -119,17 +136,17 @@ const ProductTable: React.FC = () => {
       checkboxes.forEach((checkBox) => {
         checkBox.checked = selectCheckbox.checked;
       });
-      setIsAnyCheckboxSelected(selectCheckbox.checked);
+      setIsAnyProductSelected(selectCheckbox.checked);
     });
 
     checkboxes.forEach((checkBox) => {
       checkBox.addEventListener('change', () => {
-        setIsAnyCheckboxSelected(
+        setIsAnyProductSelected(
           Array.from(checkboxes).some((checkbox) => checkbox.checked)
         );
       });
     });
-  }, [isProductsLoading, products]);
+  }, [isProductsLoading, productsData]);
 
   return (
     <div>
@@ -171,15 +188,15 @@ const ProductTable: React.FC = () => {
               <th>Producto</th>
               <th
                 onClick={() => {
-                  if (orderedOptions?.column === 'category') {
+                  if (orderedOptions.column === 'category') {
                     setOrderedOptions({
                       column: 'category',
-                      reverse: !orderedOptions?.reverse,
+                      reverse: !orderedOptions.reverse,
                     });
-                    setProducts(products?.reverse());
+                    setProductsData(productsData?.reverse());
                   } else {
-                    setProducts(
-                      products?.sort((a, b) =>
+                    setProductsData(
+                      productsData?.sort((a, b) =>
                         a.categoryName.localeCompare(b.categoryName)
                       )
                     );
@@ -192,7 +209,7 @@ const ProductTable: React.FC = () => {
               >
                 <div className="flex justify-between ">
                   Categoría
-                  {orderedOptions?.column === 'category' && (
+                  {orderedOptions.column === 'category' && (
                     <span className="swap swap-rotate">
                       <svg
                         viewBox="0 0 30 30"
@@ -213,15 +230,15 @@ const ProductTable: React.FC = () => {
               <th>Disponibles</th>
               <th
                 onClick={() => {
-                  if (orderedOptions?.column === 'name') {
+                  if (orderedOptions.column === 'name') {
                     setOrderedOptions({
                       column: 'name',
-                      reverse: !orderedOptions?.reverse,
+                      reverse: !orderedOptions.reverse,
                     });
-                    setProducts(products?.reverse());
+                    setProductsData(productsData?.reverse());
                   } else {
-                    setProducts(
-                      products?.sort((a, b) => a.name.localeCompare(b.name))
+                    setProductsData(
+                      productsData?.sort((a, b) => a.name.localeCompare(b.name))
                     );
                     setOrderedOptions({
                       column: 'name',
@@ -232,7 +249,7 @@ const ProductTable: React.FC = () => {
               >
                 <div className="flex justify-between ">
                   Nombre
-                  {orderedOptions?.column === 'name' && (
+                  {orderedOptions.column === 'name' && (
                     <span className="swap swap-rotate">
                       <svg
                         viewBox="0 0 30 30"
@@ -252,14 +269,16 @@ const ProductTable: React.FC = () => {
               </th>
               <th
                 onClick={() => {
-                  if (orderedOptions?.column === 'price') {
+                  if (orderedOptions.column === 'price') {
                     setOrderedOptions({
                       column: 'price',
-                      reverse: !orderedOptions?.reverse,
+                      reverse: !orderedOptions.reverse,
                     });
-                    setProducts(products?.reverse());
+                    setProductsData(productsData?.reverse());
                   } else {
-                    setProducts(products?.sort((a, b) => a.price - b.price));
+                    setProductsData(
+                      productsData?.sort((a, b) => a.price - b.price)
+                    );
                     setOrderedOptions({
                       column: 'price',
                       reverse: false,
@@ -269,7 +288,7 @@ const ProductTable: React.FC = () => {
               >
                 <div className="flex justify-between ">
                   Precio
-                  {orderedOptions?.column === 'price' && (
+                  {orderedOptions.column === 'price' && (
                     <span className="swap swap-rotate">
                       <svg
                         viewBox="0 0 30 30"
@@ -289,14 +308,16 @@ const ProductTable: React.FC = () => {
               </th>
               <th
                 onClick={() => {
-                  if (orderedOptions?.column === 'stock') {
+                  if (orderedOptions.column === 'stock') {
                     setOrderedOptions({
                       column: 'stock',
-                      reverse: !orderedOptions?.reverse,
+                      reverse: !orderedOptions.reverse,
                     });
-                    setProducts(products?.reverse());
+                    setProductsData(productsData?.reverse());
                   } else {
-                    setProducts(products?.sort((a, b) => a.stock - b.stock));
+                    setProductsData(
+                      productsData?.sort((a, b) => a.stock - b.stock)
+                    );
                     setOrderedOptions({
                       column: 'stock',
                       reverse: false,
@@ -306,7 +327,7 @@ const ProductTable: React.FC = () => {
               >
                 <div className="flex justify-between ">
                   Cantidad
-                  {orderedOptions?.column === 'stock' && (
+                  {orderedOptions.column === 'stock' && (
                     <span className="swap swap-rotate">
                       <svg
                         viewBox="0 0 30 30"
@@ -326,15 +347,15 @@ const ProductTable: React.FC = () => {
               </th>
               <th
                 onClick={() => {
-                  if (orderedOptions?.column === 'priority') {
+                  if (orderedOptions.column === 'priority') {
                     setOrderedOptions({
                       column: 'priority',
-                      reverse: !orderedOptions?.reverse,
+                      reverse: !orderedOptions.reverse,
                     });
-                    setProducts(products?.reverse());
+                    setProductsData(productsData?.reverse());
                   } else {
-                    setProducts(
-                      products?.sort((a, b) => a.priority - b.priority)
+                    setProductsData(
+                      productsData?.sort((a, b) => a.priority - b.priority)
                     );
                     setOrderedOptions({
                       column: 'priority',
@@ -345,7 +366,7 @@ const ProductTable: React.FC = () => {
               >
                 <div className="flex justify-between ">
                   Prioridad
-                  {orderedOptions?.column === 'priority' && (
+                  {orderedOptions.column === 'priority' && (
                     <span className="swap swap-rotate">
                       <svg
                         viewBox="0 0 30 30"
@@ -365,295 +386,348 @@ const ProductTable: React.FC = () => {
               </th>
             </tr>
           </thead>
-          <tbody>
-            {/* rows */}
-            {products?.map((product) => {
-              return (
-                <tr key={product.id}>
-                  <th>
-                    <label>
-                      <input
-                        type="checkbox"
-                        className="checkbox select-checkbox-group"
-                      />
-                    </label>
-                  </th>
-                  <td>
-                    <div className="flex items-center space-x-3">
-                      <div className="avatar">
-                        <div className="mask mask-squircle w-12 h-12">
-                          <Image
-                            src={product.primaryImage.url}
-                            alt="Avatar Tailwind CSS Component"
-                            width={48}
-                            height={48}
-                          />
-                        </div>
-                      </div>
-                      <div className="w-full">
-                        <div className="font-bold">{product.name}</div>
-                        <div className="flex justify-around items-center flex-row">
-                          <div className="text-sm opacity-50">
-                            ${product.price}
-                          </div>
-                          <div
-                            className={`badge badge-sm text-sm badge-${
-                              product.active ? 'success' : 'warning'
-                            } gap-2`}
+          <DragDropContext
+            onDragEnd={(result) => {
+              if (
+                orderedOptions.column !== 'priority' ||
+                orderedOptions.reverse
+              ) {
+                dispatchMessage({
+                  payload: {
+                    text: 'Tiene que estar ordenado por prioridad y descendentemente',
+                    type: 'error',
+                  },
+                  type: ActionType.ADD_MESSAGE,
+                });
+                throw new Error({
+                  title:
+                    'Tiene que estar ordenado por prioridad y descendentemente',
+                  statusCode: 1002,
+                });
+              }
+
+              if (result.destination && productsData) {
+                const sourceProductPriority =
+                  productsData[result.source.index]?.priority;
+                const targetProductPriority =
+                  productsData[result.destination.index]?.priority;
+
+                const sourceProductId = productsData[result.source.index]?.id;
+                const targetProductId =
+                  productsData[result.destination.index]?.id;
+
+                if (!sourceProductPriority || !targetProductPriority) return;
+
+                if (!sourceProductId || !targetProductId) return;
+
+                if (sourceProductPriority < targetProductPriority) {
+                  changePriorityUp({
+                    productId: sourceProductId,
+                    targetId: targetProductId,
+                  });
+                } else if (sourceProductPriority > targetProductPriority) {
+                  changePriorityDown({
+                    productId: sourceProductId,
+                    targetId: targetProductId,
+                  });
+                }
+
+                const modifiedProducts = productsData;
+                const reorderedProduct = modifiedProducts.splice(
+                  result.source.index,
+                  1
+                );
+                if (!reorderedProduct[0]) return;
+                modifiedProducts.splice(
+                  result.destination.index,
+                  0,
+                  reorderedProduct[0]
+                );
+                setProductsData(modifiedProducts);
+              }
+            }}
+          >
+            <Droppable droppableId="productTable">
+              {(provided: DroppableProvided) => (
+                <tbody {...provided.droppableProps} ref={provided.innerRef}>
+                  {productsData?.map((product, index) => {
+                    return (
+                      <Draggable
+                        key={product.id}
+                        draggableId={product.id.toString()}
+                        index={index}
+                      >
+                        {(provided) => (
+                          <tr
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            ref={provided.innerRef}
                           >
-                            {product.active ? 'active' : 'disabled'}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="relative">
-                    <div className="flex justify-between items-center w-24">
-                      <select
-                        onChange={(e) => {
-                          if (e.target.value === 'Añadir') {
-                            setEditInputProperties({
-                              ...editInputProperties,
-                              value: e.target.value,
-                            });
-                            return;
-                          }
-                          setEditInputProperties({
-                            ...editInputProperties,
-                            active: false,
-                            productID: product.id,
-                            column: 'category',
-                            type: 'text',
-                            value: e.target.value,
-                          });
-                        }}
-                        value={product.categoryId}
-                        className="select w-full h-[75px] absolute inset-0"
-                      >
-                        {categoriesData?.map((category) => (
-                          <option key={category.id} value={category.id}>
-                            {category.name}
-                          </option>
-                        ))}
-                        <option
-                          onClick={() => {
-                            console.log(
-                              'El usuario quiere cambiar la categoría'
-                            );
-                          }}
-                          value={'Añadir'}
-                          className="btn"
-                        >
-                          + Añadir
-                        </option>
-                      </select>
-                    </div>
-                  </td>
-                  <td>
-                    <input
-                      type="checkbox"
-                      className="toggle toggle-active"
-                      defaultChecked={product.active}
-                      onChange={() => {
-                        toggleActive.mutate({
-                          productID: product.id,
-                          active: !product.active,
-                        });
-                      }}
-                    />
-                  </td>
-                  <th>
-                    <div className="flex justify-between">
-                      <p
-                        onClick={(event) => {
-                          event.preventDefault();
-                          event.stopPropagation();
-                          const target = event.currentTarget as HTMLSpanElement;
-                          const parent =
-                            target.parentElement as HTMLTableCellElement;
-                          const grandParent =
-                            parent.parentElement as HTMLTableCellElement;
+                            <th>
+                              <label>
+                                <input
+                                  type="checkbox"
+                                  className="checkbox select-checkbox-group"
+                                />
+                              </label>
+                            </th>
+                            <td>
+                              <div className="flex items-center space-x-3">
+                                <div className="avatar">
+                                  <div className="mask mask-squircle w-12 h-12">
+                                    <Image
+                                      src={product.primaryImage.url}
+                                      alt="Avatar Tailwind CSS Component"
+                                      width={48}
+                                      height={48}
+                                    />
+                                  </div>
+                                </div>
+                                <div className="w-full">
+                                  <div className="font-bold">
+                                    {product.name}
+                                  </div>
+                                  <div className="flex justify-around items-center flex-row">
+                                    <div className="text-sm opacity-50">
+                                      ${product.price}
+                                    </div>
+                                    <div
+                                      className={`badge badge-sm text-sm badge-${
+                                        product.active ? 'success' : 'warning'
+                                      } gap-2`}
+                                    >
+                                      {product.active ? 'active' : 'disabled'}
+                                    </div>
+                                    <div
+                                      className={`badge badge-sm text-sm badge-info gap-2`}
+                                    >
+                                      {product.id}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="relative">
+                              <div className="flex justify-between items-center w-24">
+                                <select
+                                  onChange={(e) => {
+                                    if (e.target.value === 'Añadir') {
+                                      setEditInputProperties({
+                                        ...editInputProperties,
+                                        value: e.target.value,
+                                      });
+                                      return;
+                                    }
+                                    setEditInputProperties({
+                                      ...editInputProperties,
+                                      active: false,
+                                      productId: product.id,
+                                      column: 'category',
+                                      type: 'text',
+                                      value: e.target.value,
+                                    });
+                                  }}
+                                  value={product.categoryId}
+                                  className="select w-full h-[75px] absolute inset-0"
+                                >
+                                  {categoriesData?.map((category) => (
+                                    <option
+                                      key={category.id}
+                                      value={category.id}
+                                    >
+                                      {category.name}
+                                    </option>
+                                  ))}
+                                  <option
+                                    onClick={() => {
+                                      console.log(
+                                        'El usuario quiere cambiar la categoría'
+                                      );
+                                    }}
+                                    value={'Añadir'}
+                                    className="btn"
+                                  >
+                                    + Añadir
+                                  </option>
+                                </select>
+                              </div>
+                            </td>
+                            <td>
+                              <input
+                                type="checkbox"
+                                className="toggle toggle-active"
+                                defaultChecked={product.active}
+                                onChange={() => {
+                                  toggleActive({
+                                    productId: product.id,
+                                    active: !product.active,
+                                  });
+                                }}
+                              />
+                            </td>
+                            <th>
+                              <div className="flex justify-between">
+                                <p
+                                  onClick={(event) => {
+                                    event.preventDefault();
+                                    event.stopPropagation();
+                                    const target =
+                                      event.currentTarget as HTMLSpanElement;
+                                    const parent =
+                                      target.parentElement as HTMLTableCellElement;
+                                    const grandParent =
+                                      parent.parentElement as HTMLTableCellElement;
 
-                          const position = {
-                            x: grandParent?.offsetLeft,
-                            y: grandParent?.offsetTop,
-                          };
-                          const size = {
-                            width: grandParent?.offsetWidth,
-                            height: grandParent?.offsetHeight,
-                          };
+                                    const position = {
+                                      x: grandParent?.offsetLeft,
+                                      y: grandParent?.offsetTop,
+                                    };
+                                    const size = {
+                                      width: grandParent?.offsetWidth,
+                                      height: grandParent?.offsetHeight,
+                                    };
 
-                          setEditInputProperties({
-                            left: position.x,
-                            top: position.y,
-                            height: size.height,
-                            width: size.width,
-                            value: product.name,
-                            active: true,
-                            productID: product.id,
-                            type: 'text',
-                            column: 'name',
-                          });
-                        }}
-                      >
-                        {product.name}
-                      </p>
-                      {editInputProperties.active &&
-                        editInputProperties.productID === product.id &&
-                        editInputProperties.column === 'name' && (
-                          <div
-                            onClick={() => {
-                              setEditInputProperties({
-                                ...editInputProperties,
-                                active: false,
-                              });
-                              if (product.name === editInputProperties.value)
-                                return;
-                              updateName.mutate({
-                                productID: product.id,
-                                newName: editInputProperties.value,
-                              });
-                              product.name = editInputProperties.value;
-                            }}
-                            className="fixed inset-0 w-[100vw] h-[100vh] opacity-30 stroke-slate-600"
-                          ></div>
+                                    setEditInputProperties({
+                                      left: position.x,
+                                      top: position.y,
+                                      height: size.height,
+                                      width: size.width,
+                                      value: product.name,
+                                      active: true,
+                                      productId: product.id,
+                                      type: 'text',
+                                      column: 'name',
+                                    });
+                                  }}
+                                >
+                                  {product.name}
+                                </p>
+                                {editInputProperties.active &&
+                                  editInputProperties.productId ===
+                                    product.id &&
+                                  editInputProperties.column === 'name' && (
+                                    <div
+                                      onClick={() => {
+                                        updateName(product.id);
+                                      }}
+                                      className="fixed inset-0 w-[100vw] h-[100vh] opacity-30 stroke-slate-600"
+                                    ></div>
+                                  )}
+                              </div>
+                            </th>
+                            <th>
+                              <div className="flex justify-between">
+                                <p
+                                  onClick={(event) => {
+                                    event.preventDefault();
+                                    event.stopPropagation();
+                                    const target =
+                                      event.currentTarget as HTMLSpanElement;
+                                    const parent =
+                                      target.parentElement as HTMLTableCellElement;
+                                    const grandParent =
+                                      parent.parentElement as HTMLTableCellElement;
+
+                                    const position = {
+                                      x: grandParent?.offsetLeft,
+                                      y: grandParent?.offsetTop,
+                                    };
+                                    const size = {
+                                      width: grandParent?.offsetWidth,
+                                      height: grandParent?.offsetHeight,
+                                    };
+
+                                    setEditInputProperties({
+                                      left: position.x,
+                                      top: position.y,
+                                      height: size.height,
+                                      width: size.width,
+                                      value: product.price.toString(),
+                                      active: true,
+                                      productId: product.id,
+                                      type: 'number',
+                                      column: 'price',
+                                    });
+                                  }}
+                                >
+                                  {product.price}
+                                </p>
+                                {editInputProperties.active &&
+                                  editInputProperties.productId ===
+                                    product.id &&
+                                  editInputProperties.column === 'price' && (
+                                    <div
+                                      onClick={() => {
+                                        updatePrice(product.id);
+                                      }}
+                                      className="fixed inset-0 w-[100vw] h-[100vh] opacity-30 stroke-slate-600"
+                                    ></div>
+                                  )}
+                              </div>
+                            </th>
+                            <th>
+                              <div className="flex justify-between">
+                                <p
+                                  onClick={(event) => {
+                                    event.preventDefault();
+                                    event.stopPropagation();
+                                    const target =
+                                      event.currentTarget as HTMLSpanElement;
+                                    const parent =
+                                      target.parentElement as HTMLTableCellElement;
+                                    const grandParent =
+                                      parent.parentElement as HTMLTableCellElement;
+
+                                    const position = {
+                                      x: grandParent?.offsetLeft,
+                                      y: grandParent?.offsetTop,
+                                    };
+                                    const size = {
+                                      width: grandParent?.offsetWidth,
+                                      height: grandParent?.offsetHeight,
+                                    };
+
+                                    setEditInputProperties({
+                                      left: position.x,
+                                      top: position.y,
+                                      height: size.height,
+                                      width: size.width,
+                                      value: product.stock.toString(),
+                                      active: true,
+                                      productId: product.id,
+                                      type: 'number',
+                                      column: 'stock',
+                                    });
+                                  }}
+                                >
+                                  {product.stock}
+                                </p>
+                                {editInputProperties.active &&
+                                  editInputProperties.productId ===
+                                    product.id &&
+                                  editInputProperties.column === 'stock' && (
+                                    <div
+                                      onClick={() => {
+                                        updateStock(product.id);
+                                      }}
+                                      className="fixed inset-0 w-[100vw] h-[100vh] opacity-30 stroke-slate-600"
+                                    ></div>
+                                  )}
+                              </div>
+                            </th>
+                            <th>
+                              <p>{product.priority}</p>
+                            </th>
+                          </tr>
                         )}
-                    </div>
-                  </th>
-                  <th>
-                    <div className="flex justify-between">
-                      <p
-                        onClick={(event) => {
-                          event.preventDefault();
-                          event.stopPropagation();
-                          const target = event.currentTarget as HTMLSpanElement;
-                          const parent =
-                            target.parentElement as HTMLTableCellElement;
-                          const grandParent =
-                            parent.parentElement as HTMLTableCellElement;
-
-                          const position = {
-                            x: grandParent?.offsetLeft,
-                            y: grandParent?.offsetTop,
-                          };
-                          const size = {
-                            width: grandParent?.offsetWidth,
-                            height: grandParent?.offsetHeight,
-                          };
-
-                          setEditInputProperties({
-                            left: position.x,
-                            top: position.y,
-                            height: size.height,
-                            width: size.width,
-                            value: product.price.toString(),
-                            active: true,
-                            productID: product.id,
-                            type: 'number',
-                            column: 'price',
-                          });
-                        }}
-                      >
-                        {product.price}
-                      </p>
-                      {editInputProperties.active &&
-                        editInputProperties.productID === product.id &&
-                        editInputProperties.column === 'price' && (
-                          <div
-                            onClick={() => {
-                              setEditInputProperties({
-                                ...editInputProperties,
-                                active: false,
-                              });
-                              if (
-                                product.price.toString() ===
-                                editInputProperties.value
-                              )
-                                return;
-                              updatePrice.mutate({
-                                productID: product.id,
-                                newPrice: parseInt(editInputProperties.value),
-                              });
-                              product.price = parseInt(
-                                editInputProperties.value
-                              );
-                            }}
-                            className="fixed inset-0 w-[100vw] h-[100vh] opacity-30 stroke-slate-600"
-                          ></div>
-                        )}
-                    </div>
-                  </th>
-                  <th>
-                    <div className="flex justify-between">
-                      <p
-                        onClick={(event) => {
-                          event.preventDefault();
-                          event.stopPropagation();
-                          const target = event.currentTarget as HTMLSpanElement;
-                          const parent =
-                            target.parentElement as HTMLTableCellElement;
-                          const grandParent =
-                            parent.parentElement as HTMLTableCellElement;
-
-                          const position = {
-                            x: grandParent?.offsetLeft,
-                            y: grandParent?.offsetTop,
-                          };
-                          const size = {
-                            width: grandParent?.offsetWidth,
-                            height: grandParent?.offsetHeight,
-                          };
-
-                          setEditInputProperties({
-                            left: position.x,
-                            top: position.y,
-                            height: size.height,
-                            width: size.width,
-                            value: product.stock.toString(),
-                            active: true,
-                            productID: product.id,
-                            type: 'number',
-                            column: 'stock',
-                          });
-                        }}
-                      >
-                        {product.stock}
-                      </p>
-                      {editInputProperties.active &&
-                        editInputProperties.productID === product.id &&
-                        editInputProperties.column === 'stock' && (
-                          <div
-                            onClick={() => {
-                              setEditInputProperties({
-                                ...editInputProperties,
-                                active: false,
-                              });
-                              if (
-                                product.stock.toString() ===
-                                editInputProperties.value
-                              )
-                                return;
-                              updateStock.mutate({
-                                productID: product.id,
-                                newStock: parseInt(editInputProperties.value),
-                              });
-                              product.stock = parseInt(
-                                editInputProperties.value
-                              );
-                            }}
-                            className="fixed inset-0 w-[100vw] h-[100vh] opacity-30 stroke-slate-600"
-                          ></div>
-                        )}
-                    </div>
-                  </th>
-                  <th>
-                    <p>{product.priority}</p>
-                  </th>
-                </tr>
-              );
-            })}
-          </tbody>
-          {/* foot */}
+                      </Draggable>
+                    );
+                  })}
+                  {provided.placeholder}
+                </tbody>
+              )}
+            </Droppable>
+          </DragDropContext>
           <tfoot>
             <tr>
               <th></th>
@@ -693,12 +767,12 @@ const ProductTable: React.FC = () => {
 
               if (!checkedProductsIds || checkedProductsIds?.length === 0)
                 return;
-              deleteProducts.mutate({
-                productIDs: checkedProductsIds,
+              deleteProducts({
+                productIds: checkedProductsIds,
               });
             }}
             okBtnText="Eliminar"
-            isDisabled={!isAnyCheckboxSelected || productsData?.length === 0}
+            isDisabled={!isAnyProductSelected || productsData?.length === 0}
             title="Eliminando!"
             description="Estás segura que deseas eliminar estos productos?"
           >

@@ -19,7 +19,10 @@ enum ActionType {
 // Define the action interfaces
 interface AddMessageAction {
   type: ActionType.ADD_MESSAGE;
-  payload: MessageType;
+  payload: {
+    text: string;
+    type: string;
+  };
 }
 
 interface RemoveMessageAction {
@@ -40,7 +43,10 @@ const MessagesReducer: Reducer<MessagesBubbles, Action> = (state, action) => {
     case ActionType.ADD_MESSAGE: {
       return {
         ...state,
-        messages: [...state.messages, action.payload],
+        messages: [
+          ...state.messages,
+          { ...action.payload, id: state.messages.length },
+        ],
       };
     }
     case ActionType.REMOVE_MESSAGE: {
