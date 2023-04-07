@@ -45,7 +45,10 @@ const MessagesReducer: Reducer<MessagesBubbles, Action> = (state, action) => {
         ...state,
         messages: [
           ...state.messages,
-          { ...action.payload, id: state.messages.length },
+          {
+            ...action.payload,
+            id: (state.messages[state.messages.length - 1]?.id || 1) + 1,
+          },
         ],
       };
     }
