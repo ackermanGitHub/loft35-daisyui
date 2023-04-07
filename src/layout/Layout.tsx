@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { ChatContext } from '~/context/ChatBubbles';
 import Drawer from '~/layout/Drawer';
 
@@ -11,32 +11,32 @@ import Drawer from '~/layout/Drawer';
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { stateMessages } = useContext(ChatContext);
   const [isMessagesShown, setMessagesShown] = useState(false);
-
+  const timeoutId = useRef<NodeJS.Timeout | null>(null);
   useEffect(() => {
     setMessagesShown(true);
-    const foo = setTimeout(() => {
+    if (timeoutId.current) {
+      clearTimeout(timeoutId.current);
+    }
+    timeoutId.current = setTimeout(() => {
       setMessagesShown(false);
     }, 5000);
-    clearTimeout(foo);
   }, [stateMessages]);
-
   return (
     <>
       <Drawer>{children}</Drawer>
-      <div className="chat w-1/2 gap-4 chat-end absolute bottom-20 right-8">
+      <div className="chat w-1/2 gap-4 chat-end absolute bottom-20 right-8 pointer-events-none">
         {stateMessages.messages.map((message) => (
           <div
             key={message.id}
             className={`chat-bubble chat-bubble-${message.type} transition-opacity duration-700`}
             style={{
-              opacity: isMessagesShown ? '50' : '0',
+              opacity: isMessagesShown ? '0.5' : '0',
             }}
           >
-            {message.text}.
+            <p className="opacity-100">{message.text}.</p>
           </div>
         ))}
       </div>
-      {/* This ones are for preloading the chat-bubble themes */}
       <div className="hidden">
         <div className="chat-bubble-error">Teeeest.</div>
         <div className="chat-bubble-warning">Teeeest.</div>
