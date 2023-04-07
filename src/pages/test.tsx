@@ -1,239 +1,48 @@
-import { useEffect, useState } from 'react';
 import Head from 'next/head';
-import { type Product, type Image as ProductImage } from '@prisma/client';
-import { api } from '~/utils/api';
 import Layout from '~/layout/Layout';
-import ProductTable from '~/components/ProductTable';
 
-const Products = () => {
-  const [isAnyCheckboxSelected, setIsAnyCheckboxSelected] = useState(false);
-  const [orderedOptions, setOrderedOptions] = useState<{
-    column: string;
-    reverse: boolean;
-  }>({
-    column: 'priority',
-    reverse: false,
-  });
-
-  const [products, setProducts] = useState<
-    (Product & {
-      primaryImage: ProductImage;
-    })[]
-  >();
-  const [editInputProperties, setEditInputProperties] = useState({
-    left: 0,
-    top: 0,
-    width: 0,
-    height: 0,
-    active: false,
-    value: '',
-    productId: -1,
-    type: '',
-    column: '',
-  });
-
-  const { refetch: refetchProducts, isLoading: isProductsLoading } =
-    api.product.getAll.useQuery(undefined, {
-      onSuccess: (data) => {
-        if (orderedOptions) {
-          switch (orderedOptions.column) {
-            case 'name':
-              setProducts(data.sort((a, b) => a.name.localeCompare(b.name)));
-              break;
-            case 'category':
-              setProducts(
-                data.sort((a, b) =>
-                  a.categoryName.localeCompare(b.categoryName)
-                )
-              );
-              break;
-            case 'price':
-              setProducts(data.sort((a, b) => a.price - b.price));
-              break;
-            case 'priority':
-              setProducts(data.sort((a, b) => a.priority - b.priority));
-              break;
-            default:
-              if (orderedOptions.reverse) {
-                setProducts(products?.reverse());
-                setOrderedOptions({ ...orderedOptions, reverse: true });
-              }
-              break;
-          }
-        } else {
-          setProducts(data);
-        }
-      },
-    });
-
-  const { data: categoriesData } = api.category.getAll.useQuery();
-
-  const deleteProducts = api.product.deleteMany.useMutation({
-    onSuccess: () => {
-      void refetchProducts();
-    },
-  });
-
-  const updateName = api.updateProduct.updateName.useMutation({
-    onSuccess: () => {
-      void refetchProducts();
-    },
-  });
-
-  const updatePrice = api.updateProduct.updatePrice.useMutation({
-    onSuccess: () => {
-      void refetchProducts();
-    },
-  });
-
-  const updateStock = api.updateProduct.updateStock.useMutation({
-    onSuccess: () => {
-      void refetchProducts();
-    },
-  });
-
-  const changePriorityUp = api.updateProduct.changePriorityUp.useMutation({
-    onSuccess: () => {
-      void refetchProducts();
-    },
-  });
-
-  const changePriorityDown = api.updateProduct.changePriorityDown.useMutation({
-    onSuccess: () => {
-      void refetchProducts();
-    },
-  });
-
-  // const updateCategory = api.updateProduct.updateCategory.useMutation({
-  //   onSuccess: () => {
-  //     void refetchProducts();
-  //   },
-  // });
-
-  const toggleActive = api.product.setActive.useMutation({
-    onSuccess: () => {
-      void refetchProducts();
-    },
-  });
-
-  useEffect(() => {
-    const selectCheckbox = document.getElementById(
-      'select-all-checkbox'
-    ) as HTMLInputElement;
-    const checkboxes = document.querySelectorAll(
-      '.select-checkbox-group'
-    ) as NodeListOf<HTMLInputElement>;
-    const togglesActives = document.querySelectorAll(
-      '.toggle-active'
-    ) as NodeListOf<HTMLInputElement>;
-
-    togglesActives.forEach((toggle, index) => {
-      if (products && products[index] && !isProductsLoading) {
-        toggle.checked = products[index]?.active || toggle.checked;
-      }
-    });
-
-    selectCheckbox.addEventListener('click', () => {
-      checkboxes.forEach((checkBox) => {
-        checkBox.checked = selectCheckbox.checked;
-      });
-      setIsAnyCheckboxSelected(selectCheckbox.checked);
-    });
-
-    checkboxes.forEach((checkBox) => {
-      checkBox.addEventListener('change', () => {
-        setIsAnyCheckboxSelected(
-          Array.from(checkboxes).some((checkbox) => checkbox.checked)
-        );
-      });
-    });
-  }, [isProductsLoading, products]);
-
+const Tests = () => {
   return (
     <>
       <Head>
-        <title>Loft 35 - Products</title>
+        <title>Loft 35 - Tests</title>
         <meta name="description" content="Loft-35 Store" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
-        <ProductTable
-          productsData={products ?? []}
-          setProductsData={setProducts}
-          refetchProducts={() => {
-            void refetchProducts();
-          }}
-          isProductsLoading={isAnyCheckboxSelected}
-          orderedOptions={orderedOptions}
-          setOrderedOptions={setOrderedOptions}
-          categoriesData={categoriesData ?? []}
-          deleteProducts={deleteProducts.mutate}
-          updateName={(productId) => {
-            const product = products?.find(
-              (product) => product.id === productId
-            );
-            if (!product) {
-              throw new Error('ProductId no existe');
-            }
-            setEditInputProperties({
-              ...editInputProperties,
-              active: false,
-            });
-            if (product.name === editInputProperties.value) return;
-            updateName.mutate({
-              productId: product.id,
-              newName: editInputProperties.value,
-            });
-            product.name = editInputProperties.value;
-          }}
-          updatePrice={(productId) => {
-            const product = products?.find(
-              (product) => product.id === productId
-            );
-            if (!product) {
-              throw new Error('ProductId no existe');
-            }
-            setEditInputProperties({
-              ...editInputProperties,
-              active: false,
-            });
-            if (product.price.toString() === editInputProperties.value) return;
-            updatePrice.mutate({
-              productId: product.id,
-              newPrice: parseInt(editInputProperties.value),
-            });
-            product.price = parseInt(editInputProperties.value);
-          }}
-          updateStock={(productId) => {
-            const product = products?.find(
-              (product) => product.id === productId
-            );
-            if (!product) {
-              throw new Error('ProductId no existe');
-            }
-            setEditInputProperties({
-              ...editInputProperties,
-              active: false,
-            });
-            if (product.stock.toString() === editInputProperties.value) return;
-            updateStock.mutate({
-              productId: product.id,
-              newStock: parseInt(editInputProperties.value),
-            });
-            product.stock = parseInt(editInputProperties.value);
-          }}
-          changePriorityUp={changePriorityUp.mutate}
-          changePriorityDown={changePriorityDown.mutate}
-          toggleActive={toggleActive.mutate}
-          isAnyProductSelected={isAnyCheckboxSelected}
-          setIsAnyProductSelected={setIsAnyCheckboxSelected}
-          editInputProperties={editInputProperties}
-          setEditInputProperties={setEditInputProperties}
-        />
+        <div className="w-full flex items-center justify-center h-full">
+          <svg
+            fill="currentColor"
+            height="80px"
+            width="80px"
+            version="1.2"
+            baseProfile="tiny"
+            id="progress"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 256 256"
+            xmlSpace="preserve"
+          >
+            <circle id="_x33_" cx="114.5" cy="42.7" r="21.7" />
+            <path
+              id="_x32__12_"
+              d="M34.9,152.5l-0.2-0.2l0,0c-0.9-0.6-1.7-1.1-2.4-1.9l2.4,27.5L4.5,220.7c-4.3,6.2-2.8,14.6,3.2,18.9
+	c6.2,4.3,14.6,2.8,18.9-3.2l32.6-47c1.7-2.4,2.8-5.6,2.4-8.8l-1.1-13.3L34.9,152.5z"
+            />
+            <path
+              id="_x31__15_"
+              d="M124.6,242h129.4l-24.2-75.5c0,0-13.7,3.4-40.8,32.2c-0.6,0.6-1.3,1.3-1.9,1.9l-65.4-37.8
+	c1.1-2.1,1.3-4.5,0.9-7.1l-23.2-86c-1.9-8.4-9.4-14.8-18.2-14.8H37.9c-3.2,0-6.4,1.7-8.2,4.5L8.1,96.9c-2.8,4.5-1.1,10.3,3.4,12.9
+	l24.2,13.9l-3.2,5.4c-3.9,6.4-1.7,14.6,4.9,18.2l54.3,31.3v49.6c0,7.5,6,13.5,13.5,13.5s13.5-6,13.5-13.5v-56.6l60.1,34.8
+	c-12.4,7.1-26.6,8.4-36.7,14.4C129.7,228.2,124.6,242,124.6,242z M40.3,115.8l-15.9-9.2l0,0L43.3,74h21.2L40.3,115.8z M75.2,136
+	l15-26.2l11.2,41.2L75.2,136z"
+            />
+          </svg>
+          <h2 className="card-title">Esta parte está en construcción</h2>
+        </div>
       </Layout>
     </>
   );
 };
 
-export default Products;
+export default Tests;
