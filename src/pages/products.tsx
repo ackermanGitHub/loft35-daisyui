@@ -225,6 +225,9 @@ const Products = () => {
           }}
           changePriorityUp={changePriorityUp.mutate}
           changePriorityDown={changePriorityDown.mutate}
+          changePriorityLoading={
+            changePriorityUp.isLoading || changePriorityDown.isLoading
+          }
           toggleActive={toggleActive.mutate}
           isAnyProductSelected={isAnyCheckboxSelected}
           setIsAnyProductSelected={setIsAnyCheckboxSelected}

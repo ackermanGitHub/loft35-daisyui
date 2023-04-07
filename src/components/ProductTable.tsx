@@ -54,6 +54,8 @@ interface IProps {
     productId: number;
     targetId: number;
   }) => void;
+
+  changePriorityLoading: boolean;
   toggleActive: ({
     productId,
     active,
@@ -107,6 +109,7 @@ const ProductTable: React.FC<IProps> = ({
   updateStock,
   changePriorityUp,
   changePriorityDown,
+  changePriorityLoading,
   toggleActive,
   isAnyProductSelected,
   setIsAnyProductSelected,
@@ -457,6 +460,7 @@ const ProductTable: React.FC<IProps> = ({
                         key={product.id}
                         draggableId={product.id.toString()}
                         index={index}
+                        isDragDisabled={changePriorityLoading}
                       >
                         {(provided) => (
                           <tr
