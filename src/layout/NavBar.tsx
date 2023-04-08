@@ -1,9 +1,11 @@
+import { useSession, signOut } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 const NavBar: React.FC = () => {
   const [currentTheme, setCurrentTheme] = useState('');
+  const session = useSession();
 
   useEffect(() => {
     const prefersDarkMode =
@@ -37,7 +39,9 @@ const NavBar: React.FC = () => {
         </svg>
       </label>
       <div className="flex-1">
-        <Link href="./" className="btn btn-ghost normal-case text-xl">Loft35</Link>
+        <Link href="./" className="btn btn-ghost normal-case text-xl">
+          Loft35
+        </Link>
       </div>
       <label className="swap swap-rotate">
         <input type="checkbox" />
@@ -112,7 +116,7 @@ const NavBar: React.FC = () => {
           <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
             <div className="w-10 rounded-full">
               <Image
-                src="/favicon.ico"
+                src={session.data?.user.image ?? '/favicon.ico'}
                 priority
                 alt="avatar"
                 width={40}
@@ -134,7 +138,13 @@ const NavBar: React.FC = () => {
               <Link href={'/settings'}>Settings</Link>
             </li>
             <li>
-              <a>Logout</a>
+              <a
+                onClick={() => {
+                  void signOut();
+                }}
+              >
+                Logout
+              </a>
             </li>
           </ul>
         </div>
