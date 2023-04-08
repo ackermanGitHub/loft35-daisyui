@@ -5,6 +5,7 @@ import { api } from '~/utils/api';
 import Layout from '~/layout/Layout';
 import ProductsTable from '~/components/ProductsTable';
 import ProductsCardScroll from '~/components/ProductsCardScroll';
+import SettingsOptions from '~/components/Settings';
 
 const Products = () => {
   const [productsView, setProducstView] = useState<'table' | 'cards'>('table');
@@ -160,7 +161,7 @@ const Products = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
-        <div className="text-end">
+        <div className="flex flex-row justify-end">
           <div className="dropdown dropdown-end">
             <label tabIndex={0} className="btn m-1">
               Vista
@@ -189,6 +190,7 @@ const Products = () => {
               </li>
             </ul>
           </div>
+          <SettingsOptions />
         </div>
         {productsView === 'table' && (
           <ProductsTable

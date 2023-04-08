@@ -135,7 +135,7 @@ const NavBar: React.FC = () => {
               </Link>
             </li>
             <li>
-              <Link href={'/settings'}>Settings</Link>
+              <button>Settings</button>
             </li>
             <li>
               <a
