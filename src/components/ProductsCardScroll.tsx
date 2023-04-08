@@ -9,10 +9,10 @@ interface IProps {
 
 const ProductsCardScroll: React.FC<IProps> = ({ productsData }) => {
   return (
-    <div className="flex items-center flex-col justify-center">
+    <div className="flex flex-wrap items-center justify-around">
       {productsData.map((product) => (
-        <div key={product.id} className="card w-96 glass mt-12">
-          <figure className="relative h-96 w-96">
+        <div key={product.id} className="card w-[45%] glass mt-12">
+          <figure className="relative pb-[100%] w-full">
             <Image fill src={product.imageUrl} alt="car!" />
           </figure>
           <div className="card-body">
