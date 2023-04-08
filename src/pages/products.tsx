@@ -4,8 +4,10 @@ import { type Product, type Image as ProductImage } from '@prisma/client';
 import { api } from '~/utils/api';
 import Layout from '~/layout/Layout';
 import ProductsTable from '~/components/ProductsTable';
+import ProductsCardScroll from '~/components/ProductsCardScroll';
 
 const Products = () => {
+  const [productsView, setProducstView] = useState<'table' | 'cards'>('table');
   const [isAnyCheckboxSelected, setIsAnyCheckboxSelected] = useState(false);
   const [orderedOptions, setOrderedOptions] = useState<{
     column: string;
@@ -158,82 +160,119 @@ const Products = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
-        <ProductsTable
-          productsData={products ?? []}
-          setProductsData={setProducts}
-          refetchProducts={() => {
-            void refetchProducts();
-          }}
-          isProductsLoading={isAnyCheckboxSelected}
-          orderedOptions={orderedOptions}
-          setOrderedOptions={setOrderedOptions}
-          categoriesData={categoriesData ?? []}
-          deleteProducts={deleteProducts.mutate}
-          updateName={(productId) => {
-            const product = products?.find(
-              (product) => product.id === productId
-            );
-            if (!product) {
-              throw new Error('ProductId no existe');
+        <div className="text-end">
+          <div className="dropdown dropdown-end">
+            <label tabIndex={0} className="btn m-1">
+              Vista
+            </label>
+            <ul
+              tabIndex={0}
+              className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
+            >
+              <li>
+                <button
+                  onClick={() => {
+                    setProducstView('table');
+                  }}
+                >
+                  Tabla
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => {
+                    setProducstView('cards');
+                  }}
+                >
+                  Tarjetas
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+        {productsView === 'table' && (
+          <ProductsTable
+            productsData={products ?? []}
+            setProductsData={setProducts}
+            refetchProducts={() => {
+              void refetchProducts();
+            }}
+            isProductsLoading={isAnyCheckboxSelected}
+            orderedOptions={orderedOptions}
+            setOrderedOptions={setOrderedOptions}
+            categoriesData={categoriesData ?? []}
+            deleteProducts={deleteProducts.mutate}
+            updateName={(productId) => {
+              const product = products?.find(
+                (product) => product.id === productId
+              );
+              if (!product) {
+                throw new Error('ProductId no existe');
+              }
+              setEditInputProperties({
+                ...editInputProperties,
+                active: false,
+              });
+              if (product.name === editInputProperties.value) return;
+              updateName.mutate({
+                productId: product.id,
+                newName: editInputProperties.value,
+              });
+              product.name = editInputProperties.value;
+            }}
+            updatePrice={(productId) => {
+              const product = products?.find(
+                (product) => product.id === productId
+              );
+              if (!product) {
+                throw new Error('ProductId no existe');
+              }
+              setEditInputProperties({
+                ...editInputProperties,
+                active: false,
+              });
+              if (product.price.toString() === editInputProperties.value)
+                return;
+              updatePrice.mutate({
+                productId: product.id,
+                newPrice: parseInt(editInputProperties.value),
+              });
+              product.price = parseInt(editInputProperties.value);
+            }}
+            updateStock={(productId) => {
+              const product = products?.find(
+                (product) => product.id === productId
+              );
+              if (!product) {
+                throw new Error('ProductId no existe');
+              }
+              setEditInputProperties({
+                ...editInputProperties,
+                active: false,
+              });
+              if (product.stock.toString() === editInputProperties.value)
+                return;
+              updateStock.mutate({
+                productId: product.id,
+                newStock: parseInt(editInputProperties.value),
+              });
+              product.stock = parseInt(editInputProperties.value);
+            }}
+            changePriorityUp={changePriorityUp.mutate}
+            changePriorityDown={changePriorityDown.mutate}
+            changePriorityLoading={
+              changePriorityUp.isLoading || changePriorityDown.isLoading
             }
-            setEditInputProperties({
-              ...editInputProperties,
-              active: false,
-            });
-            if (product.name === editInputProperties.value) return;
-            updateName.mutate({
-              productId: product.id,
-              newName: editInputProperties.value,
-            });
-            product.name = editInputProperties.value;
-          }}
-          updatePrice={(productId) => {
-            const product = products?.find(
-              (product) => product.id === productId
-            );
-            if (!product) {
-              throw new Error('ProductId no existe');
-            }
-            setEditInputProperties({
-              ...editInputProperties,
-              active: false,
-            });
-            if (product.price.toString() === editInputProperties.value) return;
-            updatePrice.mutate({
-              productId: product.id,
-              newPrice: parseInt(editInputProperties.value),
-            });
-            product.price = parseInt(editInputProperties.value);
-          }}
-          updateStock={(productId) => {
-            const product = products?.find(
-              (product) => product.id === productId
-            );
-            if (!product) {
-              throw new Error('ProductId no existe');
-            }
-            setEditInputProperties({
-              ...editInputProperties,
-              active: false,
-            });
-            if (product.stock.toString() === editInputProperties.value) return;
-            updateStock.mutate({
-              productId: product.id,
-              newStock: parseInt(editInputProperties.value),
-            });
-            product.stock = parseInt(editInputProperties.value);
-          }}
-          changePriorityUp={changePriorityUp.mutate}
-          changePriorityDown={changePriorityDown.mutate}
-          changePriorityLoading={
-            changePriorityUp.isLoading || changePriorityDown.isLoading
-          }
-          toggleActive={toggleActive.mutate}
-          isAnyProductSelected={isAnyCheckboxSelected}
-          setIsAnyProductSelected={setIsAnyCheckboxSelected}
-          editInputProperties={editInputProperties}
-          setEditInputProperties={setEditInputProperties}
-        />
+            toggleActive={toggleActive.mutate}
+            isAnyProductSelected={isAnyCheckboxSelected}
+            setIsAnyProductSelected={setIsAnyCheckboxSelected}
+            editInputProperties={editInputProperties}
+            setEditInputProperties={setEditInputProperties}
+          />
+        )}
+        {productsView === 'cards' && (
+          <ProductsCardScroll productsData={products ?? []} />
+        )}
       </Layout>
     </>
   );
