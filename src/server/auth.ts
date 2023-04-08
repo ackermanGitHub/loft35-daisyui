@@ -10,6 +10,8 @@ import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { env } from '~/env.mjs';
 import { prisma } from '~/server/db';
 
+type UserRole = 'admin' | 'user';
+
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
  * object and keep type safety.
@@ -23,6 +25,7 @@ declare module 'next-auth' {
       colorTheme: string;
       lightColorTheme: string;
       darkColorTheme: string;
+      role: UserRole;
       // ...other properties
       // role: UserRole;
     } & DefaultSession['user'];
@@ -40,7 +43,6 @@ declare module 'next-auth' {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authOptions: NextAuthOptions = {
-  debug: true,
   callbacks: {
     session({ session, user }) {
       if (session.user) {
