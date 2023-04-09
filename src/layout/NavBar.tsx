@@ -2,22 +2,33 @@ import { useSession, signOut } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { useCookies } from 'react-cookie';
 
 const NavBar: React.FC = () => {
+  const [cookies, setCookie, removeCookie] = useCookies(['color-theme']);
   const [currentTheme, setCurrentTheme] = useState('');
   const session = useSession();
 
   useEffect(() => {
-    const prefersDarkMode =
-      window.matchMedia &&
-      window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (!cookies['color-theme']) {
+      const prefersDarkMode =
+        window.matchMedia &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-    if (prefersDarkMode) {
-      document.querySelector('html')?.setAttribute('data-theme', 'dracula');
-      setCurrentTheme('dracula');
+      if (prefersDarkMode) {
+        document.querySelector('html')?.setAttribute('data-theme', 'dracula');
+        setCookie('color-theme', 'dracula');
+        setCurrentTheme('dracula');
+      } else {
+        document.querySelector('html')?.setAttribute('data-theme', 'pastel');
+        setCookie('color-theme', 'pastel');
+        setCurrentTheme('pastel');
+      }
     } else {
-      document.querySelector('html')?.setAttribute('data-theme', 'pastel');
-      setCurrentTheme('pastel');
+      document
+        .querySelector('html')
+        ?.setAttribute('data-theme', cookies['color-theme']);
+      setCurrentTheme(cookies['color-theme']);
     }
   }, []);
 
@@ -45,7 +56,7 @@ const NavBar: React.FC = () => {
       </div>
 
       <label className="swap swap-rotate">
-        <input type="checkbox" />
+        <input type="checkbox" checked={currentTheme === 'pastel'} />
 
         <svg
           className="swap-on fill-current w-6 h-6"
@@ -57,6 +68,7 @@ const NavBar: React.FC = () => {
                 .querySelector('html')
                 ?.setAttribute('data-theme', 'pastel');
               setCurrentTheme('pastel');
+              setCookie('color-theme', 'pastel');
             }
           }}
         >
@@ -68,11 +80,12 @@ const NavBar: React.FC = () => {
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
           onClick={() => {
-            if (currentTheme === 'pastel') {
+            if (currentTheme === currentTheme) {
               document
                 .querySelector('html')
                 ?.setAttribute('data-theme', 'dracula');
               setCurrentTheme('dracula');
+              setCookie('color-theme', 'dracula');
             }
           }}
         >
