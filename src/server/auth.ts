@@ -23,8 +23,8 @@ declare module 'next-auth' {
     user: {
       id: string;
       colorTheme: string;
-      lightColorTheme: string;
-      darkColorTheme: string;
+      lightColorTheme: string | "pastel";
+      darkColorTheme: string | "dracula";
       role: UserRole;
       // ...other properties
       // role: UserRole;
