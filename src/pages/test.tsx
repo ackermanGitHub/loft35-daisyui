@@ -1,11 +1,7 @@
 import Head from 'next/head';
-import ProductsCardScroll from '~/components/ProductsCardScroll';
 import Layout from '~/layout/Layout';
-import { api } from '~/utils/api';
 
 const Tests = () => {
-  const { data: ProductsData } = api.product.getAll.useQuery();
-
   return (
     <>
       <Head>
@@ -15,7 +11,7 @@ const Tests = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
-        <ProductsCardScroll productsData={ProductsData ?? []} />
+        <div></div>
       </Layout>
     </>
   );
