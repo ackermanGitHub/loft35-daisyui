@@ -5,7 +5,6 @@ import { api } from '~/utils/api';
 import Layout from '~/layout/Layout';
 import ProductsTable from '~/components/ProductsTable';
 import ProductsCardScroll from '~/components/ProductsCardScroll';
-import SettingsOptions from '~/components/Settings';
 
 const Products = () => {
   const [productsView, setProducstView] = useState<'table' | 'cards'>('table');
@@ -161,10 +160,20 @@ const Products = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
-        <div className="flex flex-row justify-end">
-          <div className="dropdown dropdown-end">
-            <label tabIndex={0} className="btn m-1">
-              Vista
+        <div className="w-full h-8 ">
+          <div className="dropdown">
+            <label
+              tabIndex={0}
+              className="cursor-pointer ml-5 flex items-center"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="currentColor"
+              >
+                <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
+              </svg>
             </label>
             <ul
               tabIndex={0}
@@ -190,7 +199,6 @@ const Products = () => {
               </li>
             </ul>
           </div>
-          <SettingsOptions />
         </div>
         {productsView === 'table' && (
           <ProductsTable

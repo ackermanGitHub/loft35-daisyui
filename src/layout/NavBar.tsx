@@ -43,6 +43,7 @@ const NavBar: React.FC = () => {
           Loft35
         </Link>
       </div>
+
       <label className="swap swap-rotate">
         <input type="checkbox" />
 
@@ -154,3 +155,6 @@ const NavBar: React.FC = () => {
 };
 
 export default NavBar;
+
+/*
+ */
