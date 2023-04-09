@@ -176,7 +176,7 @@ const ProductsTable: React.FC<IProps> = ({
             />
           </div>
         )}
-        <table className="table w-full">
+        <table className="table table-zebra w-full">
           <thead>
             <tr>
               <th>
@@ -548,7 +548,7 @@ const ProductsTable: React.FC<IProps> = ({
                                     });
                                   }}
                                   value={product.categoryId}
-                                  className="select w-full h-[75px] absolute inset-0"
+                                  className="select bg-transparent w-full h-[75px] absolute inset-0"
                                 >
                                   {categoriesData?.map((category) => (
                                     <option
