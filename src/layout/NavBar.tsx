@@ -4,33 +4,62 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
 
+const DEFAULT_LIGHT_THEME = 'pastel';
+const DEFAULT_DARK_THEME = 'dracula';
+
 const NavBar: React.FC = () => {
-  const [cookies, setCookie] = useCookies(['color-theme']);
-  const [currentTheme, setCurrentTheme] = useState('');
+  const [cookies, setCookie] = useCookies([
+    'color-theme',
+    'light-theme',
+    'dark-theme',
+  ]);
+  const [currentTheme, setCurrentTheme] = useState('light');
   const session = useSession();
 
   useEffect(() => {
+    if (!cookies['dark-theme']) {
+      setCookie('dark-theme', DEFAULT_DARK_THEME);
+    }
+
+    if (!cookies['light-theme']) {
+      setCookie('light-theme', DEFAULT_LIGHT_THEME);
+    }
+
     if (!cookies['color-theme']) {
       const prefersDarkMode =
         window.matchMedia &&
         window.matchMedia('(prefers-color-scheme: dark)').matches;
 
       if (prefersDarkMode) {
-        document.querySelector('html')?.setAttribute('data-theme', 'dracula');
-        setCookie('color-theme', 'dracula');
-        setCurrentTheme('dracula');
+        document
+          .querySelector('html')
+          ?.setAttribute('data-theme', cookies['dark-theme']);
+        setCookie('color-theme', 'dark');
+        setCurrentTheme('dark');
       } else {
-        document.querySelector('html')?.setAttribute('data-theme', 'pastel');
-        setCookie('color-theme', 'pastel');
-        setCurrentTheme('pastel');
+        document
+          .querySelector('html')
+          ?.setAttribute('data-theme', cookies['light-theme']);
+        setCookie('color-theme', 'light');
+        setCurrentTheme('light');
       }
     } else {
-      document
-        .querySelector('html')
-        ?.setAttribute('data-theme', cookies['color-theme']);
-      setCurrentTheme(cookies['color-theme']);
+      if (cookies['color-theme'] === 'light') {
+        document
+          .querySelector('html')
+          ?.setAttribute('data-theme', cookies['light-theme']);
+        setCookie('color-theme', 'light');
+        setCurrentTheme('light');
+      } else {
+        document
+          .querySelector('html')
+          ?.setAttribute('data-theme', cookies['dark-theme']);
+        setCookie('color-theme', 'dark');
+        setCurrentTheme('dark');
+      }
     }
-  }, [cookies, setCookie]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cookies]);
 
   return (
     <div className="navbar bg-base-100">
@@ -54,16 +83,26 @@ const NavBar: React.FC = () => {
           Loft35
         </Link>
       </div>
-
-      <label
-        className="swap swap-rotate"
-        onClick={() => {
-          if (currentTheme === 'pastel') setCookie('color-theme', 'dracula');
-          else if (currentTheme === 'dracula')
-            setCookie('color-theme', 'pastel');
-        }}
-      >
-        <input type="checkbox" checked={currentTheme === 'pastel'} />
+      <label className="swap swap-rotate">
+        <input
+          type="checkbox"
+          checked={currentTheme === 'light'}
+          onChange={() => {
+            if (currentTheme === 'light') {
+              document
+                .querySelector('html')
+                ?.setAttribute('data-theme', cookies['dark-theme']);
+              setCurrentTheme('dark');
+              setCookie('color-theme', 'dark');
+            } else if (currentTheme === 'dark') {
+              document
+                .querySelector('html')
+                ?.setAttribute('data-theme', cookies['light-theme']);
+              setCurrentTheme('light');
+              setCookie('color-theme', 'light');
+            }
+          }}
+        />
 
         <svg
           className="swap-on fill-current w-6 h-6"
@@ -138,7 +177,7 @@ const NavBar: React.FC = () => {
               </Link>
             </li>
             <li>
-              <button>Settings</button>
+              <label htmlFor="setting-modal">Settings</label>
             </li>
             <li>
               <a
