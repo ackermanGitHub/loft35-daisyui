@@ -30,12 +30,16 @@ const themes = [
   'winter',
 ];
 
-const ChangeTheme = () => {
+interface IProps {
+  onChangeFn: (theme: string) => void;
+}
+
+const ChangeTheme: React.FC<IProps> = ({ onChangeFn }) => {
   return (
     <div>
       <div className="dropdown">
-        <label tabIndex={0} className="btn m-1">
-          Settings
+        <label tabIndex={0} className="select select-info">
+          Theme
         </label>
         <div className="dropdown-content bg-base-200 text-base-content rounded-t-box rounded-b-box top-px max-h-96 h-[70vh] w-52 overflow-y-auto shadow-2xl mt-16">
           <div className="grid grid-cols-1 gap-3 p-3" tabIndex={0}>
@@ -44,6 +48,9 @@ const ChangeTheme = () => {
                 key={index}
                 className="outline-base-content overflow-hidden rounded-lg text-left"
                 data-set-theme={theme}
+                onClick={() => {
+                  onChangeFn(theme);
+                }}
               >
                 <div
                   data-theme={theme}

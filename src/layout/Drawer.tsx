@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import NavBar from './NavBar';
+import Footer from './Footer';
 
 const Drawer: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
@@ -8,11 +9,11 @@ const Drawer: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       <div className="drawer-content flex flex-col">
         <NavBar />
         {children}
+        <Footer />
       </div>
       <div className="drawer-side">
         <label htmlFor="my-drawer-3" className="drawer-overlay"></label>
         <ul className="menu p-4 w-80 bg-base-100">
-          {/* <!-- Sidebar content here --> */}
           <li>
             <Link href="/products">Productos</Link>
           </li>
