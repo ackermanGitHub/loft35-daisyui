@@ -46,14 +46,14 @@ const ChangeTheme: React.FC<IProps> = ({
   isEnabled,
 }) => {
   const [selectedTheme, setSelectedTheme] = useState('');
-  const [isBorderEnabled, setIsBorderEnabled] = useState(false);
+  const [isThemeEnabled, setIsThemeEnabled] = useState(false);
 
   useEffect(() => {
     setSelectedTheme(currentTheme);
   }, [currentTheme]);
 
   useEffect(() => {
-    setIsBorderEnabled(isEnabled);
+    setIsThemeEnabled(isEnabled);
   }, [isEnabled]);
 
   return (
@@ -64,7 +64,7 @@ const ChangeTheme: React.FC<IProps> = ({
         <button
           tabIndex={0}
           className={`${
-            isBorderEnabled ? 'border-primary border border-solid' : ''
+            isThemeEnabled ? 'border-primary border border-solid' : ''
           } outline-base-content overflow-hidden rounded-lg text-left`}
           data-set-theme={selectedTheme}
         >
