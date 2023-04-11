@@ -52,7 +52,7 @@ const ChangeTheme: React.FC<IProps> = ({
   return (
     <div>
       <div className="dropdown">
-        <label
+        <button
           tabIndex={0}
           className=" outline-base-content overflow-hidden rounded-lg text-left"
           data-set-theme={selectedTheme}
@@ -87,9 +87,9 @@ const ChangeTheme: React.FC<IProps> = ({
               </div>
             </div>
           </div>
-        </label>
+        </button>
 
-        <div className="dropdown-content bg-base-200 text-base-content rounded-t-box rounded-b-box top-px max-h-96 h-[70vh] w-52 overflow-y-auto shadow-2xl mt-16">
+        <div className="dropdown-content bg-base-200 text-base-content rounded-t-box rounded-b-box top-px max-h-52 w-52 overflow-y-auto shadow-2xl mt-16">
           <div className="grid grid-cols-1 gap-3 p-3" tabIndex={0}>
             {themes.map((theme, index) => (
               <button
