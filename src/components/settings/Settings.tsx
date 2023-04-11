@@ -48,7 +48,7 @@ const SettingsOptions = () => {
             {currentSection === 'Products' && <ProductsSection />}
             <div className="modal-action">
               <label htmlFor="setting-modal" className="btn">
-                Ok!
+                Cerrar
               </label>
             </div>
           </div>
