@@ -5,8 +5,11 @@ import { api } from '~/utils/api';
 import Layout from '~/layout/Layout';
 import ProductsTable from '~/components/ProductsTable';
 import ProductsCardScroll from '~/components/ProductsCardScroll';
+import { useCookies } from 'react-cookie';
 
 const Products = () => {
+  const [cookie] = useCookies(['products-view']);
+
   const [productsView, setProducstView] = useState<'table' | 'cards'>('table');
   const [isAnyCheckboxSelected, setIsAnyCheckboxSelected] = useState(false);
   const [orderedOptions, setOrderedOptions] = useState<{
@@ -16,6 +19,10 @@ const Products = () => {
     column: 'priority',
     reverse: false,
   });
+
+  useEffect(() => {
+    if (cookie['products-view']) setProducstView(cookie['products-view']);
+  }, [cookie]);
 
   const [products, setProducts] = useState<
     (Product & {
@@ -119,6 +126,9 @@ const Products = () => {
   });
 
   useEffect(() => {
+    if (productsView !== 'table') {
+      return;
+    }
     const selectCheckbox = document.getElementById(
       'select-all-checkbox'
     ) as HTMLInputElement;
@@ -149,6 +159,7 @@ const Products = () => {
         );
       });
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isProductsLoading, products]);
 
   return (
@@ -160,46 +171,6 @@ const Products = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
-        <div className="w-full h-8 ">
-          <div className="dropdown">
-            <label
-              tabIndex={0}
-              className="cursor-pointer ml-5 flex items-center"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                fill="currentColor"
-              >
-                <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
-              </svg>
-            </label>
-            <ul
-              tabIndex={0}
-              className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
-            >
-              <li>
-                <button
-                  onClick={() => {
-                    setProducstView('table');
-                  }}
-                >
-                  Tabla
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => {
-                    setProducstView('cards');
-                  }}
-                >
-                  Tarjetas
-                </button>
-              </li>
-            </ul>
-          </div>
-        </div>
         {productsView === 'table' && (
           <ProductsTable
             productsData={products ?? []}
