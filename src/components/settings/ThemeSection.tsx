@@ -1,12 +1,15 @@
+import { useState } from 'react';
 import { useCookies } from 'react-cookie';
 import ChangeTheme from './ChangeTheme';
 
 const ThemeSection = () => {
+  const [isSameConfig, setIsSameConfig] = useState(false);
   const [cookies, setCookie] = useCookies([
     'color-theme',
     'light-theme',
     'dark-theme',
   ]);
+
   return (
     <div className="flex h-full flex-col items-center justify-evenly">
       <div className="w-full">
@@ -48,8 +51,9 @@ const ThemeSection = () => {
             <div>
               <h1>Modo Claro: </h1>
               <ChangeTheme
+                isEnabled
                 targetTheme="light"
-                isEnabled={cookies['color-theme'] === 'light'}
+                isBorderEnabled={cookies['color-theme'] === 'light'}
                 currentTheme={cookies['light-theme']}
                 onChangeFn={(theme) => {
                   setCookie('light-theme', theme);
@@ -59,8 +63,9 @@ const ThemeSection = () => {
             <div>
               <h2>Modo Oscuro: </h2>
               <ChangeTheme
+                isEnabled
                 targetTheme="dark"
-                isEnabled={cookies['color-theme'] === 'dark'}
+                isBorderEnabled={cookies['color-theme'] === 'dark'}
                 currentTheme={cookies['dark-theme']}
                 onChangeFn={(theme) => {
                   setCookie('dark-theme', theme);
@@ -72,14 +77,21 @@ const ThemeSection = () => {
       </div>
       <div className="divider">
         Usar la Misma
-        <input type="checkbox" className="checkbox" />
+        <input
+          checked={isSameConfig}
+          onChange={() => {
+            setIsSameConfig(!isSameConfig);
+          }}
+          type="checkbox"
+          className="checkbox"
+        />
       </div>
-      <div className="w-full">
+      <div className={`w-full ${isSameConfig ? 'opacity-50' : ''}`}>
         <h1 className="mb-2 font-medium">Configuración del Ciente: </h1>
         <div className="flex flex-row my-1">
           <h1 className="mr-2">Tema Por Defecto: </h1>
           <label className="swap swap-rotate">
-            <input type="checkbox" />
+            <input type="checkbox" disabled={isSameConfig} />
 
             <svg
               className="swap-on fill-current w-6 h-6"
@@ -103,7 +115,8 @@ const ThemeSection = () => {
             <h1>Modo Claro: </h1>
             <ChangeTheme
               targetTheme="light"
-              isEnabled={cookies['color-theme'] === 'light'}
+              isBorderEnabled={cookies['color-theme'] === 'light'}
+              isEnabled={!isSameConfig}
               currentTheme={cookies['light-theme']}
               onChangeFn={(theme) => {
                 console.log(theme);
@@ -114,7 +127,8 @@ const ThemeSection = () => {
             <h2>Modo Oscuro: </h2>
             <ChangeTheme
               targetTheme="dark"
-              isEnabled={cookies['color-theme'] === 'dark'}
+              isBorderEnabled={cookies['color-theme'] === 'dark'}
+              isEnabled={!isSameConfig}
               currentTheme={cookies['dark-theme']}
               onChangeFn={(theme) => {
                 console.log(theme);

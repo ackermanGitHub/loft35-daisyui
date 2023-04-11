@@ -36,6 +36,7 @@ interface IProps {
   targetTheme: string;
   onChangeFn: (theme: string) => void;
   currentTheme: string;
+  isBorderEnabled: boolean;
   isEnabled: boolean;
 }
 
@@ -43,6 +44,7 @@ const ChangeTheme: React.FC<IProps> = ({
   targetTheme,
   onChangeFn,
   currentTheme,
+  isBorderEnabled,
   isEnabled,
 }) => {
   const [selectedTheme, setSelectedTheme] = useState('');
@@ -53,8 +55,8 @@ const ChangeTheme: React.FC<IProps> = ({
   }, [currentTheme]);
 
   useEffect(() => {
-    setIsThemeEnabled(isEnabled);
-  }, [isEnabled]);
+    setIsThemeEnabled(isBorderEnabled);
+  }, [isBorderEnabled]);
 
   return (
     <div>
@@ -62,6 +64,7 @@ const ChangeTheme: React.FC<IProps> = ({
         className={`dropdown ${targetTheme === 'dark' ? 'dropdown-end' : ''}`}
       >
         <button
+          disabled={!isEnabled}
           tabIndex={0}
           className={`${
             isThemeEnabled ? 'border-primary border border-solid' : ''
