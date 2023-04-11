@@ -36,14 +36,14 @@ interface IProps {
   targetTheme: string;
   onChangeFn: (theme: string) => void;
   currentTheme: string;
-  borderEnabled: boolean;
+  isEnabled: boolean;
 }
 
 const ChangeTheme: React.FC<IProps> = ({
   targetTheme,
   onChangeFn,
   currentTheme,
-  borderEnabled,
+  isEnabled,
 }) => {
   const [selectedTheme, setSelectedTheme] = useState('');
   const [isBorderEnabled, setIsBorderEnabled] = useState(false);
@@ -53,8 +53,8 @@ const ChangeTheme: React.FC<IProps> = ({
   }, [currentTheme]);
 
   useEffect(() => {
-    setIsBorderEnabled(borderEnabled);
-  }, [borderEnabled]);
+    setIsBorderEnabled(isEnabled);
+  }, [isEnabled]);
 
   return (
     <div>
