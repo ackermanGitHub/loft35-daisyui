@@ -89,16 +89,8 @@ const NavBar: React.FC = () => {
           checked={currentTheme === 'light'}
           onChange={() => {
             if (currentTheme === 'light') {
-              document
-                .querySelector('html')
-                ?.setAttribute('data-theme', cookies['dark-theme']);
-              setCurrentTheme('dark');
               setCookie('color-theme', 'dark');
             } else if (currentTheme === 'dark') {
-              document
-                .querySelector('html')
-                ?.setAttribute('data-theme', cookies['light-theme']);
-              setCurrentTheme('light');
               setCookie('color-theme', 'light');
             }
           }}
