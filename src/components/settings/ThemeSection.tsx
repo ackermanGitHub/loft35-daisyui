@@ -12,7 +12,8 @@ const ThemeSection = () => {
       <div>
         <h1>Light Theme</h1>
         <ChangeTheme
-          borderEnabled={true}
+          targetTheme="light"
+          borderEnabled={cookies['color-theme'] === 'light'}
           currentTheme={cookies['light-theme']}
           onChangeFn={(theme) => {
             setCookie('light-theme', theme);
@@ -22,7 +23,8 @@ const ThemeSection = () => {
       <div>
         <h2>Dark Theme</h2>
         <ChangeTheme
-          borderEnabled={true}
+          targetTheme="dark"
+          borderEnabled={cookies['color-theme'] === 'dark'}
           currentTheme={cookies['dark-theme']}
           onChangeFn={(theme) => {
             setCookie('dark-theme', theme);

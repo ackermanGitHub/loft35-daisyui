@@ -33,35 +33,44 @@ const themes = [
 ];
 
 interface IProps {
+  targetTheme: string;
   onChangeFn: (theme: string) => void;
   currentTheme: string;
   borderEnabled: boolean;
 }
 
 const ChangeTheme: React.FC<IProps> = ({
+  targetTheme,
   onChangeFn,
   currentTheme,
   borderEnabled,
 }) => {
   const [selectedTheme, setSelectedTheme] = useState('');
+  const [isBorderEnabled, setIsBorderEnabled] = useState(false);
 
   useEffect(() => {
     setSelectedTheme(currentTheme);
   }, [currentTheme]);
 
+  useEffect(() => {
+    setIsBorderEnabled(borderEnabled);
+  }, [borderEnabled]);
+
   return (
     <div>
-      <div className="dropdown">
+      <div
+        className={`dropdown ${targetTheme === 'dark' ? 'dropdown-end' : ''}`}
+      >
         <button
           tabIndex={0}
-          className=" outline-base-content overflow-hidden rounded-lg text-left"
+          className={`${
+            isBorderEnabled ? 'border-primary border border-solid' : ''
+          } outline-base-content overflow-hidden rounded-lg text-left`}
           data-set-theme={selectedTheme}
         >
           <div
             data-theme={selectedTheme}
-            className={`${
-              borderEnabled && 'border-primary border border-solid'
-            } bg-base-100 text-base-content w-full cursor-pointer font-sans`}
+            className="bg-base-100 text-base-content w-full cursor-pointer font-sans"
           >
             <div className="grid grid-cols-5 grid-rows-3">
               <div className="col-span-5 row-span-3 row-start-1 flex gap-2 py-3 px-4 items-center">
