@@ -1,3 +1,4 @@
+import SettingsOptions from '~/components/settings/Settings';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { ChatContext } from '~/context/ChatBubbles';
 import Drawer from '~/layout/Drawer';
@@ -46,6 +47,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         <div className="chat-bubble-info">Teeeest.</div>
         <div className="chat-bubble-success">Teeeest.</div>
       </div>
+      <SettingsOptions />
     </>
   );
 };
