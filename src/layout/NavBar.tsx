@@ -13,7 +13,7 @@ const NavBar: React.FC = () => {
   ]);
   const session = useSession();
 
-  const {} = api.setting.get.useQuery(
+  const { isLoading } = api.setting.get.useQuery(
     {
       settingId: 1,
     },
@@ -32,6 +32,7 @@ const NavBar: React.FC = () => {
   const changeDarkTheme = api.setting.changeDarkTheme.useMutation();
 
   useEffect(() => {
+    if (isLoading) return;
     if (cookies['color-theme'] === 'light') {
       document
         .querySelector('html')
