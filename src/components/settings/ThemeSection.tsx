@@ -1,9 +1,9 @@
-import { useState } from 'react';
+// import { useState } from 'react';
 import { useCookies } from 'react-cookie';
 import ChangeTheme from './ChangeTheme';
 
 const ThemeSection = () => {
-  const [isSameConfig, setIsSameConfig] = useState(false);
+  // const [isSameConfig, setIsSameConfig] = useState(true);
   const [cookies, setCookie] = useCookies([
     'color-theme',
     'light-theme',
@@ -15,7 +15,7 @@ const ThemeSection = () => {
       <div className="w-full">
         <h1 className="mb-2 font-medium">Configuración Personal: </h1>
         <div>
-          <div className="flex flex-row my-1">
+          <div className="flex flex-row my-5 justify-center">
             <h1 className="mr-2">Tema Por Defecto: </h1>
             <label className="swap swap-rotate">
               <input
@@ -78,20 +78,20 @@ const ThemeSection = () => {
       <div className="divider">
         Usar la Misma
         <input
-          checked={isSameConfig}
+          checked={true}
           onChange={() => {
-            setIsSameConfig(!isSameConfig);
+            // bsetIsSameConfig(!isSameConfig);
           }}
           type="checkbox"
           className="checkbox"
         />
       </div>
-      <div className={`w-full ${isSameConfig ? 'opacity-50' : ''}`}>
+      <div className={`w-full ${true ? 'opacity-50' : ''}`}>
         <h1 className="mb-2 font-medium">Configuración del Ciente: </h1>
-        <div className="flex flex-row my-1">
+        <div className="flex flex-row justify-center my-1">
           <h1 className="mr-2">Tema Por Defecto: </h1>
           <label className="swap swap-rotate">
-            <input type="checkbox" disabled={isSameConfig} />
+            <input type="checkbox" disabled={true} />
 
             <svg
               className="swap-on fill-current w-6 h-6"
@@ -116,7 +116,7 @@ const ThemeSection = () => {
             <ChangeTheme
               targetTheme="light"
               isBorderEnabled={cookies['color-theme'] === 'light'}
-              isEnabled={!isSameConfig}
+              isEnabled={!true}
               currentTheme={cookies['light-theme']}
               onChangeFn={(theme) => {
                 console.log(theme);
@@ -128,7 +128,7 @@ const ThemeSection = () => {
             <ChangeTheme
               targetTheme="dark"
               isBorderEnabled={cookies['color-theme'] === 'dark'}
-              isEnabled={!isSameConfig}
+              isEnabled={!true}
               currentTheme={cookies['dark-theme']}
               onChangeFn={(theme) => {
                 console.log(theme);

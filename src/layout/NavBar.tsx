@@ -1,22 +1,64 @@
 import { useSession, signOut } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useCookies } from 'react-cookie';
 import { api } from '~/utils/api';
 
 const NavBar: React.FC = () => {
-  const [currentTheme, setCurrentTheme] = useState('light');
+  const [cookies, setCookie] = useCookies([
+    'color-theme',
+    'light-theme',
+    'dark-theme',
+  ]);
   const session = useSession();
 
-  useEffect(() => {
-    const initialTheme = document
-      .querySelector('html')
-      ?.getAttribute('data-theme');
-    if (!initialTheme) return;
-    setCurrentTheme(initialTheme);
-  }, []);
+  const {} = api.setting.get.useQuery(
+    {
+      settingId: 1,
+    },
+    {
+      onSuccess(data) {
+        setCookie('color-theme', data?.defaultTheme);
+        setCookie('light-theme', data?.lightTheme);
+        setCookie('dark-theme', data?.darkTheme);
+      },
+    }
+  );
 
   const toggleDefaultTheme = api.setting.toggleDefaultTheme.useMutation();
+
+  const changelightTheme = api.setting.changeLightTheme.useMutation();
+  const changeDarkTheme = api.setting.changeDarkTheme.useMutation();
+
+  useEffect(() => {
+    if (cookies['color-theme'] === 'light') {
+      document
+        .querySelector('html')
+        ?.setAttribute('data-theme', cookies['light-theme']);
+      toggleDefaultTheme.mutate({
+        settingId: 1,
+        newDefaultTheme: 'light',
+      });
+      changelightTheme.mutate({
+        settingId: 1,
+        newLightTheme: cookies['light-theme'],
+      });
+    } else if (cookies['color-theme'] === 'dark') {
+      document
+        .querySelector('html')
+        ?.setAttribute('data-theme', cookies['dark-theme']);
+      toggleDefaultTheme.mutate({
+        settingId: 1,
+        newDefaultTheme: 'dark',
+      });
+      changeDarkTheme.mutate({
+        settingId: 1,
+        newDarkTheme: cookies['dark-theme'],
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cookies]);
 
   return (
     <div className="navbar bg-base-100">
@@ -43,26 +85,12 @@ const NavBar: React.FC = () => {
       <label className="swap swap-rotate">
         <input
           type="checkbox"
-          checked={currentTheme === 'light'}
+          checked={cookies['color-theme'] === 'light'}
           onChange={() => {
-            if (currentTheme === 'light') {
-              document
-                .querySelector('html')
-                ?.setAttribute('data-theme', 'dark');
-              toggleDefaultTheme.mutate({
-                settingId: 1,
-                newDefaultTheme: 'dark',
-              });
-              setCurrentTheme('dark');
-            } else if (currentTheme === 'dark') {
-              document
-                .querySelector('html')
-                ?.setAttribute('data-theme', 'light');
-              toggleDefaultTheme.mutate({
-                settingId: 1,
-                newDefaultTheme: 'light',
-              });
-              setCurrentTheme('light');
+            if (cookies['color-theme'] === 'light') {
+              setCookie('color-theme', 'dark');
+            } else if (cookies['color-theme'] === 'dark') {
+              setCookie('color-theme', 'light');
             }
           }}
         />
