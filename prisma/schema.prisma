@@ -61,8 +61,8 @@ model VerificationToken {
 model Setting {
   id       Int   @id   @default(autoincrement())
   defaultTheme  String   @default("light")
-  lightTheme   String?
-  darkTheme    String?
+  lightTheme   String @default("pastel") 
+  darkTheme    String @default("dracula")
   productsView String?
   placeholderImgURL String?
 }
