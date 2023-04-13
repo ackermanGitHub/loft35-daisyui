@@ -6,6 +6,7 @@ import Document, {
   type DocumentProps,
   type DocumentContext,
 } from 'next/document';
+import { useEffect } from 'react';
 import { prisma } from '~/server/db';
 
 interface IDocumentProps extends DocumentProps {
@@ -13,6 +14,12 @@ interface IDocumentProps extends DocumentProps {
 }
 
 export default function MyDocument({ dataTheme }: IDocumentProps) {
+  console.log('MyDocument');
+
+  useEffect(() => {
+    console.log('MyDocument-useEffect');
+  });
+
   return (
     <Html data-theme={dataTheme} lang="es">
       <Head />
@@ -27,6 +34,8 @@ export default function MyDocument({ dataTheme }: IDocumentProps) {
 // `getInitialProps` belongs to `_document` (instead of `_app`),
 // it's compatible with static-site generation (SSG).
 MyDocument.getInitialProps = async (ctx: DocumentContext) => {
+  console.log('MyDocument.getInitialProps');
+
   // Resolution order
   //
   // On the server:
@@ -60,12 +69,12 @@ MyDocument.getInitialProps = async (ctx: DocumentContext) => {
   if (!setting)
     return {
       ...initialProps,
-      dataTheme: 'light',
+      dataTheme: 'dark',
     };
 
-  let dataTheme = setting?.lightTheme;
+  let dataTheme = setting.lightTheme;
 
-  if (setting?.defaultTheme === 'dark') dataTheme = setting.darkTheme;
+  if (setting.defaultTheme === 'dark') dataTheme = setting.darkTheme;
 
   return {
     ...initialProps,
