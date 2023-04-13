@@ -6,6 +6,7 @@ import {
 } from 'next-auth';
 import DiscordProvider from 'next-auth/providers/discord';
 import GoogleProvider from 'next-auth/providers/google';
+import InstagramProvider from 'next-auth/providers/instagram';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { env } from '~/env.mjs';
 import { prisma } from '~/server/db';
@@ -23,8 +24,8 @@ declare module 'next-auth' {
     user: {
       id: string;
       colorTheme: string;
-      lightColorTheme: string | "pastel";
-      darkColorTheme: string | "dracula";
+      lightColorTheme: string | 'pastel';
+      darkColorTheme: string | 'dracula';
       role: UserRole;
       // ...other properties
       // role: UserRole;
@@ -65,6 +66,11 @@ export const authOptions: NextAuthOptions = {
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
     }),
+    InstagramProvider({
+      clientId: process.env.INSTAGRAM_CLIENT_ID,
+      clientSecret: process.env.INSTAGRAM_CLIENT_SECRET,
+    }),
+
     /**
      * ...add more providers here.
      *
