@@ -2,64 +2,21 @@ import { useSession, signOut } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { useCookies } from 'react-cookie';
-
-const DEFAULT_LIGHT_THEME = 'pastel';
-const DEFAULT_DARK_THEME = 'dracula';
+import { api } from '~/utils/api';
 
 const NavBar: React.FC = () => {
-  const [cookies, setCookie] = useCookies([
-    'color-theme',
-    'light-theme',
-    'dark-theme',
-  ]);
   const [currentTheme, setCurrentTheme] = useState('light');
   const session = useSession();
 
   useEffect(() => {
-    if (!cookies['dark-theme']) {
-      setCookie('dark-theme', DEFAULT_DARK_THEME);
-    }
+    const initialTheme = document
+      .querySelector('html')
+      ?.getAttribute('data-theme');
+    if (!initialTheme) return;
+    setCurrentTheme(initialTheme);
+  }, []);
 
-    if (!cookies['light-theme']) {
-      setCookie('light-theme', DEFAULT_LIGHT_THEME);
-    }
-
-    if (!cookies['color-theme']) {
-      const prefersDarkMode =
-        window.matchMedia &&
-        window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-      if (prefersDarkMode) {
-        document
-          .querySelector('html')
-          ?.setAttribute('data-theme', cookies['dark-theme']);
-        setCookie('color-theme', 'dark');
-        setCurrentTheme('dark');
-      } else {
-        document
-          .querySelector('html')
-          ?.setAttribute('data-theme', cookies['light-theme']);
-        setCookie('color-theme', 'light');
-        setCurrentTheme('light');
-      }
-    } else {
-      if (cookies['color-theme'] === 'light') {
-        document
-          .querySelector('html')
-          ?.setAttribute('data-theme', cookies['light-theme']);
-        setCookie('color-theme', 'light');
-        setCurrentTheme('light');
-      } else {
-        document
-          .querySelector('html')
-          ?.setAttribute('data-theme', cookies['dark-theme']);
-        setCookie('color-theme', 'dark');
-        setCurrentTheme('dark');
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cookies]);
+  const toggleDefaultTheme = api.setting.toggleDefaultTheme.useMutation();
 
   return (
     <div className="navbar bg-base-100">
@@ -89,9 +46,23 @@ const NavBar: React.FC = () => {
           checked={currentTheme === 'light'}
           onChange={() => {
             if (currentTheme === 'light') {
-              setCookie('color-theme', 'dark');
+              document
+                .querySelector('html')
+                ?.setAttribute('data-theme', 'dark');
+              toggleDefaultTheme.mutate({
+                settingId: 1,
+                newDefaultTheme: 'dark',
+              });
+              setCurrentTheme('dark');
             } else if (currentTheme === 'dark') {
-              setCookie('color-theme', 'light');
+              document
+                .querySelector('html')
+                ?.setAttribute('data-theme', 'light');
+              toggleDefaultTheme.mutate({
+                settingId: 1,
+                newDefaultTheme: 'light',
+              });
+              setCurrentTheme('light');
             }
           }}
         />
