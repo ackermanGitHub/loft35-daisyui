@@ -33,12 +33,6 @@ MyDocument.getInitialProps = async (ctx: DocumentContext) => {
     },
   });
 
-  if (!setting)
-    return {
-      ...initialProps,
-      dataTheme: 'pastel',
-    };
-
   let dataTheme = setting?.lightTheme;
 
   if (setting?.defaultTheme === 'dark') dataTheme = setting?.darkTheme;
