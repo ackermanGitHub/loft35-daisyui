@@ -67,10 +67,26 @@ export const authOptions: NextAuthOptions = {
       clientSecret: env.GOOGLE_CLIENT_SECRET,
     }),
     InstagramProvider({
+      id: 'instagram',
+      name: 'Instagram',
+      type: 'oauth',
+      authorization:
+        'https://api.instagram.com/oauth/authorize?scope=user_profile',
+      token: 'https://api.instagram.com/oauth/access_token',
+      userinfo:
+        'https://graph.instagram.com/me?fields=id,username,account_type,name',
       clientId: process.env.INSTAGRAM_CLIENT_ID,
       clientSecret: process.env.INSTAGRAM_CLIENT_SECRET,
       client: {
         token_endpoint_auth_method: 'client_secret_post',
+      },
+      profile(profile) {
+        return {
+          id: profile.id,
+          name: profile.username,
+          email: null,
+          image: null,
+        };
       },
     }),
 
