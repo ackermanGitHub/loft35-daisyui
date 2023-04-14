@@ -80,7 +80,7 @@ export const authOptions: NextAuthOptions = {
       client: {
         token_endpoint_auth_method: 'client_secret_post',
       },
-      profile(profile) {
+      profile(profile: { id: number; username: string }) {
         return {
           id: profile.id,
           name: profile.username,
