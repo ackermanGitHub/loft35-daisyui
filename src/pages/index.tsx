@@ -1,7 +1,5 @@
-import { type GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Layout from '~/layout/Layout';
-import { getServerAuthSession } from '~/server/auth';
 
 const Home = () => {
   return (
@@ -44,23 +42,6 @@ const Home = () => {
       </Layout>
     </>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const session = await getServerAuthSession(ctx);
-
-  if (!session) {
-    return {
-      redirect: {
-        destination: '/api/auth/signin',
-      },
-      props: {},
-    };
-  }
-
-  return {
-    props: {},
-  };
 };
 
 export default Home;
