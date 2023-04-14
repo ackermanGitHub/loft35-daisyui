@@ -23,9 +23,9 @@ declare module 'next-auth' {
   interface Session extends DefaultSession {
     user: {
       id: string;
-      colorTheme: string;
-      lightColorTheme: string | 'pastel';
-      darkColorTheme: string | 'dracula';
+      defaultTheme: string;
+      lightTheme: string;
+      darkTheme: string;
       role: UserRole;
       // ...other properties
       // role: UserRole;
