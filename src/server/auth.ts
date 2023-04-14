@@ -71,7 +71,7 @@ export const authOptions: NextAuthOptions = {
       name: 'Instagram',
       type: 'oauth',
       authorization:
-        'https://api.instagram.com/oauth/authorize?scope=public_profile',
+        'https://api.instagram.com/oauth/authorize?scope=user_profile',
       token: 'https://api.instagram.com/oauth/access_token',
       userinfo:
         'https://graph.instagram.com/me?fields=id,username,account_type,name',
