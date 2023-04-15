@@ -18,9 +18,9 @@ const ProductsCardScroll: React.FC<IProps> = ({ productsData }) => {
             <Image fill src={product.imageUrl} alt="car!" />
           </figure>
           <div className="card-body">
-            <h2 className="card-title">
+            <h2 className="card-title indicator">
               {product.name}
-              <span className="badge badge-lg badge-secondary">
+              <span className="badge badge-md indicator-item badge-secondary">
                 ${product.price}
               </span>
             </h2>
