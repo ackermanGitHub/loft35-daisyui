@@ -3,7 +3,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect } from 'react';
 import { useCookies } from 'react-cookie';
-import { api } from '~/utils/api';
 
 const NavBar: React.FC = () => {
   const [cookies, setCookie] = useCookies([
@@ -13,52 +12,41 @@ const NavBar: React.FC = () => {
   ]);
   const session = useSession();
 
-  const { isLoading, isFetching } = api.setting.get.useQuery(
-    {
-      settingId: 1,
-    },
-    {
-      onSuccess(data) {
-        setCookie('color-theme', data?.defaultTheme);
-        setCookie('light-theme', data?.lightTheme);
-        setCookie('dark-theme', data?.darkTheme);
-      },
+  useEffect(() => {
+    const defaultTheme = document
+      .querySelector('html')
+      ?.getAttribute('data-theme');
+
+    const initialLightTheme = document
+      .querySelector('html')
+      ?.getAttribute('data-light-theme');
+
+    const initialDarkTheme = document
+      .querySelector('html')
+      ?.getAttribute('data-dark-theme');
+
+    setCookie('light-theme', initialLightTheme);
+    setCookie('dark-theme', initialDarkTheme);
+
+    if (defaultTheme === initialLightTheme) {
+      setCookie('color-theme', 'light');
+    } else if (defaultTheme === initialDarkTheme) {
+      setCookie('color-theme', 'dark');
     }
-  );
 
-  const toggleDefaultTheme = api.setting.toggleDefaultTheme.useMutation();
-
-  const changelightTheme = api.setting.changeLightTheme.useMutation();
-  const changeDarkTheme = api.setting.changeDarkTheme.useMutation();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
-    if (isLoading || isFetching) return;
     if (cookies['color-theme'] === 'light') {
       document
         .querySelector('html')
         ?.setAttribute('data-theme', cookies['light-theme']);
-      toggleDefaultTheme.mutate({
-        settingId: 1,
-        newDefaultTheme: 'light',
-      });
-      changelightTheme.mutate({
-        settingId: 1,
-        newLightTheme: cookies['light-theme'],
-      });
     } else if (cookies['color-theme'] === 'dark') {
       document
         .querySelector('html')
         ?.setAttribute('data-theme', cookies['dark-theme']);
-      toggleDefaultTheme.mutate({
-        settingId: 1,
-        newDefaultTheme: 'dark',
-      });
-      changeDarkTheme.mutate({
-        settingId: 1,
-        newDarkTheme: cookies['dark-theme'],
-      });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cookies]);
 
   return (
@@ -146,42 +134,46 @@ const NavBar: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="dropdown dropdown-end">
-          <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
-            <div className="w-10 rounded-full">
-              <Image
-                src={session.data?.user.image ?? '/favicon.ico'}
-                priority
-                alt="avatar"
-                width={40}
-                height={40}
-              />
-            </div>
-          </label>
-          <ul
-            tabIndex={0}
-            className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
-          >
-            <li>
-              <Link href={'/profile'} className="justify-between">
-                Profile
-                <span className="badge">New</span>
-              </Link>
-            </li>
-            <li>
-              <label htmlFor="setting-modal">Settings</label>
-            </li>
-            <li>
-              <a
-                onClick={() => {
-                  void signOut();
-                }}
-              >
-                Logout
-              </a>
-            </li>
-          </ul>
-        </div>
+        {session.data?.user.image ? (
+          <div className="dropdown dropdown-end">
+            <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
+              <div className="w-10 rounded-full">
+                <Image
+                  src={session.data.user.image}
+                  priority
+                  alt="avatar"
+                  width={40}
+                  height={40}
+                />
+              </div>
+            </label>
+            <ul
+              tabIndex={0}
+              className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
+            >
+              <li>
+                <Link href={'/profile'} className="justify-between">
+                  Profile
+                  <span className="badge">New</span>
+                </Link>
+              </li>
+              <li>
+                <label htmlFor="setting-modal">Settings</label>
+              </li>
+              <li>
+                <a
+                  onClick={() => {
+                    void signOut();
+                  }}
+                >
+                  Logout
+                </a>
+              </li>
+            </ul>
+          </div>
+        ) : (
+          <button className="btn btn-info">Sign In</button>
+        )}
       </div>
     </div>
   );
