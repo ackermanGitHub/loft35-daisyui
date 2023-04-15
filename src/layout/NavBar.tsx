@@ -121,7 +121,7 @@ const NavBar: React.FC = () => {
                 />
               </svg>
               <span className="badge badge-sm indicator-item">
-                {cart.items.length}
+                {cart.items.reduce((a, b) => a + b.quantity, 0)}
               </span>
             </div>
           </label>
@@ -131,7 +131,7 @@ const NavBar: React.FC = () => {
           >
             <div className="card-body">
               <span className="font-bold text-lg">
-                {cart.items.length} Items
+                {cart.items.reduce((a, b) => a + b.quantity, 0)} Items
               </span>
               <span className="text-info">Subtotal: ${cart.total}</span>
               <div className="card-actions">
