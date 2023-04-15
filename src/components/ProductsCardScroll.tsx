@@ -1,5 +1,6 @@
 import { type Product, type Image as ProductImage } from '@prisma/client';
 import Image from 'next/image';
+import { useCart } from '~/context/ShoppingCart';
 
 interface IProps {
   productsData: (Product & {
@@ -8,6 +9,7 @@ interface IProps {
 }
 
 const ProductsCardScroll: React.FC<IProps> = ({ productsData }) => {
+  const { addToCart } = useCart();
   return (
     <div className="flex flex-wrap items-center justify-around">
       {productsData.map((product) => (
@@ -16,10 +18,26 @@ const ProductsCardScroll: React.FC<IProps> = ({ productsData }) => {
             <Image fill src={product.imageUrl} alt="car!" />
           </figure>
           <div className="card-body">
-            <h2 className="card-title">Life hack</h2>
-            <p>How to park your car at your garage?</p>
+            <h2 className="card-title">
+              {product.name}
+              <span className="badge badge-lg badge-secondary">
+                ${product.price}
+              </span>
+            </h2>
             <div className="card-actions justify-end">
-              <button className="btn btn-primary">Learn now!</button>
+              <button
+                className="btn btn-primary"
+                onClick={() => {
+                  addToCart({
+                    productId: product.id,
+                    name: product.name,
+                    price: product.price,
+                    quantity: 1,
+                  });
+                }}
+              >
+                Add to cart
+              </button>
             </div>
           </div>
         </div>
