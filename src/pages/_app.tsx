@@ -7,6 +7,7 @@ import { Analytics } from '@vercel/analytics/react';
 import { api } from '~/utils/api';
 import ChatBubblesProvider from '~/context/ChatBubbles';
 import '~/styles/globals.css';
+import CartProvider from '~/context/ShoppingCart';
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -17,7 +18,9 @@ const MyApp: AppType<{ session: Session | null }> = ({
       <Analytics mode={'production'} />
       <ChatBubblesProvider>
         <CookiesProvider>
-          <Component {...pageProps} />
+          <CartProvider>
+            <Component {...pageProps} />
+          </CartProvider>
         </CookiesProvider>
       </ChatBubblesProvider>
     </SessionProvider>
