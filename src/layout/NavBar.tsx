@@ -1,4 +1,4 @@
-import { useSession, signOut } from 'next-auth/react';
+import { useSession, signIn, signOut } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect } from 'react';
@@ -172,7 +172,16 @@ const NavBar: React.FC = () => {
             </ul>
           </div>
         ) : (
-          <button className="btn btn-info">Sign In</button>
+          <button
+            className="btn btn-info"
+            onClick={() => {
+              void signIn();
+              window.scrollTo(0, 0);
+              return;
+            }}
+          >
+            Sign In
+          </button>
         )}
       </div>
     </div>
