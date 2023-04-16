@@ -12,13 +12,6 @@ const Products = () => {
 
   const [productsView, setProducstView] = useState<'table' | 'cards'>('table');
   const [isAnyCheckboxSelected, setIsAnyCheckboxSelected] = useState(false);
-  const [orderedOptions, setOrderedOptions] = useState<{
-    column: string;
-    reverse: boolean;
-  }>({
-    column: 'priority',
-    reverse: false,
-  });
 
   useEffect(() => {
     if (cookie['products-view']) setProducstView(cookie['products-view']);
@@ -44,34 +37,7 @@ const Products = () => {
   const { refetch: refetchProducts, isLoading: isProductsLoading } =
     api.product.getAll.useQuery(undefined, {
       onSuccess: (data) => {
-        if (orderedOptions) {
-          switch (orderedOptions.column) {
-            case 'name':
-              setProducts(data.sort((a, b) => a.name.localeCompare(b.name)));
-              break;
-            case 'category':
-              setProducts(
-                data.sort((a, b) =>
-                  a.categoryName.localeCompare(b.categoryName)
-                )
-              );
-              break;
-            case 'price':
-              setProducts(data.sort((a, b) => a.price - b.price));
-              break;
-            case 'priority':
-              setProducts(data.sort((a, b) => a.priority - b.priority));
-              break;
-            default:
-              if (orderedOptions.reverse) {
-                setProducts(products?.reverse());
-                setOrderedOptions({ ...orderedOptions, reverse: true });
-              }
-              break;
-          }
-        } else {
-          setProducts(data);
-        }
+        setProducts(data);
       },
     });
 
@@ -179,8 +145,6 @@ const Products = () => {
               void refetchProducts();
             }}
             isProductsLoading={isAnyCheckboxSelected}
-            orderedOptions={orderedOptions}
-            setOrderedOptions={setOrderedOptions}
             categoriesData={categoriesData ?? []}
             deleteProducts={deleteProducts.mutate}
             updateName={(productId) => {

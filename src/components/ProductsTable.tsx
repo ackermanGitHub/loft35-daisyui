@@ -1,6 +1,5 @@
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import Image from 'next/image';
-import Error from 'next/error';
 import {
   type Category,
   type Product,
@@ -14,7 +13,6 @@ import {
   type DroppableProvided,
 } from 'react-beautiful-dnd';
 import { StrictModeDroppable as Droppable } from '~/helpers/DroppableStrictMode';
-import { ChatContext } from '~/context/ChatBubbles';
 
 interface IProps {
   categoriesData: Category[];
@@ -28,14 +26,6 @@ interface IProps {
   ) => void;
   refetchProducts: () => void;
   isProductsLoading: boolean;
-  orderedOptions: {
-    column: string;
-    reverse: boolean;
-  };
-  setOrderedOptions: (orderedOptions: {
-    column: string;
-    reverse: boolean;
-  }) => void;
   deleteProducts: ({ productIds }: { productIds: number[] }) => void;
   updateName: (productId: number) => void;
   updatePrice: (productId: number) => void;
@@ -89,19 +79,11 @@ interface IProps {
   }) => void;
 }
 
-// Define the action types
-enum ActionType {
-  ADD_MESSAGE = 'ADD_MESSAGE',
-  REMOVE_MESSAGE = 'REMOVE_MESSAGE',
-}
-
 const ProductsTable: React.FC<IProps> = ({
   productsData,
   setProductsData,
   refetchProducts,
   isProductsLoading,
-  orderedOptions,
-  setOrderedOptions,
   categoriesData,
   deleteProducts,
   updateName,
@@ -116,8 +98,6 @@ const ProductsTable: React.FC<IProps> = ({
   editInputProperties,
   setEditInputProperties,
 }) => {
-  const { dispatchMessage } = useContext(ChatContext);
-
   useEffect(() => {
     const selectCheckbox = document.getElementById(
       'select-all-checkbox'
@@ -172,11 +152,11 @@ const ProductsTable: React.FC<IProps> = ({
                 display: `${editInputProperties?.active ? 'block' : 'none'}`,
               }}
               defaultValue={editInputProperties.value}
-              className="absolute input input-primary z-20"
+              className="absolute input input-primary shadow-lg z-20"
             />
           </div>
         )}
-        <table className="table table-zebra w-full">
+        <table className="table table-compact table-zebra w-full">
           <thead>
             <tr>
               <th>
@@ -190,226 +170,23 @@ const ProductsTable: React.FC<IProps> = ({
               </th>
               <th></th>
               <th>Producto</th>
-              <th
-                onClick={() => {
-                  if (orderedOptions.column === 'category') {
-                    setOrderedOptions({
-                      column: 'category',
-                      reverse: !orderedOptions.reverse,
-                    });
-                    setProductsData(productsData?.reverse());
-                  } else {
-                    setProductsData(
-                      productsData?.sort((a, b) =>
-                        a.categoryName.localeCompare(b.categoryName)
-                      )
-                    );
-                    setOrderedOptions({
-                      column: 'category',
-                      reverse: false,
-                    });
-                  }
-                }}
-              >
-                <div className="flex justify-between ">
-                  Categoría
-                  {orderedOptions.column === 'category' && (
-                    <span className="swap swap-rotate">
-                      <svg
-                        viewBox="0 0 30 30"
-                        height={12}
-                        width={12}
-                        fill="currentColor"
-                        stroke="currentColor"
-                        className={`${
-                          orderedOptions.reverse ? 'rotate-180' : ''
-                        } swap-active`}
-                      >
-                        <polygon points="15,17.4 4.8,7 2,9.8 15,23 28,9.8 25.2,7 "></polygon>
-                      </svg>
-                    </span>
-                  )}
-                </div>
+              <th>
+                <div className="flex justify-between ">Categoría</div>
               </th>
               <th>Disponibles</th>
-              <th
-                onClick={() => {
-                  if (orderedOptions.column === 'name') {
-                    setOrderedOptions({
-                      column: 'name',
-                      reverse: !orderedOptions.reverse,
-                    });
-                    setProductsData(productsData?.reverse());
-                  } else {
-                    setProductsData(
-                      productsData?.sort((a, b) => a.name.localeCompare(b.name))
-                    );
-                    setOrderedOptions({
-                      column: 'name',
-                      reverse: false,
-                    });
-                  }
-                }}
-              >
-                <div className="flex justify-between ">
-                  Nombre
-                  {orderedOptions.column === 'name' && (
-                    <span className="swap swap-rotate">
-                      <svg
-                        viewBox="0 0 30 30"
-                        height={12}
-                        width={12}
-                        fill="currentColor"
-                        stroke="currentColor"
-                        className={`${
-                          orderedOptions.reverse ? 'rotate-180' : ''
-                        } swap-active`}
-                      >
-                        <polygon points="15,17.4 4.8,7 2,9.8 15,23 28,9.8 25.2,7 "></polygon>
-                      </svg>
-                    </span>
-                  )}
-                </div>
+              <th>
+                <div className="flex justify-between ">Nombre</div>
               </th>
-              <th
-                onClick={() => {
-                  if (orderedOptions.column === 'price') {
-                    setOrderedOptions({
-                      column: 'price',
-                      reverse: !orderedOptions.reverse,
-                    });
-                    setProductsData(productsData?.reverse());
-                  } else {
-                    setProductsData(
-                      productsData?.sort((a, b) => a.price - b.price)
-                    );
-                    setOrderedOptions({
-                      column: 'price',
-                      reverse: false,
-                    });
-                  }
-                }}
-              >
-                <div className="flex justify-between ">
-                  Precio
-                  {orderedOptions.column === 'price' && (
-                    <span className="swap swap-rotate">
-                      <svg
-                        viewBox="0 0 30 30"
-                        height={12}
-                        width={12}
-                        fill="currentColor"
-                        stroke="currentColor"
-                        className={`${
-                          orderedOptions.reverse ? 'rotate-180' : ''
-                        } swap-active`}
-                      >
-                        <polygon points="15,17.4 4.8,7 2,9.8 15,23 28,9.8 25.2,7 "></polygon>
-                      </svg>
-                    </span>
-                  )}
-                </div>
+              <th>
+                <div className="flex justify-between ">Precio</div>
               </th>
-              <th
-                onClick={() => {
-                  if (orderedOptions.column === 'stock') {
-                    setOrderedOptions({
-                      column: 'stock',
-                      reverse: !orderedOptions.reverse,
-                    });
-                    setProductsData(productsData?.reverse());
-                  } else {
-                    setProductsData(
-                      productsData?.sort((a, b) => a.stock - b.stock)
-                    );
-                    setOrderedOptions({
-                      column: 'stock',
-                      reverse: false,
-                    });
-                  }
-                }}
-              >
-                <div className="flex justify-between ">
-                  Cantidad
-                  {orderedOptions.column === 'stock' && (
-                    <span className="swap swap-rotate">
-                      <svg
-                        viewBox="0 0 30 30"
-                        height={12}
-                        width={12}
-                        fill="currentColor"
-                        stroke="currentColor"
-                        className={`${
-                          orderedOptions.reverse ? 'rotate-180' : ''
-                        } swap-active`}
-                      >
-                        <polygon points="15,17.4 4.8,7 2,9.8 15,23 28,9.8 25.2,7 "></polygon>
-                      </svg>
-                    </span>
-                  )}
-                </div>
-              </th>
-              <th
-                onClick={() => {
-                  if (orderedOptions.column === 'priority') {
-                    setOrderedOptions({
-                      column: 'priority',
-                      reverse: !orderedOptions.reverse,
-                    });
-                    setProductsData(productsData?.reverse());
-                  } else {
-                    setProductsData(
-                      productsData?.sort((a, b) => a.priority - b.priority)
-                    );
-                    setOrderedOptions({
-                      column: 'priority',
-                      reverse: false,
-                    });
-                  }
-                }}
-              >
-                <div className="flex justify-between ">
-                  Prioridad
-                  {orderedOptions.column === 'priority' && (
-                    <span className="swap swap-rotate">
-                      <svg
-                        viewBox="0 0 30 30"
-                        height={12}
-                        width={12}
-                        fill="currentColor"
-                        stroke="currentColor"
-                        className={`${
-                          orderedOptions.reverse ? 'rotate-180' : ''
-                        } swap-active`}
-                      >
-                        <polygon points="15,17.4 4.8,7 2,9.8 15,23 28,9.8 25.2,7 "></polygon>
-                      </svg>
-                    </span>
-                  )}
-                </div>
+              <th>
+                <div className="flex justify-between ">Cantidad</div>
               </th>
             </tr>
           </thead>
           <DragDropContext
             onDragEnd={(result) => {
-              if (
-                orderedOptions.column !== 'priority' ||
-                orderedOptions.reverse
-              ) {
-                dispatchMessage({
-                  payload: {
-                    text: 'Tiene que estar ordenado por prioridad y descendentemente',
-                    type: 'error',
-                  },
-                  type: ActionType.ADD_MESSAGE,
-                });
-                throw new Error({
-                  title:
-                    'Tiene que estar ordenado por prioridad y descendentemente',
-                  statusCode: 1002,
-                });
-              }
-
               if (result.destination && productsData) {
                 const sourceProductPriority =
                   productsData[result.source.index]?.priority;
@@ -492,7 +269,7 @@ const ProductsTable: React.FC<IProps> = ({
                               </svg>
                             </th>
                             <td>
-                              <div className="flex items-center space-x-3">
+                              <div className="flex items-center space-x-3 min-w-[190px]">
                                 <div className="avatar">
                                   <div className="mask mask-squircle w-12 h-12">
                                     <Image
@@ -528,7 +305,7 @@ const ProductsTable: React.FC<IProps> = ({
                               </div>
                             </td>
                             <td className="relative">
-                              <div className="flex justify-between items-center w-24">
+                              <div className="flex justify-between items-center min-w-[120px]">
                                 <select
                                   onChange={(e) => {
                                     if (e.target.value === 'Añadir') {
@@ -548,7 +325,7 @@ const ProductsTable: React.FC<IProps> = ({
                                     });
                                   }}
                                   value={product.categoryId}
-                                  className="select bg-transparent w-full h-[75px] absolute inset-0"
+                                  className="select bg-transparent w-full absolute"
                                 >
                                   {categoriesData?.map((category) => (
                                     <option
@@ -573,61 +350,58 @@ const ProductsTable: React.FC<IProps> = ({
                               </div>
                             </td>
                             <td>
-                              <input
-                                type="checkbox"
-                                className="toggle toggle-active"
-                                defaultChecked={product.active}
-                                onChange={() => {
-                                  toggleActive({
-                                    productId: product.id,
-                                    active: !product.active,
-                                  });
-                                }}
-                              />
-                            </td>
-                            <th>
-                              <div className="flex justify-between">
-                                <p
-                                  onClick={(event) => {
-                                    event.preventDefault();
-                                    event.stopPropagation();
-                                    const target =
-                                      event.currentTarget as HTMLSpanElement;
-                                    const parent =
-                                      target.parentElement as HTMLTableCellElement;
-                                    const grandParent =
-                                      parent.parentElement as HTMLTableCellElement;
-
-                                    const position = {
-                                      x: grandParent?.offsetLeft,
-                                      y: grandParent?.offsetTop,
-                                    };
-                                    const size = {
-                                      width: grandParent?.offsetWidth,
-                                      height: grandParent?.offsetHeight,
-                                    };
-
-                                    setEditInputProperties({
-                                      left: position.x,
-                                      top: position.y,
-                                      height: size.height,
-                                      width: size.width,
-                                      value: product.name,
-                                      active: true,
+                              <div className="flex justify-center items-center min-w-[60px]">
+                                <input
+                                  type="checkbox"
+                                  className="toggle toggle-active"
+                                  defaultChecked={product.active}
+                                  onChange={() => {
+                                    toggleActive({
                                       productId: product.id,
-                                      type: 'text',
-                                      column: 'name',
+                                      active: !product.active,
                                     });
                                   }}
-                                >
-                                  {product.name}
-                                </p>
+                                />
+                              </div>
+                            </td>
+                            <th
+                              onClick={(event) => {
+                                event.preventDefault();
+                                event.stopPropagation();
+                                const target =
+                                  event.currentTarget as HTMLSpanElement;
+
+                                const position = {
+                                  x: target?.offsetLeft,
+                                  y: target?.offsetTop,
+                                };
+                                const size = {
+                                  width: target?.offsetWidth,
+                                  height: target?.offsetHeight,
+                                };
+
+                                setEditInputProperties({
+                                  left: position.x,
+                                  top: position.y,
+                                  height: size.height,
+                                  width: size.width,
+                                  value: product.name,
+                                  active: true,
+                                  productId: product.id,
+                                  type: 'text',
+                                  column: 'name',
+                                });
+                              }}
+                            >
+                              <div className="flex justify-between ">
+                                <p className="w-full">{product.name}</p>
                                 {editInputProperties.active &&
                                   editInputProperties.productId ===
                                     product.id &&
                                   editInputProperties.column === 'name' && (
                                     <div
-                                      onClick={() => {
+                                      onClick={(e) => {
+                                        e.stopPropagation();
                                         updateName(product.id);
                                       }}
                                       className="fixed inset-0 w-[100vw] h-[100vh] opacity-30 stroke-slate-600"
@@ -635,49 +409,45 @@ const ProductsTable: React.FC<IProps> = ({
                                   )}
                               </div>
                             </th>
-                            <th>
+                            <th
+                              onClick={(event) => {
+                                event.preventDefault();
+                                event.stopPropagation();
+                                const target =
+                                  event.currentTarget as HTMLSpanElement;
+
+                                const position = {
+                                  x: target?.offsetLeft,
+                                  y: target?.offsetTop,
+                                };
+                                const size = {
+                                  width: target?.offsetWidth,
+                                  height: target?.offsetHeight,
+                                };
+
+                                setEditInputProperties({
+                                  left: position.x,
+                                  top: position.y,
+                                  height: size.height,
+                                  width: size.width,
+                                  value: product.price.toString(),
+                                  active: true,
+                                  productId: product.id,
+                                  type: 'number',
+                                  column: 'price',
+                                });
+                              }}
+                            >
                               <div className="flex justify-between">
-                                <p
-                                  onClick={(event) => {
-                                    event.preventDefault();
-                                    event.stopPropagation();
-                                    const target =
-                                      event.currentTarget as HTMLSpanElement;
-                                    const parent =
-                                      target.parentElement as HTMLTableCellElement;
-                                    const grandParent =
-                                      parent.parentElement as HTMLTableCellElement;
-
-                                    const position = {
-                                      x: grandParent?.offsetLeft,
-                                      y: grandParent?.offsetTop,
-                                    };
-                                    const size = {
-                                      width: grandParent?.offsetWidth,
-                                      height: grandParent?.offsetHeight,
-                                    };
-
-                                    setEditInputProperties({
-                                      left: position.x,
-                                      top: position.y,
-                                      height: size.height,
-                                      width: size.width,
-                                      value: product.price.toString(),
-                                      active: true,
-                                      productId: product.id,
-                                      type: 'number',
-                                      column: 'price',
-                                    });
-                                  }}
-                                >
-                                  {product.price}
-                                </p>
+                                <p>{product.price}</p>
                                 {editInputProperties.active &&
                                   editInputProperties.productId ===
                                     product.id &&
                                   editInputProperties.column === 'price' && (
                                     <div
-                                      onClick={() => {
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
                                         updatePrice(product.id);
                                       }}
                                       className="fixed inset-0 w-[100vw] h-[100vh] opacity-30 stroke-slate-600"
@@ -685,58 +455,51 @@ const ProductsTable: React.FC<IProps> = ({
                                   )}
                               </div>
                             </th>
-                            <th>
+                            <th
+                              onClick={(event) => {
+                                event.preventDefault();
+                                event.stopPropagation();
+                                const target =
+                                  event.currentTarget as HTMLSpanElement;
+
+                                const position = {
+                                  x: target?.offsetLeft,
+                                  y: target?.offsetTop,
+                                };
+                                const size = {
+                                  width: target?.offsetWidth,
+                                  height: target?.offsetHeight,
+                                };
+
+                                setEditInputProperties({
+                                  left: position.x,
+                                  top: position.y,
+                                  height: size.height,
+                                  width: size.width,
+                                  value: product.stock.toString(),
+                                  active: true,
+                                  productId: product.id,
+                                  type: 'number',
+                                  column: 'stock',
+                                });
+                              }}
+                            >
                               <div className="flex justify-between">
-                                <p
-                                  onClick={(event) => {
-                                    event.preventDefault();
-                                    event.stopPropagation();
-                                    const target =
-                                      event.currentTarget as HTMLSpanElement;
-                                    const parent =
-                                      target.parentElement as HTMLTableCellElement;
-                                    const grandParent =
-                                      parent.parentElement as HTMLTableCellElement;
-
-                                    const position = {
-                                      x: grandParent?.offsetLeft,
-                                      y: grandParent?.offsetTop,
-                                    };
-                                    const size = {
-                                      width: grandParent?.offsetWidth,
-                                      height: grandParent?.offsetHeight,
-                                    };
-
-                                    setEditInputProperties({
-                                      left: position.x,
-                                      top: position.y,
-                                      height: size.height,
-                                      width: size.width,
-                                      value: product.stock.toString(),
-                                      active: true,
-                                      productId: product.id,
-                                      type: 'number',
-                                      column: 'stock',
-                                    });
-                                  }}
-                                >
-                                  {product.stock}
-                                </p>
+                                <p>{product.stock}</p>
                                 {editInputProperties.active &&
                                   editInputProperties.productId ===
                                     product.id &&
                                   editInputProperties.column === 'stock' && (
                                     <div
-                                      onClick={() => {
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
                                         updateStock(product.id);
                                       }}
                                       className="fixed inset-0 w-[100vw] h-[100vh] opacity-30 stroke-slate-600"
                                     ></div>
                                   )}
                               </div>
-                            </th>
-                            <th>
-                              <p>{product.priority}</p>
                             </th>
                           </tr>
                         )}
@@ -758,7 +521,6 @@ const ProductsTable: React.FC<IProps> = ({
               <th>Nombre</th>
               <th>Precio CUP</th>
               <th>Cantidad</th>
-              <th>Prioridad</th>
             </tr>
           </tfoot>
         </table>

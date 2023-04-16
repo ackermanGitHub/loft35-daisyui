@@ -129,17 +129,19 @@ const ProductTableRow: React.FC<IProps> = ({
         </div>
       </td>
       <td>
-        <input
-          type="checkbox"
-          className="toggle toggle-active"
-          defaultChecked={product.active}
-          onChange={() => {
-            onCheckBoxToggle({
-              productID: product.id,
-              active: !product.active,
-            });
-          }}
-        />
+        <div className="flex justify-center items-center">
+          <input
+            type="checkbox"
+            className="toggle toggle-active"
+            defaultChecked={product.active}
+            onChange={() => {
+              onCheckBoxToggle({
+                productID: product.id,
+                active: !product.active,
+              });
+            }}
+          />
+        </div>
       </td>
       <th>
         <div className="flex justify-between">
