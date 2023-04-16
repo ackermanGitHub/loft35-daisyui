@@ -15,7 +15,7 @@ const Tests = () => {
         <div className="flex w-full h-full justify-evenly items-center">
           <div className="card shadow-md overflow-hidden">
             <Image
-              src={'/loft35-sign1.png'}
+              src={'/Loft35-sign1.png'}
               alt="loft35-sign"
               width={324 / 2}
               height={575 / 2}
