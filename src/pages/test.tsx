@@ -16,7 +16,7 @@ const Tests = () => {
           <div className="card shadow-md overflow-hidden">
             <Image
               src={'/loft35-sign1.png'}
-              alt="home-promo_1"
+              alt="loft35-sign"
               width={324 / 2}
               height={575 / 2}
             />
