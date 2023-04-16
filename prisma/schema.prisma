@@ -84,6 +84,7 @@ model Product {
   primaryImageId  Int      @unique
   imageUrl        String
   price           Float
+  // coin            String
   priority        Int      @unique @default(autoincrement())
   active          Boolean
   deleted         Boolean
