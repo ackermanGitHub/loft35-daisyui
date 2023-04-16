@@ -10,7 +10,6 @@ import { prisma } from '~/server/db';
 
 interface IDocumentProps extends DocumentProps {
   dataTheme: string;
-  defaultTheme: string;
   lightTheme: string;
   darkTheme: string;
 }

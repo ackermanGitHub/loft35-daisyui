@@ -15,31 +15,6 @@ const NavBar: React.FC = () => {
   const { cart } = useCart();
 
   useEffect(() => {
-    const defaultTheme = document
-      .querySelector('html')
-      ?.getAttribute('data-theme');
-
-    const initialLightTheme = document
-      .querySelector('html')
-      ?.getAttribute('data-light-theme');
-
-    const initialDarkTheme = document
-      .querySelector('html')
-      ?.getAttribute('data-dark-theme');
-
-    setCookie('light-theme', initialLightTheme);
-    setCookie('dark-theme', initialDarkTheme);
-
-    if (defaultTheme === initialLightTheme) {
-      setCookie('color-theme', 'light');
-    } else if (defaultTheme === initialDarkTheme) {
-      setCookie('color-theme', 'dark');
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
     if (cookies['color-theme'] === 'light') {
       document
         .querySelector('html')
@@ -58,7 +33,10 @@ const NavBar: React.FC = () => {
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
-          className="inline-block w-6 h-6 stroke-current"
+          width="24"
+          height="24"
+          stroke="currentColor"
+          display="inline-block"
         >
           <path
             strokeLinecap="round"
@@ -87,7 +65,10 @@ const NavBar: React.FC = () => {
         />
 
         <svg
-          className="swap-on fill-current w-6 h-6"
+          className="swap-on"
+          fill="currentColor"
+          width="24"
+          height="24"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
         >
@@ -95,7 +76,10 @@ const NavBar: React.FC = () => {
         </svg>
 
         <svg
-          className="swap-off fill-current w-6 h-6"
+          className="swap-off"
+          fill="currentColor"
+          width="24"
+          height="24"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
         >
@@ -108,7 +92,8 @@ const NavBar: React.FC = () => {
             <div className="indicator">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
+                width="20"
+                height="20"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
