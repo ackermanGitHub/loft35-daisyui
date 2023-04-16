@@ -52,7 +52,7 @@ const NavBar: React.FC = () => {
   }, [cookies]);
 
   return (
-    <div className="navbar bg-base-100">
+    <nav className="navbar sticky top-0 z-30 text-base-content shadow-md backdrop-blur bg-opacity-90 bg-base-100">
       <label htmlFor="my-drawer-3" className="btn btn-square btn-ghost">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -190,7 +190,7 @@ const NavBar: React.FC = () => {
           </button>
         )}
       </div>
-    </div>
+    </nav>
   );
 };
 

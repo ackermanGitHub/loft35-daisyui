@@ -525,7 +525,7 @@ const ProductsTable: React.FC<IProps> = ({
           </tfoot>
         </table>
       </div>
-      <div>
+      <div className="bg-base-100 p-2 rounded-md">
         <div className="flex flex-row gap-2">
           <div className="w-12"></div>
           <div className="flex items-center space-x-3">

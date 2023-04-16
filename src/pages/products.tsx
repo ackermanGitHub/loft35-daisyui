@@ -9,13 +9,7 @@ import { useCookies } from 'react-cookie';
 
 const Products = () => {
   const [cookie] = useCookies(['products-view']);
-
-  const [productsView, setProducstView] = useState<'table' | 'cards'>('table');
   const [isAnyCheckboxSelected, setIsAnyCheckboxSelected] = useState(false);
-
-  useEffect(() => {
-    if (cookie['products-view']) setProducstView(cookie['products-view']);
-  }, [cookie]);
 
   const [products, setProducts] = useState<
     (Product & {
@@ -92,7 +86,7 @@ const Products = () => {
   });
 
   useEffect(() => {
-    if (productsView !== 'table') {
+    if (cookie['products-view'] !== 'table') {
       return;
     }
     const selectCheckbox = document.getElementById(
@@ -137,7 +131,7 @@ const Products = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
-        {productsView === 'table' && (
+        {cookie['products-view'] === 'table' && (
           <ProductsTable
             productsData={products ?? []}
             setProductsData={setProducts}
@@ -215,7 +209,7 @@ const Products = () => {
             setEditInputProperties={setEditInputProperties}
           />
         )}
-        {productsView === 'cards' && (
+        {cookie['products-view'] === 'cards' && (
           <ProductsCardScroll productsData={products ?? []} />
         )}
       </Layout>

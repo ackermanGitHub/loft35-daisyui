@@ -5,7 +5,7 @@ const Drawer: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <div className="drawer">
       <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
-      <div className="drawer-content from-primary to-secondary bg-gradient-to-br flex flex-col">
+      <div className="drawer-content mb-12 from-primary to-secondary bg-gradient-to-br flex flex-col">
         <NavBar />
         {children}
       </div>
