@@ -33,7 +33,7 @@ const themes = [
 ];
 
 interface IProps {
-  targetTheme: string;
+  dropdownPos: string;
   onChangeFn: (theme: string) => void;
   currentTheme: string;
   isBorderEnabled: boolean;
@@ -41,7 +41,7 @@ interface IProps {
 }
 
 const ChangeTheme: React.FC<IProps> = ({
-  targetTheme,
+  dropdownPos,
   onChangeFn,
   currentTheme,
   isBorderEnabled,
@@ -60,9 +60,7 @@ const ChangeTheme: React.FC<IProps> = ({
 
   return (
     <div>
-      <div
-        className={`dropdown ${targetTheme === 'dark' ? 'dropdown-end' : ''}`}
-      >
+      <div className={`dropdown ${dropdownPos}`}>
         <button
           disabled={!isEnabled}
           tabIndex={0}
@@ -111,13 +109,11 @@ const ChangeTheme: React.FC<IProps> = ({
                     <div className="col-span-5 row-span-3 row-start-1 flex gap-2 py-3 px-4 items-center">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
+                        width={16}
+                        height={16}
                         viewBox="0 0 24 24"
                         fill="currentColor"
-                        className={`w-3 h-3 ${
-                          selectedTheme !== theme ? 'invisible' : ''
-                        }`}
+                        className={selectedTheme !== theme ? 'invisible' : ''}
                       >
                         <path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z"></path>
                       </svg>{' '}
