@@ -43,9 +43,11 @@ const SettingsOptions = () => {
                 Orders
               </button>
             </div>
-            {currentSection === 'Theme' && <ThemeSection />}
+            <div className="overflow-scroll">
+              {currentSection === 'Theme' && <ThemeSection />}
 
-            {currentSection === 'Products' && <ProductsSection />}
+              {currentSection === 'Products' && <ProductsSection />}
+            </div>
             <div className="modal-action">
               <label htmlFor="setting-modal" className="btn">
                 Cerrar
