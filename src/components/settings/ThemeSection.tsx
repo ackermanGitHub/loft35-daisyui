@@ -11,11 +11,12 @@ const ThemeSection = () => {
   ]);
 
   return (
-    <div className="flex h-full flex-col items-center justify-evenly">
-      <div className="w-full">
+    <div className="flex flex-col overflow-visible items-center justify-evenly">
+      <div className="w-full mt-4">
         <h1 className="mb-2 font-medium">Configuración Personal: </h1>
-        <div>
-          <div className="flex flex-row my-5 justify-center">
+
+        <div className="flex flex-col">
+          <div className="flex flex-row mb-5 justify-center">
             <h1 className="mr-2">Tema Por Defecto: </h1>
             <label className="swap swap-rotate">
               <input
@@ -47,12 +48,12 @@ const ThemeSection = () => {
               </svg>
             </label>
           </div>
-          <div className="flex w-full flex-row items-center justify-around">
-            <div>
+          <div className="flex w-full flex-row flex-wrap items-center justify-around">
+            <div className="mx-2">
               <h1>Modo Claro: </h1>
               <ChangeTheme
                 isEnabled
-                targetTheme="light"
+                dropdownPos="dropdown-start"
                 isBorderEnabled={cookies['color-theme'] === 'light'}
                 currentTheme={cookies['light-theme']}
                 onChangeFn={(theme) => {
@@ -60,11 +61,11 @@ const ThemeSection = () => {
                 }}
               />
             </div>
-            <div>
+            <div className="mx-2">
               <h2>Modo Oscuro: </h2>
               <ChangeTheme
                 isEnabled
-                targetTheme="dark"
+                dropdownPos="dropdown-end"
                 isBorderEnabled={cookies['color-theme'] === 'dark'}
                 currentTheme={cookies['dark-theme']}
                 onChangeFn={(theme) => {
@@ -73,6 +74,16 @@ const ThemeSection = () => {
               />
             </div>
           </div>
+        </div>
+      </div>
+      <div className="flex flex-wrap w-full my-5 justify-evenly">
+        <div className="flex flex-row mx-1">
+          <h1 className="mr-2">Gradiente: </h1>
+          <input type="checkbox" className="checkbox" />
+        </div>
+        <div className="flex flex-row mx-1">
+          <h1 className="mr-2">Fondo blanco/negro: </h1>
+          <input type="checkbox" className="checkbox" />
         </div>
       </div>
       <div className="divider">
@@ -114,9 +125,9 @@ const ThemeSection = () => {
           <div>
             <h1>Modo Claro: </h1>
             <ChangeTheme
-              targetTheme="light"
+              dropdownPos="dropdown-top"
               isBorderEnabled={cookies['color-theme'] === 'light'}
-              isEnabled={!true}
+              isEnabled={true}
               currentTheme={cookies['light-theme']}
               onChangeFn={(theme) => {
                 console.log(theme);
@@ -126,15 +137,25 @@ const ThemeSection = () => {
           <div>
             <h2>Modo Oscuro: </h2>
             <ChangeTheme
-              targetTheme="dark"
+              dropdownPos="dropdown-end dropdown-top"
               isBorderEnabled={cookies['color-theme'] === 'dark'}
-              isEnabled={!true}
+              isEnabled={true}
               currentTheme={cookies['dark-theme']}
               onChangeFn={(theme) => {
                 console.log(theme);
               }}
             />
           </div>
+        </div>
+      </div>
+      <div className="flex flex-wrap w-full my-5 justify-evenly opacity-50">
+        <div className="flex flex-row mx-1">
+          <h1 className="mr-2">Gradiente: </h1>
+          <input type="checkbox" className="checkbox" />
+        </div>
+        <div className="flex flex-row mx-1">
+          <h1 className="mr-2">Fondo blanco/negro: </h1>
+          <input type="checkbox" className="checkbox" />
         </div>
       </div>
     </div>
