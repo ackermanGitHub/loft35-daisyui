@@ -8,8 +8,15 @@ import ProductsCardScroll from '~/components/ProductsCardScroll';
 import { useCookies } from 'react-cookie';
 
 const Products = () => {
-  const [cookie] = useCookies(['products-view']);
+  const [cookie, setCookie] = useCookies(['products-view']);
   const [isAnyCheckboxSelected, setIsAnyCheckboxSelected] = useState(false);
+
+  useEffect(() => {
+    if (!cookie['products-view']) {
+      setCookie('products-view', 'cards');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [products, setProducts] = useState<
     (Product & {
@@ -72,12 +79,6 @@ const Products = () => {
       void refetchProducts();
     },
   });
-
-  // const updateCategory = api.updateProduct.updateCategory.useMutation({
-  //   onSuccess: () => {
-  //     void refetchProducts();
-  //   },
-  // });
 
   const toggleActive = api.product.setActive.useMutation({
     onSuccess: () => {
@@ -209,8 +210,8 @@ const Products = () => {
             setEditInputProperties={setEditInputProperties}
           />
         )}
-        {cookie['products-view'] === 'cards' && (
-          <ProductsCardScroll productsData={products ?? []} />
+        {cookie['products-view'] === 'cards' && products && (
+          <ProductsCardScroll productsData={products} />
         )}
       </Layout>
     </>
