@@ -13,7 +13,7 @@ const Tests = () => {
       </Head>
       <Layout>
         <div className="flex w-full h-full justify-evenly items-center">
-          <div className="card shadow-md overflow-hidden">
+          <div className="card bg-primary shadow-md overflow-hidden">
             <Image
               src={'/Loft35-sign1.png'}
               alt="loft35-sign"
@@ -21,7 +21,7 @@ const Tests = () => {
               height={575 / 2}
             />
           </div>
-          <div className="card glass shadow-md overflow-hidden">
+          <div className="card bg-secondary glass shadow-md overflow-hidden">
             <Image
               src={'/home-promo_1.png'}
               alt="home-promo_1"
