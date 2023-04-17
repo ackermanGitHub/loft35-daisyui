@@ -21,7 +21,7 @@ export default function MyDocument({
 }: IDocumentProps) {
   return (
     <Html
-      data-theme={dataTheme}
+      data-theme={dataTheme === 'light' ? lightTheme : darkTheme}
       data-light-theme={lightTheme}
       data-dark-theme={darkTheme}
       lang="es"
@@ -47,22 +47,19 @@ MyDocument.getInitialProps = async (ctx: DocumentContext) => {
     .map((cookie) => cookie.replace(';', ''));
 
   const defalutThemeCookie = themeCookies
-    ?.find((cookie) => cookie.includes('color'))
+    ?.find((cookie) => cookie.includes('color-theme'))
     ?.split('=')[1];
   const defalutLightThemeCookie = themeCookies
-    ?.find((cookie) => cookie.includes('light'))
+    ?.find((cookie) => cookie.includes('light-theme'))
     ?.split('=')[1];
   const defalutDarkThemeCookie = themeCookies
-    ?.find((cookie) => cookie.includes('dark'))
+    ?.find((cookie) => cookie.includes('dark-theme'))
     ?.split('=')[1];
 
   if (defalutThemeCookie && defalutLightThemeCookie && defalutDarkThemeCookie) {
     return {
       ...initialProps,
-      dataTheme:
-        defalutThemeCookie === 'light'
-          ? defalutLightThemeCookie
-          : defalutDarkThemeCookie,
+      dataTheme: defalutThemeCookie,
       lightTheme: defalutLightThemeCookie,
       darkTheme: defalutDarkThemeCookie,
     };
@@ -76,10 +73,7 @@ MyDocument.getInitialProps = async (ctx: DocumentContext) => {
 
   return {
     ...initialProps,
-    dataTheme:
-      setting?.defaultTheme === 'light'
-        ? setting?.lightTheme
-        : setting?.darkTheme,
+    dataTheme: setting?.defaultTheme,
     lightTheme: setting?.lightTheme,
     darkTheme: setting?.darkTheme,
   };
