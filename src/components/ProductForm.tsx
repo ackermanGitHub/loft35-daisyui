@@ -117,8 +117,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
       <div className="modal">
         <form
           className="modal-box flex w-auto max-w-5xl flex-col"
-          // eslint-disable-next-line @typescript-eslint/no-misused-promises
-          onSubmit={handleSubmit(onUpldProClick)}
+          onSubmit={void handleSubmit(onUpldProClick)}
         >
           <h3 className="card-title">Sube un Producto!</h3>
           <div className="form-control w-full max-w-xs">
