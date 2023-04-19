@@ -43,7 +43,7 @@ const SettingsOptions = () => {
                 Orders
               </button>
             </div>
-            <div className="overflow-scroll">
+            <div className="overflow-auto">
               {currentSection === 'Theme' && <ThemeSection />}
 
               {currentSection === 'Products' && <ProductsSection />}
