@@ -98,7 +98,7 @@ const ThemeSection = () => {
             onChange={(e) => {
               setCookie('bg-theme', e.target.value);
             }}
-            defaultValue={cookies['bg-theme']}
+            value={cookies['bg-theme']}
             className="select select-bordered"
           >
             <option value={'primary'}>Primario</option>
