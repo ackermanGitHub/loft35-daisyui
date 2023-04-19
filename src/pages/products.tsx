@@ -1,127 +1,48 @@
 import { useEffect, useState } from 'react';
+import { type GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
-import { type Product, type Image as ProductImage } from '@prisma/client';
-import { api } from '~/utils/api';
 import Layout from '~/layout/Layout';
 import ProductsTable from '~/components/ProductsTable';
 import ProductsCardScroll from '~/components/ProductsCardScroll';
+import { getCookie, setCookie } from 'cookies-next';
 import { useCookies } from 'react-cookie';
 
-const Products = () => {
-  const [cookie, setCookie] = useCookies(['products-view']);
-  const [isAnyCheckboxSelected, setIsAnyCheckboxSelected] = useState(false);
+export const getServerSideProps = ({ req, res }: GetServerSidePropsContext) => {
+  const productsView = getCookie('products-view', { req, res });
+  if (!productsView) {
+    return {
+      props: {
+        productsView: 'cards',
+      },
+    };
+  }
+  return {
+    props: {
+      productsView,
+    },
+  };
+};
+
+const Products = ({ productsView }: { productsView: string }) => {
+  const [productView, setProductView] = useState(productsView);
+  const [cookies] = useCookies(['products-view']);
 
   useEffect(() => {
-    if (!cookie['products-view']) {
+    const productViewCookie = getCookie('products-view');
+    if (!productViewCookie) {
       setCookie('products-view', 'cards');
+    } else {
+      if (typeof productViewCookie === 'string')
+        setProductView(productViewCookie);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const [products, setProducts] = useState<
-    (Product & {
-      primaryImage: ProductImage;
-    })[]
-  >();
-  const [editInputProperties, setEditInputProperties] = useState({
-    left: 0,
-    top: 0,
-    width: 0,
-    height: 0,
-    active: false,
-    value: '',
-    productId: -1,
-    type: '',
-    column: '',
-  });
-
-  const { refetch: refetchProducts, isLoading: isProductsLoading } =
-    api.product.getAll.useQuery(undefined, {
-      onSuccess: (data) => {
-        setProducts(data);
-      },
-    });
-
-  const { data: categoriesData } = api.category.getAll.useQuery();
-
-  const deleteProducts = api.product.deleteMany.useMutation({
-    onSuccess: () => {
-      void refetchProducts();
-    },
-  });
-
-  const updateName = api.updateProduct.updateName.useMutation({
-    onSuccess: () => {
-      void refetchProducts();
-    },
-  });
-
-  const updatePrice = api.updateProduct.updatePrice.useMutation({
-    onSuccess: () => {
-      void refetchProducts();
-    },
-  });
-
-  const updateStock = api.updateProduct.updateStock.useMutation({
-    onSuccess: () => {
-      void refetchProducts();
-    },
-  });
-
-  const changePriorityUp = api.updateProduct.changePriorityUp.useMutation({
-    onSuccess: () => {
-      void refetchProducts();
-    },
-  });
-
-  const changePriorityDown = api.updateProduct.changePriorityDown.useMutation({
-    onSuccess: () => {
-      void refetchProducts();
-    },
-  });
-
-  const toggleActive = api.product.setActive.useMutation({
-    onSuccess: () => {
-      void refetchProducts();
-    },
-  });
-
   useEffect(() => {
-    if (cookie['products-view'] !== 'table') {
-      return;
-    }
-    const selectCheckbox = document.getElementById(
-      'select-all-checkbox'
-    ) as HTMLInputElement;
-    const checkboxes = document.querySelectorAll(
-      '.select-checkbox-group'
-    ) as NodeListOf<HTMLInputElement>;
-    const togglesActives = document.querySelectorAll(
-      '.toggle-active'
-    ) as NodeListOf<HTMLInputElement>;
-
-    togglesActives.forEach((toggle, index) => {
-      if (products && products[index] && !isProductsLoading) {
-        toggle.checked = products[index]?.active || toggle.checked;
-      }
-    });
-
-    selectCheckbox.addEventListener('click', () => {
-      checkboxes.forEach((checkBox) => {
-        checkBox.checked = selectCheckbox.checked;
-      });
-      setIsAnyCheckboxSelected(selectCheckbox.checked);
-    });
-
-    checkboxes.forEach((checkBox) => {
-      checkBox.addEventListener('change', () => {
-        setIsAnyCheckboxSelected(
-          Array.from(checkboxes).some((checkbox) => checkbox.checked)
-        );
-      });
-    });
+    const productViewCookie: string = cookies['products-view'];
+    setProductView(productViewCookie);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isProductsLoading, products]);
+  }, [cookies['products-view']]);
 
   return (
     <>
@@ -132,87 +53,8 @@ const Products = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
-        {cookie['products-view'] === 'table' && (
-          <ProductsTable
-            productsData={products ?? []}
-            setProductsData={setProducts}
-            refetchProducts={() => {
-              void refetchProducts();
-            }}
-            isProductsLoading={isAnyCheckboxSelected}
-            categoriesData={categoriesData ?? []}
-            deleteProducts={deleteProducts.mutate}
-            updateName={(productId) => {
-              const product = products?.find(
-                (product) => product.id === productId
-              );
-              if (!product) {
-                throw new Error('ProductId no existe');
-              }
-              setEditInputProperties({
-                ...editInputProperties,
-                active: false,
-              });
-              if (product.name === editInputProperties.value) return;
-              updateName.mutate({
-                productId: product.id,
-                newName: editInputProperties.value,
-              });
-              product.name = editInputProperties.value;
-            }}
-            updatePrice={(productId) => {
-              const product = products?.find(
-                (product) => product.id === productId
-              );
-              if (!product) {
-                throw new Error('ProductId no existe');
-              }
-              setEditInputProperties({
-                ...editInputProperties,
-                active: false,
-              });
-              if (product.price.toString() === editInputProperties.value)
-                return;
-              updatePrice.mutate({
-                productId: product.id,
-                newPrice: parseInt(editInputProperties.value),
-              });
-              product.price = parseInt(editInputProperties.value);
-            }}
-            updateStock={(productId) => {
-              const product = products?.find(
-                (product) => product.id === productId
-              );
-              if (!product) {
-                throw new Error('ProductId no existe');
-              }
-              setEditInputProperties({
-                ...editInputProperties,
-                active: false,
-              });
-              if (product.stock.toString() === editInputProperties.value)
-                return;
-              updateStock.mutate({
-                productId: product.id,
-                newStock: parseInt(editInputProperties.value),
-              });
-              product.stock = parseInt(editInputProperties.value);
-            }}
-            changePriorityUp={changePriorityUp.mutate}
-            changePriorityDown={changePriorityDown.mutate}
-            changePriorityLoading={
-              changePriorityUp.isLoading || changePriorityDown.isLoading
-            }
-            toggleActive={toggleActive.mutate}
-            isAnyProductSelected={isAnyCheckboxSelected}
-            setIsAnyProductSelected={setIsAnyCheckboxSelected}
-            editInputProperties={editInputProperties}
-            setEditInputProperties={setEditInputProperties}
-          />
-        )}
-        {cookie['products-view'] === 'cards' && products && (
-          <ProductsCardScroll productsData={products} />
-        )}
+        {productView === 'table' && <ProductsTable />}
+        {productView === 'cards' && <ProductsCardScroll />}
       </Layout>
     </>
   );

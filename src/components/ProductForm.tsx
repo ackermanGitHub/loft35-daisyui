@@ -41,7 +41,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
 
   const MAX_IMAGE_SIZE = 1 * 1024 * 1024; // 5 MB
 
-  const onUpldProClick = async (data: FormValues) => {
+  const onSubmit = async (data: FormValues) => {
     if (upldProState === 'Error' || upldProState === 'Subida') {
       setPrimaryImageSize(undefined);
       setSecondaryImagesSize(undefined);
@@ -117,7 +117,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
       <div className="modal">
         <form
           className="modal-box flex w-auto max-w-5xl flex-col"
-          onSubmit={void handleSubmit(onUpldProClick)}
+          onSubmit={(event) => void handleSubmit(onSubmit)(event)}
         >
           <h3 className="card-title">Sube un Producto!</h3>
           <div className="form-control w-full max-w-xs">

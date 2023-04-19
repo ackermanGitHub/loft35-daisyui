@@ -1,9 +1,7 @@
-// import { useState } from 'react';
 import { useCookies } from 'react-cookie';
 import ChangeTheme from './ChangeTheme';
 
 const ThemeSection = () => {
-  // const [isSameConfig, setIsSameConfig] = useState(true);
   const [cookies, setCookie] = useCookies([
     'color-theme',
     'light-theme',
@@ -56,7 +54,6 @@ const ThemeSection = () => {
               <ChangeTheme
                 isEnabled
                 dropdownPos="dropdown-start"
-                isBorderEnabled={cookies['color-theme'] === 'light'}
                 currentTheme={cookies['light-theme']}
                 onChangeFn={(theme) => {
                   setCookie('light-theme', theme);
@@ -68,7 +65,6 @@ const ThemeSection = () => {
               <ChangeTheme
                 isEnabled
                 dropdownPos="dropdown-end"
-                isBorderEnabled={cookies['color-theme'] === 'dark'}
                 currentTheme={cookies['dark-theme']}
                 onChangeFn={(theme) => {
                   setCookie('dark-theme', theme);
@@ -100,6 +96,7 @@ const ThemeSection = () => {
             }}
             value={cookies['bg-theme']}
             className="select select-bordered"
+            disabled={cookies['gradient-theme'] === 'true'}
           >
             <option value={'primary'}>Primario</option>
             <option value={'secondary'}>Secundario</option>
@@ -147,8 +144,7 @@ const ThemeSection = () => {
             <h1>Modo Claro: </h1>
             <ChangeTheme
               dropdownPos="dropdown-top"
-              isBorderEnabled={cookies['color-theme'] === 'light'}
-              isEnabled={true}
+              isEnabled={false}
               currentTheme={cookies['light-theme']}
               onChangeFn={(theme) => {
                 console.log(theme);
@@ -159,8 +155,7 @@ const ThemeSection = () => {
             <h2>Modo Oscuro: </h2>
             <ChangeTheme
               dropdownPos="dropdown-end dropdown-top"
-              isBorderEnabled={cookies['color-theme'] === 'dark'}
-              isEnabled={true}
+              isEnabled={false}
               currentTheme={cookies['dark-theme']}
               onChangeFn={(theme) => {
                 console.log(theme);
@@ -172,11 +167,11 @@ const ThemeSection = () => {
       <div className="flex flex-wrap w-full my-5 justify-evenly opacity-50">
         <div className="flex flex-row mx-1">
           <h1 className="mr-2">Gradiente: </h1>
-          <input type="checkbox" className="checkbox" />
+          <input type="checkbox" disabled className="checkbox" />
         </div>
         <div className="flex flex-row mx-1">
           <h1 className="mr-2">Fondo blanco/negro: </h1>
-          <input type="checkbox" className="checkbox" />
+          <input type="checkbox" disabled className="checkbox" />
         </div>
       </div>
     </div>

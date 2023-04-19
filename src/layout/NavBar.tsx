@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect } from 'react';
 import { useCookies } from 'react-cookie';
-import { useCart } from '~/context/ShoppingCart';
+import { useCart } from '~/components/cart/ShoppingCart';
 
 const NavBar: React.FC = () => {
   const [cookies, setCookie] = useCookies([
