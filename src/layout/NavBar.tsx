@@ -10,6 +10,8 @@ const NavBar: React.FC = () => {
     'color-theme',
     'light-theme',
     'dark-theme',
+    'gradient-theme',
+    'bg-theme',
   ]);
   const session = useSession();
   const { cart } = useCart();
@@ -24,6 +26,12 @@ const NavBar: React.FC = () => {
     const initialDarkTheme = document
       .querySelector('html')
       ?.getAttribute('data-dark-theme');
+    const initialGradient = document
+      .querySelector('html')
+      ?.getAttribute('data-gradient-theme');
+    const initialBgColor = document
+      .querySelector('html')
+      ?.getAttribute('data-bg-theme');
 
     if (!cookies['color-theme']) {
       setCookie(
@@ -37,6 +45,12 @@ const NavBar: React.FC = () => {
     if (!cookies['dark-theme']) {
       setCookie('dark-theme', initialDarkTheme);
     }
+    if (!cookies['gradient-theme']) {
+      setCookie('gradient-theme', initialGradient);
+    }
+    if (!cookies['bg-theme']) {
+      setCookie('bg-theme', initialBgColor);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -49,6 +63,14 @@ const NavBar: React.FC = () => {
       document
         .querySelector('html')
         ?.setAttribute('data-theme', cookies['dark-theme']);
+    }
+    if (cookies['gradient-theme'] === 'true') {
+      (document.querySelector('body') as unknown as HTMLBodyElement).className =
+        'from-primary to-secondary bg-gradient-to-br';
+    } else {
+      (
+        document.querySelector('body') as unknown as HTMLBodyElement
+      ).className = `bg-${cookies['bg-theme']}`;
     }
   }, [cookies]);
 

@@ -63,6 +63,9 @@ model Setting {
   defaultTheme  String   @default("light")
   lightTheme   String @default("pastel") 
   darkTheme    String @default("dracula")
+  gradientTheme Boolean @default(true)
+  blackAndWhiteBg Boolean @default(false)
+  bgColor String @default("primary")
   productsView String?
   placeholderImgURL String?
 }

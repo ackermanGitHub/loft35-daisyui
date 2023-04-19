@@ -8,6 +8,8 @@ const ThemeSection = () => {
     'color-theme',
     'light-theme',
     'dark-theme',
+    'gradient-theme',
+    'bg-theme',
   ]);
 
   return (
@@ -76,14 +78,33 @@ const ThemeSection = () => {
           </div>
         </div>
       </div>
-      <div className="flex flex-wrap w-full my-5 justify-evenly">
+      <div className="flex flex-wrap items-center w-full my-5 justify-around">
         <div className="flex flex-row mx-1">
           <h1 className="mr-2">Gradiente: </h1>
-          <input type="checkbox" className="checkbox" />
+          <input
+            type="checkbox"
+            checked={cookies['gradient-theme'] === 'true'}
+            onChange={() => {
+              setCookie(
+                'gradient-theme',
+                cookies['gradient-theme'] === 'true' ? 'false' : 'true'
+              );
+            }}
+            className="checkbox"
+          />
         </div>
         <div className="flex flex-row mx-1">
-          <h1 className="mr-2">Fondo blanco/negro: </h1>
-          <input type="checkbox" className="checkbox" />
+          <select
+            onChange={(e) => {
+              setCookie('bg-theme', e.target.value);
+            }}
+            defaultValue={cookies['bg-theme']}
+            className="select select-bordered"
+          >
+            <option value={'primary'}>Primario</option>
+            <option value={'secondary'}>Secundario</option>
+            <option value={'black&white'}>Blanco/Negro</option>
+          </select>
         </div>
       </div>
       <div className="divider">
@@ -91,7 +112,7 @@ const ThemeSection = () => {
         <input
           checked={true}
           onChange={() => {
-            // bsetIsSameConfig(!isSameConfig);
+            // setIsSameConfig(!isSameConfig);
           }}
           type="checkbox"
           className="checkbox"
