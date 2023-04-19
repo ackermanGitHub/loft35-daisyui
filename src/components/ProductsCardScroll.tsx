@@ -15,8 +15,17 @@ const ProductsCardScroll: React.FC = () => {
             key={product.id}
             className="card card-compact w-[45%] glass mt-12"
           >
-            <figure className="relative pb-[100%] w-full">
-              <Image fill src={product.imageUrl} alt="car!" />
+            <figure className="relative overflow-hidden pb-[100%] w-full">
+              <Image
+                className="object-cover"
+                fill
+                sizes="(max-width: 768px) 60vw,
+                      (max-width: 1200px) 40vw,
+                      33vw"
+                quality={60}
+                src={product.imageUrl}
+                alt={product.name}
+              />
             </figure>
             <div className="card-body">
               <h2 className="card-title">{product.name}</h2>
