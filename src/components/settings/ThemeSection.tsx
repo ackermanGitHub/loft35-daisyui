@@ -1,5 +1,6 @@
 import { useCookies } from 'react-cookie';
 import ChangeTheme from './ChangeTheme';
+// import { useEffect, useState } from 'react';
 
 const ThemeSection = () => {
   const [cookies, setCookie] = useCookies([
@@ -9,6 +10,14 @@ const ThemeSection = () => {
     'gradient-theme',
     'bg-theme',
   ]);
+
+  // const [gradientActive, setGradientActive] = useState<boolean>(false);
+  // const [lightTheme, setLightTheme] = useState<boolean>(false);
+  // const [darkTheme, setDarkTheme] = useState<boolean>(false);
+  // useEffect(() => {
+  //   setGradientActive(cookies['gradient-theme'] === "true");
+  //   console.log('useEffect-gradient-theme');
+  // }, [cookies["gradient-theme"]]);
 
   return (
     <div className="flex flex-col overflow-visible items-center justify-evenly">
