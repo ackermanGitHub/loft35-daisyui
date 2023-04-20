@@ -1,7 +1,17 @@
 import Head from 'next/head';
 import Layout from '~/layout/Layout';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 
 const Home = () => {
+  const session = useSession();
+  const router = useRouter();
+
+  if (session?.data?.user?.role === 'admin') {
+    void router.push('/admin');
+    return null;
+  }
+
   return (
     <>
       <Head>

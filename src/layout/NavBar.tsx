@@ -1,6 +1,7 @@
 import { useSession, signIn, signOut } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
+import Router from 'next/router';
 import { useEffect } from 'react';
 import { useCookies } from 'react-cookie';
 import { useCart } from '~/components/cart/ShoppingCart';
@@ -135,50 +136,54 @@ const NavBar: React.FC = () => {
         </svg>
       </label>
       <div className="flex-none">
-        <div className="dropdown dropdown-end">
-          <label tabIndex={0} className="btn btn-ghost btn-circle">
-            <div className="indicator">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width={24}
-                height={24}
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                />
-              </svg>
-              <span className="badge badge-sm indicator-item">
-                {cart.items.reduce((a, b) => a + b.quantity, 0)}
-              </span>
-            </div>
-          </label>
-          <div
-            tabIndex={0}
-            className="mt-3 card card-compact dropdown-content w-52 bg-base-100 shadow"
-          >
-            <div className="card-body">
-              <span className="font-bold text-lg">
-                {cart.items.reduce((a, b) => a + b.quantity, 0)} Items
-              </span>
-              <span className="text-info">Subtotal: ${cart.total}</span>
-              <div className="card-actions">
-                <button className="btn btn-primary btn-block">View cart</button>
+        {session.data?.user.role !== 'admin' && (
+          <div className="dropdown dropdown-end">
+            <label tabIndex={0} className="btn btn-ghost btn-circle">
+              <div className="indicator">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width={24}
+                  height={24}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                  />
+                </svg>
+                <span className="badge badge-sm indicator-item">
+                  {cart.items.reduce((a, b) => a + b.quantity, 0)}
+                </span>
+              </div>
+            </label>
+            <div
+              tabIndex={0}
+              className="mt-3 card card-compact dropdown-content w-52 bg-base-100 shadow"
+            >
+              <div className="card-body">
+                <span className="font-bold text-lg">
+                  {cart.items.reduce((a, b) => a + b.quantity, 0)} Items
+                </span>
+                <span className="text-info">Subtotal: ${cart.total}</span>
+                <div className="card-actions">
+                  <button className="btn btn-primary btn-block">
+                    View cart
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        {session.data?.user.image ? (
+        )}
+        {session.status === 'authenticated' ? (
           <div className="dropdown dropdown-end">
             <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
               <div className="w-10 rounded-full">
                 <Image
-                  src={session.data.user.image}
+                  src={session.data.user.image || '/placeholder.png'}
                   priority
                   alt="avatar"
                   width={40}
@@ -214,7 +219,9 @@ const NavBar: React.FC = () => {
           <button
             className="btn btn-info"
             onClick={() => {
-              void signIn();
+              if (session.status === 'unauthenticated') void signIn();
+              else Router.reload();
+
               window.scrollTo(0, 0);
               return;
             }}
