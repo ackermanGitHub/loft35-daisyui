@@ -4,25 +4,22 @@ import Layout from '~/layout/Layout';
 
 import { prisma } from '~/server/db';
 import { getPlaiceholder } from 'plaiceholder';
-import { type InferGetStaticPropsType } from 'next/types';
+import { type InferGetServerSidePropsType } from 'next/types';
 
-export const getStaticProps = async () => {
+export const getServerSideProps = async () => {
   const products = await prisma.product.findMany();
 
-  const productsURLs = products.map((product) => product.imageUrl);
-
-  const images = await Promise.all(
-    productsURLs.map(async (src) => {
+  const productsWithPlaceholder = await Promise.all(
+    products.map(async (product) => {
       const {
         base64,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        img: { width, height, ...img },
-      } = await getPlaiceholder(src);
+        img: { width, height, ...imgPlaceholder },
+      } = await getPlaiceholder(product.imageUrl);
 
       return {
-        ...img,
-        alt: 'Paint Splashes',
-        title: 'Photo from Unsplash',
+        ...imgPlaceholder,
+        product,
         blurDataURL: base64,
       };
     })
@@ -30,14 +27,14 @@ export const getStaticProps = async () => {
 
   return {
     props: {
-      images,
+      productsWithPlaceholder,
     },
   };
 };
 
-const Tests: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
-  images,
-}) => {
+const Tests: React.FC<
+  InferGetServerSidePropsType<typeof getServerSideProps>
+> = ({ productsWithPlaceholder }) => {
   return (
     <>
       <Head>
@@ -48,17 +45,23 @@ const Tests: React.FC<InferGetStaticPropsType<typeof getStaticProps>> = ({
       </Head>
       <Layout>
         <div className="flex flex-wrap items-center justify-around">
-          {images &&
-            images.map((image) => (
+          {productsWithPlaceholder &&
+            productsWithPlaceholder.map((product) => (
               <div
-                key={image.src}
+                key={product.product.id}
                 className="card card-compact w-[45%] glass mt-12"
               >
                 <figure className="relative overflow-hidden pb-[100%] w-full">
-                  <Image {...image} placeholder="blur" fill />
+                  <Image
+                    src={product.src}
+                    blurDataURL={product.blurDataURL}
+                    alt={product.product.name}
+                    placeholder="blur"
+                    fill
+                  />
                 </figure>
                 <div className="card-body">
-                  <h2 className="card-title">{image.title}</h2>
+                  <h2 className="card-title">{product.product.name}</h2>
                   <div className="card-actions justify-end">
                     <button className="btn btn-primary">
                       <svg
