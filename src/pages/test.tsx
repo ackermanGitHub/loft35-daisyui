@@ -57,7 +57,12 @@ const Tests: React.FC<
                     blurDataURL={product.blurDataURL}
                     alt={product.product.name}
                     placeholder="blur"
+                    className="object-cover"
                     fill
+                    sizes="(max-width: 768px) 60vw,
+                      (max-width: 1200px) 40vw,
+                      33vw"
+                    quality={60}
                   />
                 </figure>
                 <div className="card-body">

@@ -9,7 +9,6 @@ const Home = () => {
 
   if (session?.data?.user?.role === 'admin') {
     void router.push('/admin');
-    return null;
   }
 
   return (

@@ -2,89 +2,14 @@ import { useSession, signIn, signOut } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import Router from 'next/router';
-import { useEffect } from 'react';
-import { useCookies } from 'react-cookie';
 import { useCart } from '~/components/cart/ShoppingCart';
+import { useTheme } from '~/hooks/useTheme';
 
 const NavBar: React.FC = () => {
-  const [cookies, setCookie] = useCookies([
-    'color_theme',
-    'light_theme',
-    'dark_theme',
-    'gradient_theme',
-    'bg_theme',
-  ]);
+  const { colorTheme, toogleColorTheme } = useTheme();
+
   const session = useSession();
   const { cart } = useCart();
-
-  useEffect(() => {
-    const initialTheme = document
-      .querySelector('html')
-      ?.getAttribute('data-theme');
-    const initialLightTheme = document
-      .querySelector('html')
-      ?.getAttribute('data-light_theme');
-    const initialDarkTheme = document
-      .querySelector('html')
-      ?.getAttribute('data-dark_theme');
-    const initialGradient = document
-      .querySelector('html')
-      ?.getAttribute('data-gradient_theme');
-    const initialBgColor = document
-      .querySelector('html')
-      ?.getAttribute('data-bg_theme');
-
-    if (!cookies.color_theme) {
-      setCookie(
-        'color_theme',
-        initialTheme === initialLightTheme ? 'light' : 'dark',
-        {
-          path: '/',
-        }
-      );
-    }
-    if (!cookies.light_theme) {
-      setCookie('light_theme', initialLightTheme, {
-        path: '/',
-      });
-    }
-    if (!cookies.dark_theme) {
-      setCookie('dark_theme', initialDarkTheme, {
-        path: '/',
-      });
-    }
-    if (!cookies.gradient_theme) {
-      setCookie('gradient_theme', initialGradient, {
-        path: '/',
-      });
-    }
-    if (!cookies.bg_theme) {
-      setCookie('bg_theme', initialBgColor, {
-        path: '/',
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (cookies.color_theme === 'light') {
-      document
-        .querySelector('html')
-        ?.setAttribute('data-theme', cookies.light_theme);
-    } else if (cookies.color_theme === 'dark') {
-      document
-        .querySelector('html')
-        ?.setAttribute('data-theme', cookies.dark_theme);
-    }
-    if (cookies.gradient_theme === 'true') {
-      (document.querySelector('body') as HTMLBodyElement).className =
-        'from-primary to-secondary bg-gradient-to-br';
-    } else {
-      (
-        document.querySelector('body') as HTMLBodyElement
-      ).className = `bg-${cookies.bg_theme}`;
-    }
-  }, [cookies]);
 
   return (
     <nav className="navbar sticky top-0 z-30 text-base-content shadow-md backdrop-blur bg-opacity-90 bg-base-100">
@@ -114,17 +39,9 @@ const NavBar: React.FC = () => {
       <label className="swap swap-rotate">
         <input
           type="checkbox"
-          checked={cookies.color_theme === 'light'}
+          checked={colorTheme === 'light'}
           onChange={() => {
-            if (cookies.color_theme === 'light') {
-              setCookie('color_theme', 'dark', {
-                path: '/',
-              });
-            } else if (cookies.color_theme === 'dark') {
-              setCookie('color_theme', 'light', {
-                path: '/',
-              });
-            }
+            toogleColorTheme();
           }}
         />
 

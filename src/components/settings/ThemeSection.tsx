@@ -1,14 +1,24 @@
 import { useCookies } from 'react-cookie';
+import { useTheme } from '~/hooks/useTheme';
 import ChangeTheme from './ChangeTheme';
 
 const ThemeSection = () => {
-  const [cookies, setCookie] = useCookies([
+  const [_cookies, setCookie] = useCookies([
     'color_theme',
     'light_theme',
     'dark_theme',
     'gradient_theme',
     'bg_theme',
   ]);
+
+  const {
+    colorTheme,
+    toogleColorTheme,
+    lightTheme,
+    darkTheme,
+    gradientTheme,
+    bgTheme,
+  } = useTheme();
 
   return (
     <div className="flex flex-col overflow-visible items-center justify-evenly">
@@ -20,17 +30,9 @@ const ThemeSection = () => {
             <h1 className="mr-2">Tema Por Defecto: </h1>
             <label className="swap swap-rotate">
               <input
-                checked={cookies.color_theme === 'light'}
+                checked={colorTheme === 'light'}
                 onChange={() => {
-                  if (cookies.color_theme === 'light') {
-                    setCookie('color_theme', 'dark', {
-                      path: '/',
-                    });
-                  } else if (cookies.color_theme === 'dark') {
-                    setCookie('color_theme', 'light', {
-                      path: '/',
-                    });
-                  }
+                  toogleColorTheme();
                 }}
                 type="checkbox"
               />
@@ -58,7 +60,7 @@ const ThemeSection = () => {
               <ChangeTheme
                 isEnabled
                 dropdownPos="dropdown-start"
-                currentTheme={cookies.light_theme}
+                currentTheme={lightTheme}
                 onChangeFn={(theme) => {
                   setCookie('light_theme', theme, {
                     path: '/',
@@ -71,7 +73,7 @@ const ThemeSection = () => {
               <ChangeTheme
                 isEnabled
                 dropdownPos="dropdown-end"
-                currentTheme={cookies.dark_theme}
+                currentTheme={darkTheme}
                 onChangeFn={(theme) => {
                   setCookie('dark_theme', theme, {
                     path: '/',
@@ -87,11 +89,11 @@ const ThemeSection = () => {
           <h1 className="mr-2">Gradiente: </h1>
           <input
             type="checkbox"
-            checked={cookies.gradient_theme === 'true'}
+            checked={gradientTheme === 'true'}
             onChange={() => {
               setCookie(
                 'gradient_theme',
-                cookies.gradient_theme === 'true' ? 'false' : 'true',
+                gradientTheme === 'true' ? 'false' : 'true',
                 {
                   path: '/',
                 }
@@ -107,9 +109,9 @@ const ThemeSection = () => {
                 path: '/',
               });
             }}
-            value={cookies.bg_theme}
+            value={bgTheme}
             className="select select-bordered"
-            disabled={cookies.gradient_theme === 'true'}
+            disabled={gradientTheme === 'true'}
           >
             <option value={'primary'}>Primario</option>
             <option value={'secondary'}>Secundario</option>
@@ -158,7 +160,7 @@ const ThemeSection = () => {
             <ChangeTheme
               dropdownPos="dropdown-top"
               isEnabled={false}
-              currentTheme={cookies.light_theme}
+              currentTheme={lightTheme}
               onChangeFn={(theme) => {
                 console.log(theme);
               }}
@@ -169,7 +171,7 @@ const ThemeSection = () => {
             <ChangeTheme
               dropdownPos="dropdown-end dropdown-top"
               isEnabled={false}
-              currentTheme={cookies.dark_theme}
+              currentTheme={darkTheme}
               onChangeFn={(theme) => {
                 console.log(theme);
               }}
