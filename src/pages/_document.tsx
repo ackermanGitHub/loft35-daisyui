@@ -26,10 +26,10 @@ export default function MyDocument({
   return (
     <Html
       data-theme={dataTheme === 'light' ? lightTheme : darkTheme}
-      data-light-theme={lightTheme}
-      data-dark-theme={darkTheme}
-      data-gradient-theme={gradientTheme}
-      data-bg-theme={bgColorTheme}
+      data-light_theme={lightTheme}
+      data-dark_theme={darkTheme}
+      data-gradient_theme={gradientTheme}
+      data-bg_theme={bgColorTheme}
       lang="es"
     >
       <Head />
@@ -59,19 +59,19 @@ MyDocument.getInitialProps = async (ctx: DocumentContext) => {
     .map((cookie) => cookie.replace(';', ''));
 
   const defalutThemeCookie = themeCookies
-    ?.find((cookie) => cookie.includes('color-theme'))
+    ?.find((cookie) => cookie.includes('color_theme'))
     ?.split('=')[1];
   const defalutLightThemeCookie = themeCookies
-    ?.find((cookie) => cookie.includes('light-theme'))
+    ?.find((cookie) => cookie.includes('light_theme'))
     ?.split('=')[1];
   const defalutDarkThemeCookie = themeCookies
-    ?.find((cookie) => cookie.includes('dark-theme'))
+    ?.find((cookie) => cookie.includes('dark_theme'))
     ?.split('=')[1];
   const gradientThemeCookie = themeCookies
-    ?.find((cookie) => cookie.includes('gradient-theme'))
+    ?.find((cookie) => cookie.includes('gradient_theme'))
     ?.split('=')[1];
   const bgColorThemeCookie = themeCookies
-    ?.find((cookie) => cookie.includes('bg-theme'))
+    ?.find((cookie) => cookie.includes('bg_theme'))
     ?.split('=')[1];
 
   if (

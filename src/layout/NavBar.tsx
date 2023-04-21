@@ -8,11 +8,11 @@ import { useCart } from '~/components/cart/ShoppingCart';
 
 const NavBar: React.FC = () => {
   const [cookies, setCookie] = useCookies([
-    'color-theme',
-    'light-theme',
-    'dark-theme',
-    'gradient-theme',
-    'bg-theme',
+    'color_theme',
+    'light_theme',
+    'dark_theme',
+    'gradient_theme',
+    'bg_theme',
   ]);
   const session = useSession();
   const { cart } = useCart();
@@ -23,55 +23,66 @@ const NavBar: React.FC = () => {
       ?.getAttribute('data-theme');
     const initialLightTheme = document
       .querySelector('html')
-      ?.getAttribute('data-light-theme');
+      ?.getAttribute('data-light_theme');
     const initialDarkTheme = document
       .querySelector('html')
-      ?.getAttribute('data-dark-theme');
+      ?.getAttribute('data-dark_theme');
     const initialGradient = document
       .querySelector('html')
-      ?.getAttribute('data-gradient-theme');
+      ?.getAttribute('data-gradient_theme');
     const initialBgColor = document
       .querySelector('html')
-      ?.getAttribute('data-bg-theme');
+      ?.getAttribute('data-bg_theme');
 
-    if (!cookies['color-theme']) {
+    if (!cookies.color_theme) {
       setCookie(
-        'color-theme',
-        initialTheme === initialLightTheme ? 'light' : 'dark'
+        'color_theme',
+        initialTheme === initialLightTheme ? 'light' : 'dark',
+        {
+          path: '/',
+        }
       );
     }
-    if (!cookies['light-theme']) {
-      setCookie('light-theme', initialLightTheme);
+    if (!cookies.light_theme) {
+      setCookie('light_theme', initialLightTheme, {
+        path: '/',
+      });
     }
-    if (!cookies['dark-theme']) {
-      setCookie('dark-theme', initialDarkTheme);
+    if (!cookies.dark_theme) {
+      setCookie('dark_theme', initialDarkTheme, {
+        path: '/',
+      });
     }
-    if (!cookies['gradient-theme']) {
-      setCookie('gradient-theme', initialGradient);
+    if (!cookies.gradient_theme) {
+      setCookie('gradient_theme', initialGradient, {
+        path: '/',
+      });
     }
-    if (!cookies['bg-theme']) {
-      setCookie('bg-theme', initialBgColor);
+    if (!cookies.bg_theme) {
+      setCookie('bg_theme', initialBgColor, {
+        path: '/',
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    if (cookies['color-theme'] === 'light') {
+    if (cookies.color_theme === 'light') {
       document
         .querySelector('html')
-        ?.setAttribute('data-theme', cookies['light-theme']);
-    } else if (cookies['color-theme'] === 'dark') {
+        ?.setAttribute('data-theme', cookies.light_theme);
+    } else if (cookies.color_theme === 'dark') {
       document
         .querySelector('html')
-        ?.setAttribute('data-theme', cookies['dark-theme']);
+        ?.setAttribute('data-theme', cookies.dark_theme);
     }
-    if (cookies['gradient-theme'] === 'true') {
-      (document.querySelector('body') as unknown as HTMLBodyElement).className =
+    if (cookies.gradient_theme === 'true') {
+      (document.querySelector('body') as HTMLBodyElement).className =
         'from-primary to-secondary bg-gradient-to-br';
     } else {
       (
-        document.querySelector('body') as unknown as HTMLBodyElement
-      ).className = `bg-${cookies['bg-theme']}`;
+        document.querySelector('body') as HTMLBodyElement
+      ).className = `bg-${cookies.bg_theme}`;
     }
   }, [cookies]);
 
@@ -103,12 +114,16 @@ const NavBar: React.FC = () => {
       <label className="swap swap-rotate">
         <input
           type="checkbox"
-          checked={cookies['color-theme'] === 'light'}
+          checked={cookies.color_theme === 'light'}
           onChange={() => {
-            if (cookies['color-theme'] === 'light') {
-              setCookie('color-theme', 'dark');
-            } else if (cookies['color-theme'] === 'dark') {
-              setCookie('color-theme', 'light');
+            if (cookies.color_theme === 'light') {
+              setCookie('color_theme', 'dark', {
+                path: '/',
+              });
+            } else if (cookies.color_theme === 'dark') {
+              setCookie('color_theme', 'light', {
+                path: '/',
+              });
             }
           }}
         />
@@ -136,48 +151,44 @@ const NavBar: React.FC = () => {
         </svg>
       </label>
       <div className="flex-none">
-        {session.data?.user.role !== 'admin' && (
-          <div className="dropdown dropdown-end">
-            <label tabIndex={0} className="btn btn-ghost btn-circle">
-              <div className="indicator">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width={24}
-                  height={24}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                  />
-                </svg>
-                <span className="badge badge-sm indicator-item">
-                  {cart.items.reduce((a, b) => a + b.quantity, 0)}
-                </span>
-              </div>
-            </label>
-            <div
-              tabIndex={0}
-              className="mt-3 card card-compact dropdown-content w-52 bg-base-100 shadow"
-            >
-              <div className="card-body">
-                <span className="font-bold text-lg">
-                  {cart.items.reduce((a, b) => a + b.quantity, 0)} Items
-                </span>
-                <span className="text-info">Subtotal: ${cart.total}</span>
-                <div className="card-actions">
-                  <button className="btn btn-primary btn-block">
-                    View cart
-                  </button>
-                </div>
+        <div className="dropdown dropdown-end">
+          <label tabIndex={0} className="btn btn-ghost btn-circle">
+            <div className="indicator">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width={24}
+                height={24}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                />
+              </svg>
+              <span className="badge badge-sm indicator-item">
+                {cart.items.reduce((a, b) => a + b.quantity, 0)}
+              </span>
+            </div>
+          </label>
+          <div
+            tabIndex={0}
+            className="mt-3 card card-compact dropdown-content w-52 bg-base-100 shadow"
+          >
+            <div className="card-body">
+              <span className="font-bold text-lg">
+                {cart.items.reduce((a, b) => a + b.quantity, 0)} Items
+              </span>
+              <span className="text-info">Subtotal: ${cart.total}</span>
+              <div className="card-actions">
+                <button className="btn btn-primary btn-block">View cart</button>
               </div>
             </div>
           </div>
-        )}
+        </div>
         {session.status === 'authenticated' ? (
           <div className="dropdown dropdown-end">
             <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
