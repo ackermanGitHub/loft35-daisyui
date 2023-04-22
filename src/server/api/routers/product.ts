@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { createTRPCRouter, publicProcedure } from '../trpc';
 import { S3 } from 'aws-sdk';
+import { getPlaiceholder } from 'plaiceholder';
 import sharp from 'sharp';
 
 const bucketName = 'loft35-aws-bucket';
@@ -93,6 +94,38 @@ export const productRouter = createTRPCRouter({
         primaryImage: true,
       },
     });
+  }),
+
+  getAllWithPlaceholders: publicProcedure.query(async ({ ctx }) => {
+    const products = await ctx.prisma.product.findMany({
+      where: {
+        deleted: false,
+      },
+      orderBy: {
+        priority: 'asc',
+      },
+      include: {
+        primaryImage: true,
+      },
+    });
+
+    const productsWithPlaceholder = await Promise.all(
+      products.map(async (product) => {
+        const {
+          base64,
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          img: { width, height, ...imgPlaceholder },
+        } = await getPlaiceholder(product.imageUrl);
+
+        return {
+          ...imgPlaceholder,
+          product,
+          blurDataURL: base64,
+        };
+      })
+    );
+
+    return productsWithPlaceholder;
   }),
 
   create: publicProcedure
