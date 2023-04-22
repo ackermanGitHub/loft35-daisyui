@@ -97,11 +97,16 @@ const NavBar: React.FC = () => {
           >
             <div className="card-body">
               <span className="font-bold text-lg">
-                {cart.items.reduce((a, b) => a + b.quantity, 0)} Items
+                {cart.items.reduce((a, b) => a + b.quantity, 0)} Productos
               </span>
-              <span className="text-info">Subtotal: ${cart.total}</span>
+              <span className="text-info">Total: ${cart.total}</span>
               <div className="card-actions">
-                <button className="btn btn-primary btn-block">View cart</button>
+                <label
+                  htmlFor="cart-modal"
+                  className="btn btn-primary btn-block"
+                >
+                  Ver Carrito
+                </label>
               </div>
             </div>
           </div>

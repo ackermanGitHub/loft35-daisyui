@@ -1,7 +1,10 @@
+import Image from 'next/image';
 import { createContext, useContext, useState } from 'react';
 
 export interface CartItem {
   productId: number;
+  imageURL: string;
+  blurImageUrl: string;
   name: string;
   price: number;
   quantity: number;
@@ -78,6 +81,84 @@ export const CartProvider: React.FC<React.PropsWithChildren> = ({
 
   return (
     <CartContext.Provider value={{ cart, addToCart, removeFromCart }}>
+      <input type="checkbox" id="cart-modal" className="modal-toggle" />
+      <label
+        htmlFor="cart-modal"
+        className="modal modal-bottom sm:modal-middle cursor-pointer"
+      >
+        <label className="modal-box relative" htmlFor="">
+          <div className="flex flex-col gap-4 justify-between items-center">
+            <div className="card-header gap-2 flex">
+              <div className="stack">
+                {cart.items.map((item) => (
+                  <figure
+                    key={item.productId}
+                    className="relative rounded-xl overflow-hidden pb-[100%] w-16"
+                  >
+                    <Image
+                      src={item.imageURL}
+                      blurDataURL={item.blurImageUrl}
+                      alt={item.name}
+                      placeholder="blur"
+                      className="object-cover"
+                      fill
+                      sizes="(max-width: 768px) 60vw,
+                      (max-width: 1200px) 40vw,
+                      33vw"
+                      quality={60}
+                    />
+                  </figure>
+                ))}
+              </div>
+              <div className="flex flex-col">
+                <h1 className="card-title font-bold text-lg">
+                  {cart.items.reduce((a, b) => a + b.quantity, 0)} Productos
+                </h1>
+                <h2 className="card-title text-info">Total: ${cart.total}</h2>
+              </div>
+            </div>
+            {cart.items.length === 0 ? (
+              <h1 className="card-title font-bold text-lg">
+                Tu carrito esta vacio 😥
+              </h1>
+            ) : (
+              <table>
+                <thead>
+                  <tr>
+                    <th>Producto</th>
+                    <th>Precio</th>
+                    <th>Cantidad</th>
+                    <th>Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {cart.items.map((item) => (
+                    <tr key={item.productId}>
+                      <td>
+                        <Image
+                          src={item.imageURL}
+                          alt={item.name}
+                          blurDataURL={item.blurImageUrl}
+                          width={64}
+                          height={64}
+                        />
+                      </td>
+                      <th>{item.price}</th>
+                      <th>{item.quantity}</th>
+                      <th>{item.quantity * item.price}</th>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+          <div className="modal-action">
+            <label htmlFor="cart-modal" className="btn btn-primary">
+              Close
+            </label>
+          </div>
+        </label>
+      </label>
       {children}
     </CartContext.Provider>
   );

@@ -67,6 +67,8 @@ const ProductsCardScroll: React.FC = () => {
                 onClick={() => {
                   addToCart({
                     productId: product.product.id,
+                    imageURL: product.product.imageUrl,
+                    blurImageUrl: product.blurDataURL,
                     name: product.product.name,
                     price: product.product.price,
                     quantity: 1,
