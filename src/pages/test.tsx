@@ -2,39 +2,14 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Layout from '~/layout/Layout';
 
-import { prisma } from '~/server/db';
-import { getPlaiceholder } from 'plaiceholder';
-import { type InferGetServerSidePropsType } from 'next/types';
+import { api } from '~/utils/api';
 
-export const getServerSideProps = async () => {
-  const products = await prisma.product.findMany();
+const Tests = () => {
+  const { data: productsWithPlaceholder, ...productsFetching } =
+    api.product.getAllWithPlaceholders.useQuery();
 
-  const productsWithPlaceholder = await Promise.all(
-    products.map(async (product) => {
-      const {
-        base64,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        img: { width, height, ...imgPlaceholder },
-      } = await getPlaiceholder(product.imageUrl);
+  console.log(productsFetching);
 
-      return {
-        ...imgPlaceholder,
-        product,
-        blurDataURL: base64,
-      };
-    })
-  ).then((values) => values);
-
-  return {
-    props: {
-      productsWithPlaceholder,
-    },
-  };
-};
-
-const Tests: React.FC<
-  InferGetServerSidePropsType<typeof getServerSideProps>
-> = ({ productsWithPlaceholder }) => {
   return (
     <>
       <Head>
@@ -45,6 +20,16 @@ const Tests: React.FC<
       </Head>
       <Layout>
         <div className="flex flex-wrap items-center justify-around">
+          {
+            <div className="card card-compact w-[45%] glass mt-12">
+              <div className="card-body">
+                <h2 className="card-title">No products</h2>
+              </div>
+              <div className="card-actions justify-end">
+                <button className="btn btn-primary"></button>
+              </div>
+            </div>
+          }
           {productsWithPlaceholder &&
             productsWithPlaceholder.map((product) => (
               <div
