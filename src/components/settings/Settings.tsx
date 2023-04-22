@@ -8,8 +8,8 @@ const SettingsOptions = () => {
   return (
     <div className="flex overflow-visible static justify-around items-center max-md:justify-between">
       <input type="checkbox" id="setting-modal" className="modal-toggle" />
-      <div className="modal overflow-hidden">
-        <div className="modal-box overflow-visible h-[70vh]">
+      <label htmlFor="setting-modal" className="modal cursor-pointer">
+        <label className="modal-box relative h-[70vh]">
           <div className="flex flex-col h-full justify-between">
             <div className="tabs">
               <button
@@ -54,8 +54,8 @@ const SettingsOptions = () => {
               </label>
             </div>
           </div>
-        </div>
-      </div>
+        </label>
+      </label>
     </div>
   );
 };
