@@ -5,6 +5,7 @@ export interface CartItem {
   productId: number;
   imageURL: string;
   blurImageUrl: string;
+  productStock: number;
   name: string;
   price: number;
   quantity: number;
@@ -144,7 +145,17 @@ export const CartProvider: React.FC<React.PropsWithChildren> = ({
                         />
                       </td>
                       <th>{item.price}</th>
-                      <th>{item.quantity}</th>
+                      <th>
+                        <select value={item.quantity} className="select">
+                          {Array(item.productStock)
+                            .fill(0)
+                            .map((_, index) => (
+                              <option value={index + 1} key={index + 1}>
+                                {index + 1}
+                              </option>
+                            ))}
+                        </select>
+                      </th>
                       <th>{item.quantity * item.price}</th>
                     </tr>
                   ))}

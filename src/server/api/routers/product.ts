@@ -3,6 +3,8 @@ import { createTRPCRouter, publicProcedure } from '../trpc';
 import { S3 } from 'aws-sdk';
 import { getPlaiceholder } from 'plaiceholder';
 import sharp from 'sharp';
+import { redis } from '~/utils/redis';
+import { type Product, type Image } from '@prisma/client';
 
 const bucketName = 'loft35-aws-bucket';
 
@@ -124,6 +126,57 @@ export const productRouter = createTRPCRouter({
         };
       })
     );
+
+    return productsWithPlaceholder;
+  }),
+
+  getAllWithPlaceholdersAndRedis: publicProcedure.query(async ({ ctx }) => {
+    const cachedProducts:
+      | {
+          product: Product & {
+            primaryImage: Image;
+          };
+          blurDataURL: string;
+          src: string;
+          type?: string | undefined;
+        }[]
+      | null = await redis.get('products');
+
+    if (cachedProducts) {
+      return cachedProducts;
+    }
+
+    const products = await ctx.prisma.product.findMany({
+      where: {
+        deleted: false,
+      },
+      orderBy: {
+        priority: 'asc',
+      },
+      include: {
+        primaryImage: true,
+      },
+    });
+
+    const productsWithPlaceholder = await Promise.all(
+      products.map(async (product) => {
+        const {
+          base64,
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          img: { width, height, ...imgPlaceholder },
+        } = await getPlaiceholder(product.imageUrl);
+
+        return {
+          ...imgPlaceholder,
+          product,
+          blurDataURL: base64,
+        };
+      })
+    );
+
+    if (!cachedProducts) {
+      await redis.set('products', JSON.stringify(productsWithPlaceholder));
+    }
 
     return productsWithPlaceholder;
   }),

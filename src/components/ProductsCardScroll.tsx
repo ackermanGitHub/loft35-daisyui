@@ -6,7 +6,7 @@ const ProductsCardScroll: React.FC = () => {
   const { addToCart } = useCart();
 
   const { data: productsWithPlaceholder, isFetched } =
-    api.product.getAllWithPlaceholders.useQuery();
+    api.product.getAllWithPlaceholdersAndRedis.useQuery();
 
   return (
     <div className="flex flex-wrap items-center justify-around">
@@ -69,6 +69,7 @@ const ProductsCardScroll: React.FC = () => {
                     productId: product.product.id,
                     imageURL: product.product.imageUrl,
                     blurImageUrl: product.blurDataURL,
+                    productStock: product.product.stock,
                     name: product.product.name,
                     price: product.product.price,
                     quantity: 1,
