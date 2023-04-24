@@ -23,7 +23,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
   const [isAddCategorySelected, setAddCategorySelected] = useState(false);
   const [isOtherStockSelected, setOtherStockSelected] = useState(false);
 
-  const productList = api.product.create.useMutation();
+  const productList = api.product.createWithSupabase.useMutation();
 
   const { data: categoriesData, refetch: refetchCategories } =
     api.category.getAll.useQuery();
@@ -347,9 +347,8 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
                   placeholder="Cantidad"
                   {...register('stock')}
                   defaultValue={'1'}
-                  className={`${
-                    !isOtherStockSelected ? 'hidden' : ''
-                  } input-bordered input w-[65px]`}
+                  className={`${!isOtherStockSelected ? 'hidden' : ''
+                    } input-bordered input w-[65px]`}
                 />
                 {!isOtherStockSelected && (
                   <select
@@ -383,9 +382,8 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
               <input
                 type="text"
                 placeholder="Categoría"
-                className={`${
-                  !isAddCategorySelected ? 'hidden' : ''
-                } input-bordered input w-full max-w-xs`}
+                className={`${!isAddCategorySelected ? 'hidden' : ''
+                  } input-bordered input w-full max-w-xs`}
                 {...register('categoryName', {
                   required: true,
                 })}
@@ -468,9 +466,8 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
 
           <div className={`modal-action mt-0`}>
             <button
-              className={`btn ${upldProState === 'Cargando' ? 'loading' : ''} ${
-                upldProState === 'Subida' ? 'btn-success' : ''
-              }
+              className={`btn ${upldProState === 'Cargando' ? 'loading' : ''} ${upldProState === 'Subida' ? 'btn-success' : ''
+                }
                 ${upldProState === 'Error' ? 'btn-error' : ''}
                 `}
               type="submit"
