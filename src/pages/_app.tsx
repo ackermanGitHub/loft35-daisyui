@@ -14,7 +14,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <SessionProvider session={session}>
-      <Analytics mode={'production'} />
+      <Analytics mode={process.env.NODE_ENV === 'production' ? 'production' : 'development'} />
       <CookiesProvider>
         <CartProvider>
           <Component {...pageProps} />

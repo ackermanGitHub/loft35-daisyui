@@ -73,6 +73,7 @@ model Setting {
 model Image {
   id        Int       @id @default(autoincrement())
   url       String
+  name      String
   sizeMb    Float
   color     String?
   productId Int?
@@ -85,6 +86,7 @@ model Product {
   name            String
   description     String?
   primaryImageId  Int      @unique
+  imageName       String
   imageUrl        String
   price           Float
   // coin            String

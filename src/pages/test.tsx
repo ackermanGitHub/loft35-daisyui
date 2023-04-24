@@ -2,6 +2,7 @@ import Head from 'next/head';
 import Layout from '~/layout/Layout';
 
 const Tests = () => {
+
   return (
     <>
       <Head>
@@ -11,7 +12,8 @@ const Tests = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
-        <div className="flex items-center justify-around"></div>
+        <div className="flex items-center justify-around">
+        </div>
       </Layout>
     </>
   );

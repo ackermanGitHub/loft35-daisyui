@@ -47,7 +47,7 @@ const ProductsCardScroll: React.FC = () => {
         >
           <figure className="relative overflow-hidden pb-[100%] w-full">
             <Image
-              src={product.src}
+              src={product.product.imageName}
               blurDataURL={product.blurDataURL}
               alt={product.product.name}
               placeholder="blur"

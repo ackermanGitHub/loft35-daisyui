@@ -103,7 +103,7 @@ const ProductsTable: React.FC = () => {
     },
   });
 
-  const toggleActive = api.product.setActive.useMutation({
+  const setActive = api.product.setActive.useMutation({
     onSuccess: () => {
       void refetchProducts();
     },
@@ -253,7 +253,7 @@ const ProductsTable: React.FC = () => {
                                   <div className="avatar">
                                     <div className="mask mask-squircle w-12 h-12">
                                       <Image
-                                        src={product.primaryImage.url}
+                                        src={product.imageName}
                                         alt="Avatar Tailwind CSS Component"
                                         width={48}
                                         height={48}
@@ -269,9 +269,8 @@ const ProductsTable: React.FC = () => {
                                         ${product.price}
                                       </div>
                                       <div
-                                        className={`badge badge-sm text-sm badge-${
-                                          product.active ? 'success' : 'warning'
-                                        } gap-2`}
+                                        className={`badge badge-sm text-sm badge-${product.active ? 'success' : 'warning'
+                                          } gap-2`}
                                       >
                                         {product.active ? 'active' : 'disabled'}
                                       </div>
@@ -336,7 +335,7 @@ const ProductsTable: React.FC = () => {
                                     className="toggle toggle-active"
                                     defaultChecked={product.active}
                                     onChange={() => {
-                                      toggleActive.mutate({
+                                      setActive.mutate({
                                         productId: product.id,
                                         active: !product.active,
                                       });
@@ -377,7 +376,7 @@ const ProductsTable: React.FC = () => {
                                   <p className="w-full">{product.name}</p>
                                   {editInputProperties.active &&
                                     editInputProperties.productId ===
-                                      product.id &&
+                                    product.id &&
                                     editInputProperties.column === 'name' && (
                                       <div
                                         onClick={(e) => {
@@ -437,7 +436,7 @@ const ProductsTable: React.FC = () => {
                                   <p>{product.price}</p>
                                   {editInputProperties.active &&
                                     editInputProperties.productId ===
-                                      product.id &&
+                                    product.id &&
                                     editInputProperties.column === 'price' && (
                                       <div
                                         onClick={(e) => {
@@ -501,7 +500,7 @@ const ProductsTable: React.FC = () => {
                                   <p>{product.stock}</p>
                                   {editInputProperties.active &&
                                     editInputProperties.productId ===
-                                      product.id &&
+                                    product.id &&
                                     editInputProperties.column === 'stock' && (
                                       <div
                                         onClick={(e) => {

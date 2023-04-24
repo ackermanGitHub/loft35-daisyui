@@ -1,18 +1,10 @@
 import { z } from 'zod';
 import { createTRPCRouter, publicProcedure } from '../trpc';
-import { S3 } from 'aws-sdk';
 import { getPlaiceholder } from 'plaiceholder';
 import sharp from 'sharp';
+import { supabase } from '~/utils/supabase';
 import { redis } from '~/utils/redis';
 import { type Product, type Image } from '@prisma/client';
-
-const bucketName = 'loft35-aws-bucket';
-
-// AWS S3 configuration
-const s3 = new S3({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-});
 
 export const productRouter = createTRPCRouter({
   delete: publicProcedure
@@ -39,24 +31,6 @@ export const productRouter = createTRPCRouter({
         },
         data: {
           deleted: true,
-        },
-      });
-    }),
-
-  toggleActive: publicProcedure
-    .input(z.object({ productId: z.number() }))
-    .mutation(async ({ ctx, input }) => {
-      const currentState = await ctx.prisma.product.findFirst({
-        where: {
-          id: input.productId,
-        },
-      });
-      return await ctx.prisma.product.update({
-        where: {
-          id: input.productId,
-        },
-        data: {
-          active: !currentState?.active,
         },
       });
     }),
@@ -181,7 +155,164 @@ export const productRouter = createTRPCRouter({
     return productsWithPlaceholder;
   }),
 
-  create: publicProcedure
+  createWithSupabase: publicProcedure
+    .input(
+      z.object({
+        name: z.string(),
+        description: z.string().optional(),
+        primaryImage: z.instanceof(Buffer),
+        secondaryImages: z.array(z.instanceof(Buffer)).optional(),
+        price: z.number(),
+        stock: z.number(),
+        categoryName: z.string(),
+        color: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const bucketName = 'images';
+        const folderName = 'products';
+        // Use Sharp to resize and optimize the primaryImage
+        const primaryImageInput = sharp(input.primaryImage);
+        const optimizedPrimaryImage = await primaryImageInput
+          .resize(800, 800, { fit: 'inside', withoutEnlargement: true })
+          .jpeg({ quality: 60 })
+          .toBuffer();
+
+        const currentDate = new Date();
+        const uniqueName = `${input.name}-${currentDate.getFullYear()}${
+          currentDate.getMonth() + 1
+        }${currentDate.getDate()}${currentDate.getHours()}${currentDate.getMinutes()}${currentDate.getSeconds()}`;
+
+        const { data: primaryImageURL, error: uploadError } =
+          await supabase.storage
+            .from(bucketName)
+            .upload(`${folderName}/${uniqueName}.jpg`, optimizedPrimaryImage);
+
+        if (uploadError || !primaryImageURL) {
+          throw new Error(
+            `Error while uploading the primary image: ${uploadError?.message}`
+          );
+        }
+
+        // Insert image on db
+        const primaryImage = await ctx.prisma.image.create({
+          data: {
+            url: `https://uhvjljbcyqfpccwrvkqx.supabase.co/storage/v1/object/public/${bucketName}/${primaryImageURL.path}`,
+            name: `${bucketName}/${primaryImageURL.path}`,
+            sizeMb: (optimizedPrimaryImage.length || 0) / 1000,
+            color: input.color,
+          },
+        });
+
+        const secondaryImagesIds: number[] = [];
+        if (input.secondaryImages) {
+          for (const [index, element] of input.secondaryImages.entries()) {
+            const secondaryImageInput = sharp(element);
+            const optimizedSecondaryImage = await secondaryImageInput
+              .resize(800, 800, { fit: 'inside', withoutEnlargement: true })
+              .jpeg({ quality: 50 })
+              .toBuffer();
+
+            const { data: secondaryImageURL, error: uploadSecError } =
+              await supabase.storage
+                .from(bucketName)
+                .upload(
+                  `${folderName}/${uniqueName}-${index + 1}.jpg`,
+                  optimizedPrimaryImage
+                );
+
+            if (uploadSecError || !secondaryImageURL) {
+              throw new Error(
+                `Error while uploading a secondary image: ${uploadSecError?.message}`
+              );
+            }
+
+            const secondaryImage = await ctx.prisma.image.create({
+              data: {
+                url: `https://uhvjljbcyqfpccwrvkqx.supabase.co/storage/v1/object/public/${bucketName}/${secondaryImageURL.path}`,
+                name: `${bucketName}/${secondaryImageURL.path}`,
+                sizeMb: (optimizedSecondaryImage.length || 0) / 1000,
+                color: input.color,
+              },
+            });
+            secondaryImagesIds.push(secondaryImage.id);
+          }
+        }
+
+        // checking if the category named exists
+        let category = await ctx.prisma.category.findFirst({
+          where: {
+            name: input.categoryName,
+          },
+        });
+
+        // if doesnt exist create a new one with that name
+        if (!category) {
+          const createdCategory = await ctx.prisma.category.create({
+            data: {
+              name: input.categoryName,
+            },
+          });
+          category = createdCategory;
+        }
+
+        const product = await ctx.prisma.product.create({
+          data: {
+            name: input.name,
+            description: input.description,
+            imageUrl: primaryImage.url,
+            imageName: primaryImage.name,
+            secondaryImages: {
+              connect: secondaryImagesIds.map((id) => ({ id })),
+            },
+            primaryImageId: primaryImage.id,
+            deleted: false,
+            active: true,
+            price: input.price,
+            stock: input.stock,
+            categoryName: category.name,
+            categoryId: category.id,
+          },
+        });
+
+        return product;
+      } catch (error) {
+        console.error('Error in create procedure:', error);
+        throw error;
+      }
+    }),
+});
+
+/* 
+
+const bucketName = 'loft35-aws-bucket';
+
+// AWS S3 configuration
+const s3 = new S3({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+});
+
+toggleActive: publicProcedure
+    .input(z.object({ productId: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const currentState = await ctx.prisma.product.findFirst({
+        where: {
+          id: input.productId,
+        },
+      });
+      return await ctx.prisma.product.update({
+        where: {
+          id: input.productId,
+        },
+        data: {
+          active: !currentState?.active,
+        },
+      });
+    }),
+
+create: publicProcedure
     .input(
       z.object({
         name: z.string(),
@@ -293,4 +424,4 @@ export const productRouter = createTRPCRouter({
         throw error;
       }
     }),
-});
+*/

@@ -1,3 +1,4 @@
+import { type Setting } from '@prisma/client';
 import Document, {
   Html,
   Head,
@@ -7,6 +8,7 @@ import Document, {
   type DocumentContext,
 } from 'next/document';
 import { prisma } from '~/server/db';
+import { redis } from '~/utils/redis';
 
 interface IDocumentProps extends DocumentProps {
   dataTheme: string;
@@ -34,11 +36,10 @@ export default function MyDocument({
     >
       <Head />
       <body
-        className={`${
-          gradientTheme === 'true'
+        className={`${gradientTheme === 'true'
             ? 'from-primary to-secondary bg-gradient-to-br'
             : 'bg-' + bgColorTheme
-        }`}
+          }`}
       >
         <Main />
         <NextScript />
@@ -91,19 +92,35 @@ MyDocument.getInitialProps = async (ctx: DocumentContext) => {
     };
   }
 
-  const setting = await prisma.setting.findUnique({
+  const cachedSetting: Setting | null = await redis.get('global-setting');
+
+  if (cachedSetting) {
+    cachedSetting;
+    return {
+      ...initialProps,
+      dataTheme: cachedSetting?.defaultTheme,
+      lightTheme: cachedSetting?.lightTheme,
+      darkTheme: cachedSetting?.darkTheme,
+      gradientTheme: cachedSetting?.gradientTheme,
+      bgColorTheme: cachedSetting?.bgColor,
+    };
+  }
+
+  const globalSetting = await prisma.setting.findUnique({
     where: {
       id: 1,
     },
   });
 
+  await redis.set('global-setting', globalSetting);
+
   return {
     ...initialProps,
-    dataTheme: setting?.defaultTheme,
-    lightTheme: setting?.lightTheme,
-    darkTheme: setting?.darkTheme,
-    gradientTheme: setting?.gradientTheme,
+    dataTheme: globalSetting?.defaultTheme,
+    lightTheme: globalSetting?.lightTheme,
+    darkTheme: globalSetting?.darkTheme,
+    gradientTheme: globalSetting?.gradientTheme,
 
-    bgColorTheme: setting?.bgColor,
+    bgColorTheme: globalSetting?.bgColor,
   };
 };
