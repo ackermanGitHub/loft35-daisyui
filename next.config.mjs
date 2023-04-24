@@ -11,6 +11,10 @@ const config = {
   /**
    * If you have the "experimental: { appDir: true }" setting enabled, then you
    * must comment the below `i18n` config out.
+   * 
+   * experimental: {
+   *   runtime: "experimental-edge"
+   * }
    *
    * @see https://github.com/vercel/next.js/issues/41980
    */
@@ -19,6 +23,8 @@ const config = {
     defaultLocale: "en",
   },
   images: {
+    loader: "custom",
+    loaderFile: "./src/utils/superbase-image-loader.ts",
     remotePatterns: [
       {
         protocol: "https",
