@@ -70,38 +70,6 @@ export const productRouter = createTRPCRouter({
     });
   }),
 
-  getAllWithPlaceholders: publicProcedure.query(async ({ ctx }) => {
-    const products = await ctx.prisma.product.findMany({
-      where: {
-        deleted: false,
-      },
-      orderBy: {
-        priority: 'asc',
-      },
-      include: {
-        primaryImage: true,
-      },
-    });
-
-    const productsWithPlaceholder = await Promise.all(
-      products.map(async (product) => {
-        const {
-          base64,
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          img: { width, height, ...imgPlaceholder },
-        } = await getPlaiceholder(product.imageUrl);
-
-        return {
-          ...imgPlaceholder,
-          product,
-          blurDataURL: base64,
-        };
-      })
-    );
-
-    return productsWithPlaceholder;
-  }),
-
   createWithSupabase: publicProcedure
     .input(
       z.object({
@@ -142,10 +110,15 @@ export const productRouter = createTRPCRouter({
           );
         }
 
+        const { base64: primaryImgBase64 } = await getPlaiceholder(
+          `https://uhvjljbcyqfpccwrvkqx.supabase.co/storage/v1/object/public/${bucketName}/${primaryImageURL.path}`
+        );
+
         // Insert image on db
         const primaryImage = await ctx.prisma.image.create({
           data: {
             url: `https://uhvjljbcyqfpccwrvkqx.supabase.co/storage/v1/object/public/${bucketName}/${primaryImageURL.path}`,
+            blurDataURL: primaryImgBase64,
             name: `${bucketName}/${primaryImageURL.path}`,
             sizeMb: (optimizedPrimaryImage.length || 0) / 1000,
             color: input.color,
@@ -175,10 +148,15 @@ export const productRouter = createTRPCRouter({
               );
             }
 
+            const { base64: secondaryImgBase64 } = await getPlaiceholder(
+              `https://uhvjljbcyqfpccwrvkqx.supabase.co/storage/v1/object/public/${bucketName}/${primaryImageURL.path}`
+            );
+
             const secondaryImage = await ctx.prisma.image.create({
               data: {
                 url: `https://uhvjljbcyqfpccwrvkqx.supabase.co/storage/v1/object/public/${bucketName}/${secondaryImageURL.path}`,
                 name: `${bucketName}/${secondaryImageURL.path}`,
+                blurDataURL: secondaryImgBase64,
                 sizeMb: (optimizedSecondaryImage.length || 0) / 1000,
                 color: input.color,
               },
@@ -210,6 +188,7 @@ export const productRouter = createTRPCRouter({
             description: input.description,
             imageUrl: primaryImage.url,
             imageName: primaryImage.name,
+            imageBlurDataURL: primaryImgBase64,
             secondaryImages: {
               connect: secondaryImagesIds.map((id) => ({ id })),
             },
@@ -234,6 +213,38 @@ export const productRouter = createTRPCRouter({
 /* 
 import { redis } from '~/utils/redis';
 import { type Product, type Image } from '@prisma/client';
+
+getAllWithPlaceholders: publicProcedure.query(async ({ ctx }) => {
+    const products = await ctx.prisma.product.findMany({
+      where: {
+        deleted: false,
+      },
+      orderBy: {
+        priority: 'asc',
+      },
+      include: {
+        primaryImage: true,
+      },
+    });
+
+    const productsWithPlaceholder = await Promise.all(
+      products.map(async (product) => {
+        const {
+          base64,
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          img: { width, height, ...imgPlaceholder },
+        } = await getPlaiceholder(product.imageUrl);
+
+        return {
+          ...imgPlaceholder,
+          product,
+          blurDataURL: base64,
+        };
+      })
+    );
+
+    return productsWithPlaceholder;
+  }),
 
 getAllWithPlaceholdersAndRedis: publicProcedure.query(async ({ ctx }) => {
     const cachedProducts:

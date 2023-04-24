@@ -5,18 +5,22 @@ import { api } from '~/utils/api';
 const ProductsCardScroll: React.FC = () => {
   const { addToCart } = useCart();
 
-  const { data: productsWithPlaceholder, isFetched } =
-    api.product.getAllWithPlaceholders.useQuery();
+  const { data: productsData, isFetched } =
+    api.product.getAll.useQuery();
 
   return (
     <div className="flex flex-wrap items-center justify-around">
-      {!isFetched &&
+
+      {!isFetched || true &&
         Array(6)
           .fill(0)
           .map((_, index) => (
-            <div key={index} className="card card-compact w-[45%] glass mt-12">
-              <div className="pb-[100%] w-full rounded-md animate-pulse bg-current opacity-25"></div>
+            <div key={index} className="card card-compact w-[45%] rounded-xl overflow-hidden glass mt-12">
+              <div className="pb-[100%] w-full  animate-pulse bg-current opacity-25">
+
+              </div>
               <div className="card-body">
+                <h2 className="w-2/3 h-4 rounded-lg animate-pulse bg-current opacity-25"></h2>
                 <h2 className="w-1/2 h-4 rounded-lg animate-pulse bg-current opacity-25"></h2>
                 <div className="card-actions justify-end">
                   <button className="btn btn-primary">
@@ -39,17 +43,18 @@ const ProductsCardScroll: React.FC = () => {
                 </div>
               </div>
             </div>
-          ))}
-      {productsWithPlaceholder?.map((product) => (
+          ))
+      }
+      {productsData?.map((product) => (
         <div
-          key={product.product.id}
+          key={product.id}
           className="card card-compact w-[45%] glass mt-12"
         >
           <figure className="relative overflow-hidden pb-[100%] w-full">
             <Image
-              src={product.product.imageName}
-              blurDataURL={product.blurDataURL}
-              alt={product.product.name}
+              src={product.imageName}
+              blurDataURL={product.imageBlurDataURL}
+              alt={product.name}
               placeholder="blur"
               className="object-cover"
               fill
@@ -60,18 +65,18 @@ const ProductsCardScroll: React.FC = () => {
             />
           </figure>
           <div className="card-body">
-            <h2 className="card-title">{product.product.name}</h2>
+            <h2 className="card-title">{product.name}</h2>
             <div className="card-actions justify-end">
               <button
                 className="btn btn-primary"
                 onClick={() => {
                   addToCart({
-                    productId: product.product.id,
-                    imageURL: product.product.imageUrl,
-                    blurImageUrl: product.blurDataURL,
-                    productStock: product.product.stock,
-                    name: product.product.name,
-                    price: product.product.price,
+                    productId: product.id,
+                    imageURL: product.imageUrl,
+                    blurImageUrl: product.imageBlurDataURL,
+                    productStock: product.stock,
+                    name: product.name,
+                    price: product.price,
                     quantity: 1,
                   });
                 }}

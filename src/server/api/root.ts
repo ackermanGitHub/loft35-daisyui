@@ -1,7 +1,6 @@
 import { createTRPCRouter } from '~/server/api/trpc';
 import { productRouter } from './routers/product';
 import { categoryRouter } from './routers/category';
-import { imageRouter } from './routers/image';
 import { productUpdateRouter } from './routers/productUpdate';
 import { settingRouter } from './routers/setting';
 
@@ -14,7 +13,6 @@ export const appRouter = createTRPCRouter({
   product: productRouter,
   updateProduct: productUpdateRouter,
   category: categoryRouter,
-  image: imageRouter,
   setting: settingRouter,
 });
 
