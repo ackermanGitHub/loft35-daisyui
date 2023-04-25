@@ -6,23 +6,16 @@ import {
   DragDropContext,
   Draggable,
   type DroppableProvided,
+  type DropResult
 } from 'react-beautiful-dnd';
 import { StrictModeDroppable as Droppable } from '~/helpers/DroppableStrictMode';
 import { api } from '~/utils/api';
+import { useInput } from '~/hooks/useInput';
 
 const ProductsTable: React.FC = () => {
   const [isAnyProductSelected, setIsAnyProductSelected] = useState(false);
-  const [editInputProperties, setEditInputProperties] = useState({
-    left: 0,
-    top: 0,
-    width: 0,
-    height: 0,
-    active: false,
-    value: '',
-    productId: -1,
-    type: '',
-    column: '',
-  });
+
+  const { editInput, inputProps } = useInput();
 
   const {
     data: productsData,
@@ -73,6 +66,13 @@ const ProductsTable: React.FC = () => {
     },
   });
 
+  // TODO update category when select changes
+  // const updateCategory = api.updateProduct.updateCategory.useMutation({
+  //   onSuccess: () => {
+  //     void refetchProducts();
+  //   },
+  // });
+
   const updateName = api.updateProduct.updateName.useMutation({
     onSuccess: () => {
       void refetchProducts();
@@ -109,27 +109,64 @@ const ProductsTable: React.FC = () => {
     },
   });
 
+  const onDragEndHandler = (result: DropResult) => {
+    if (result.destination && productsData) {
+      const sourceProductPriority =
+        productsData[result.source.index]?.priority;
+      const targetProductPriority =
+        productsData[result.destination.index]?.priority;
+
+      const sourceProductId = productsData[result.source.index]?.id;
+      const targetProductId =
+        productsData[result.destination.index]?.id;
+
+      if (!sourceProductPriority || !targetProductPriority) return;
+
+      if (!sourceProductId || !targetProductId) return;
+
+      if (sourceProductPriority < targetProductPriority) {
+        changePriorityUp.mutate({
+          productId: sourceProductId,
+          targetId: targetProductId,
+        });
+      } else if (sourceProductPriority > targetProductPriority) {
+        changePriorityDown.mutate({
+          productId: sourceProductId,
+          targetId: targetProductId,
+        });
+      }
+
+      const reorderedProduct = productsData.splice(
+        result.source.index,
+        1
+      );
+      if (!reorderedProduct[0]) return;
+      productsData.splice(
+        result.destination.index,
+        0,
+        reorderedProduct[0]
+      );
+    }
+  }
+
   return (
     <div>
       <div className="relative overflow-x-auto w-full">
-        {editInputProperties?.active && (
+        {inputProps.active && (
           <div className="relative">
             <input
-              type={editInputProperties.type}
+              type={inputProps.type}
               onChange={(e) => {
-                setEditInputProperties({
-                  ...editInputProperties,
-                  value: e.target.value,
-                });
+                editInput.setValue(e.target.value);
               }}
               style={{
-                left: editInputProperties?.left,
-                top: editInputProperties?.top,
-                height: editInputProperties?.height,
-                width: editInputProperties?.width,
-                display: `${editInputProperties?.active ? 'block' : 'none'}`,
+                left: inputProps.left,
+                top: inputProps.top,
+                height: inputProps.height,
+                width: inputProps.width,
+                display: `${inputProps.active ? 'block' : 'none'}`,
               }}
-              defaultValue={editInputProperties.value}
+              value={inputProps.value}
               className="absolute input input-primary shadow-lg z-20"
             />
           </div>
@@ -163,52 +200,14 @@ const ProductsTable: React.FC = () => {
               </th>
             </tr>
           </thead>
-          {!isProductsLoading ? (
+          {productsData ? (
             <DragDropContext
-              onDragEnd={(result) => {
-                if (result.destination && productsData) {
-                  const sourceProductPriority =
-                    productsData[result.source.index]?.priority;
-                  const targetProductPriority =
-                    productsData[result.destination.index]?.priority;
-
-                  const sourceProductId = productsData[result.source.index]?.id;
-                  const targetProductId =
-                    productsData[result.destination.index]?.id;
-
-                  if (!sourceProductPriority || !targetProductPriority) return;
-
-                  if (!sourceProductId || !targetProductId) return;
-
-                  if (sourceProductPriority < targetProductPriority) {
-                    changePriorityUp.mutate({
-                      productId: sourceProductId,
-                      targetId: targetProductId,
-                    });
-                  } else if (sourceProductPriority > targetProductPriority) {
-                    changePriorityDown.mutate({
-                      productId: sourceProductId,
-                      targetId: targetProductId,
-                    });
-                  }
-
-                  const reorderedProduct = productsData.splice(
-                    result.source.index,
-                    1
-                  );
-                  if (!reorderedProduct[0]) return;
-                  productsData.splice(
-                    result.destination.index,
-                    0,
-                    reorderedProduct[0]
-                  );
-                }
-              }}
+              onDragEnd={onDragEndHandler}
             >
               <Droppable droppableId="productsTable">
                 {(provided: DroppableProvided) => (
                   <tbody {...provided.droppableProps} ref={provided.innerRef}>
-                    {productsData?.map((product, index) => {
+                    {productsData.map((product, index) => {
                       return (
                         <Draggable
                           key={product.id}
@@ -236,11 +235,11 @@ const ProductsTable: React.FC = () => {
                                 <svg
                                   viewBox="0 0 10 10"
                                   className="dragHandle"
+                                  width={14}
+                                  height={14}
+                                  display="block"
+                                  fill='currentColor'
                                   style={{
-                                    width: '14px',
-                                    height: '14px',
-                                    display: 'block',
-                                    fill: 'currentColor',
                                     flexShrink: '0',
                                     backfaceVisibility: 'hidden',
                                   }}
@@ -287,21 +286,23 @@ const ProductsTable: React.FC = () => {
                                 <div className="flex justify-between items-center min-w-[120px]">
                                   <select
                                     onChange={(e) => {
-                                      if (e.target.value === 'Añadir') {
-                                        setEditInputProperties({
-                                          ...editInputProperties,
-                                          value: e.target.value,
-                                        });
+                                      if (e.target.value === product.categoryId.toString())
                                         return;
+
+                                      // TODO fix
+                                      if (e.target.value === 'addCategory') {
+                                        // editInput.setValue(e.target.value);
+                                        // editInput.setActive(true);
+                                        // editInput.setProductId(product.id);
+                                        // editInput.setField("category");
+                                        // editInput.setType("text");
+                                      } else {
+                                        // updateCategory.mutate({
+                                        //   productId: product.id,
+                                        //   newCategory: e.target.value,
+                                        // })
                                       }
-                                      setEditInputProperties({
-                                        ...editInputProperties,
-                                        active: false,
-                                        productId: product.id,
-                                        column: 'category',
-                                        type: 'text',
-                                        value: e.target.value,
-                                      });
+
                                     }}
                                     value={product.categoryId}
                                     className="select bg-transparent w-full absolute"
@@ -320,7 +321,7 @@ const ProductsTable: React.FC = () => {
                                           'El usuario quiere cambiar la categoría'
                                         );
                                       }}
-                                      value={'Añadir'}
+                                      value={'addCategory'}
                                       className="btn"
                                     >
                                       + Añadir
@@ -348,55 +349,55 @@ const ProductsTable: React.FC = () => {
                                   event.preventDefault();
                                   event.stopPropagation();
                                   const target =
-                                    event.currentTarget as HTMLSpanElement;
+                                    event.currentTarget;
+
+                                  if (!target) {
+                                    throw new Error('target not found at ProductsTable');
+                                  }
 
                                   const position = {
-                                    x: target?.offsetLeft,
-                                    y: target?.offsetTop,
+                                    x: target.offsetLeft - 15,
+                                    y: target.offsetTop - 5,
                                   };
                                   const size = {
-                                    width: target?.offsetWidth,
-                                    height: target?.offsetHeight,
+                                    width: target.offsetWidth + 30,
+                                    height: target.offsetHeight + 10,
                                   };
 
-                                  setEditInputProperties({
-                                    left: position.x,
-                                    top: position.y,
-                                    height: size.height,
-                                    width: size.width,
-                                    value: product.name,
-                                    active: true,
-                                    productId: product.id,
-                                    type: 'text',
-                                    column: 'name',
-                                  });
+                                  editInput.setLeft(position.x);
+                                  editInput.setTop(position.y);
+                                  editInput.setHeight(size.height);
+                                  editInput.setWidth(size.width);
+                                  editInput.setValue(product.name);
+                                  editInput.setActive(true);
+                                  editInput.setProductId(product.id);
+                                  editInput.setType("text");
+                                  editInput.setField("name");
+
                                 }}
                               >
                                 <div className="flex justify-between ">
                                   <p className="w-full">{product.name}</p>
-                                  {editInputProperties.active &&
-                                    editInputProperties.productId ===
+                                  {inputProps.active &&
+                                    inputProps.productId ===
                                     product.id &&
-                                    editInputProperties.column === 'name' && (
+                                    inputProps.field === 'name' && (
                                       <div
                                         onClick={(e) => {
                                           e.stopPropagation();
-
-                                          setEditInputProperties({
-                                            ...editInputProperties,
-                                            active: false,
-                                          });
+                                          editInput.setActive(false);
                                           if (
                                             product.name ===
-                                            editInputProperties.value
-                                          )
+                                            inputProps.value
+                                          ) {
                                             return;
+                                          }
                                           updateName.mutate({
                                             productId: product.id,
-                                            newName: editInputProperties.value,
+                                            newName: inputProps.value,
                                           });
                                           product.name =
-                                            editInputProperties.value;
+                                            inputProps.value;
                                         }}
                                         className="fixed inset-0 w-[100vw] h-[100vh] opacity-30 stroke-slate-600"
                                       ></div>
@@ -408,58 +409,59 @@ const ProductsTable: React.FC = () => {
                                   event.preventDefault();
                                   event.stopPropagation();
                                   const target =
-                                    event.currentTarget as HTMLSpanElement;
+                                    event.currentTarget;
+
+                                  if (!target) {
+                                    throw new Error('target not found at ProductsTable');
+                                  }
 
                                   const position = {
-                                    x: target?.offsetLeft,
-                                    y: target?.offsetTop,
+                                    x: target.offsetLeft - 15,
+                                    y: target.offsetTop - 5,
                                   };
                                   const size = {
-                                    width: target?.offsetWidth,
-                                    height: target?.offsetHeight,
+                                    width: target.offsetWidth + 30,
+                                    height: target.offsetHeight + 10,
                                   };
 
-                                  setEditInputProperties({
-                                    left: position.x,
-                                    top: position.y,
-                                    height: size.height,
-                                    width: size.width,
-                                    value: product.price.toString(),
-                                    active: true,
-                                    productId: product.id,
-                                    type: 'number',
-                                    column: 'price',
-                                  });
+                                  editInput.setLeft(position.x);
+                                  editInput.setTop(position.y);
+                                  editInput.setHeight(size.height);
+                                  editInput.setWidth(size.width);
+                                  editInput.setValue(product.price.toString());
+                                  editInput.setActive(true);
+                                  editInput.setProductId(product.id);
+                                  editInput.setType("number");
+                                  editInput.setField("price");
                                 }}
                               >
                                 <div className="flex justify-between">
                                   <p>{product.price}</p>
-                                  {editInputProperties.active &&
-                                    editInputProperties.productId ===
+                                  {inputProps.active &&
+                                    inputProps.productId ===
                                     product.id &&
-                                    editInputProperties.column === 'price' && (
+                                    inputProps.field === 'price' && (
                                       <div
                                         onClick={(e) => {
                                           e.preventDefault();
                                           e.stopPropagation();
 
-                                          setEditInputProperties({
-                                            ...editInputProperties,
-                                            active: false,
-                                          });
+
+                                          editInput.setActive(false);
                                           if (
                                             product.price.toString() ===
-                                            editInputProperties.value
-                                          )
-                                            return;
+                                            inputProps.value
+                                          ) {
+                                            return
+                                          }
                                           updatePrice.mutate({
                                             productId: product.id,
                                             newPrice: parseInt(
-                                              editInputProperties.value
+                                              inputProps.value
                                             ),
                                           });
                                           product.price = parseInt(
-                                            editInputProperties.value
+                                            inputProps.value
                                           );
                                         }}
                                         className="fixed inset-0 w-[100vw] h-[100vh] opacity-30 stroke-slate-600"
@@ -472,58 +474,58 @@ const ProductsTable: React.FC = () => {
                                   event.preventDefault();
                                   event.stopPropagation();
                                   const target =
-                                    event.currentTarget as HTMLSpanElement;
+                                    event.currentTarget;
+
+                                  if (!target) {
+                                    throw new Error('target not found at ProductsTable');
+                                  }
 
                                   const position = {
-                                    x: target?.offsetLeft,
-                                    y: target?.offsetTop,
+                                    x: target.offsetLeft - 15,
+                                    y: target.offsetTop - 5,
                                   };
                                   const size = {
-                                    width: target?.offsetWidth,
-                                    height: target?.offsetHeight,
+                                    width: target.offsetWidth + 30,
+                                    height: target.offsetHeight + 10,
                                   };
 
-                                  setEditInputProperties({
-                                    left: position.x,
-                                    top: position.y,
-                                    height: size.height,
-                                    width: size.width,
-                                    value: product.stock.toString(),
-                                    active: true,
-                                    productId: product.id,
-                                    type: 'number',
-                                    column: 'stock',
-                                  });
+                                  editInput.setLeft(position.x);
+                                  editInput.setTop(position.y);
+                                  editInput.setHeight(size.height);
+                                  editInput.setWidth(size.width);
+                                  editInput.setValue(product.stock.toString());
+                                  editInput.setActive(true);
+                                  editInput.setProductId(product.id);
+                                  editInput.setType("number");
+                                  editInput.setField("stock");
                                 }}
                               >
                                 <div className="flex justify-between">
                                   <p>{product.stock}</p>
-                                  {editInputProperties.active &&
-                                    editInputProperties.productId ===
+                                  {inputProps.active &&
+                                    inputProps.productId ===
                                     product.id &&
-                                    editInputProperties.column === 'stock' && (
+                                    inputProps.field === 'stock' && (
                                       <div
                                         onClick={(e) => {
                                           e.preventDefault();
                                           e.stopPropagation();
 
-                                          setEditInputProperties({
-                                            ...editInputProperties,
-                                            active: false,
-                                          });
+                                          editInput.setActive(false);
                                           if (
                                             product.stock.toString() ===
-                                            editInputProperties.value
-                                          )
+                                            inputProps.value
+                                          ) {
                                             return;
+                                          }
                                           updateStock.mutate({
                                             productId: product.id,
                                             newStock: parseInt(
-                                              editInputProperties.value
+                                              inputProps.value
                                             ),
                                           });
                                           product.stock = parseInt(
-                                            editInputProperties.value
+                                            inputProps.value
                                           );
                                         }}
                                         className="fixed inset-0 w-[100vw] h-[100vh] opacity-30 stroke-slate-600"
@@ -542,6 +544,7 @@ const ProductsTable: React.FC = () => {
               </Droppable>
             </DragDropContext>
           ) : (
+            /* Placeholder rows */
             <tbody>
               {Array(12)
                 .fill(0)

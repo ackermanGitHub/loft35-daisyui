@@ -41,6 +41,7 @@ export const productUpdateRouter = createTRPCRouter({
       });
     }),
 
+  // TODO fix this, product must update categoryId too
   updateCategory: publicProcedure
     .input(z.object({ productId: z.number(), newCategory: z.string() }))
     .mutation(async ({ ctx, input }) => {

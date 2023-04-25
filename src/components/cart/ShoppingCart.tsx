@@ -1,6 +1,9 @@
 import Image from 'next/image';
 import { createContext, useContext, useState } from 'react';
 
+import BuyingProcess from '~/components/cart/BuyingProcess';
+
+// TODO store cart items on cookies
 export interface CartItem {
   productId: number;
   imageURL: string;
@@ -164,12 +167,17 @@ export const CartProvider: React.FC<React.PropsWithChildren> = ({
             )}
           </div>
           <div className="modal-action">
+            <label htmlFor="buy-modal" className="btn btn-primary">
+              Comprar
+            </label>
             <label htmlFor="cart-modal" className="btn btn-primary">
               Close
             </label>
           </div>
         </label>
       </label>
+      <BuyingProcess />
+
       {children}
     </CartContext.Provider>
   );

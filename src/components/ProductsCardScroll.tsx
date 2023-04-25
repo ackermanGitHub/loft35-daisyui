@@ -10,7 +10,7 @@ const ProductsCardScroll: React.FC = () => {
 
   return (
     <div className="flex flex-wrap items-center justify-around">
-
+      {/* Products Placeholders */}
       {!isFetched || true &&
         Array(6)
           .fill(0)
@@ -45,6 +45,7 @@ const ProductsCardScroll: React.FC = () => {
             </div>
           ))
       }
+      {/* Actual products cards */}
       {productsData?.map((product) => (
         <div
           key={product.id}
@@ -72,7 +73,7 @@ const ProductsCardScroll: React.FC = () => {
                 onClick={() => {
                   addToCart({
                     productId: product.id,
-                    imageURL: product.imageUrl,
+                    imageURL: product.imageName,
                     blurImageUrl: product.imageBlurDataURL,
                     productStock: product.stock,
                     name: product.name,

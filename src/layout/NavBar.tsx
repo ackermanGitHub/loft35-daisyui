@@ -118,6 +118,10 @@ const NavBar: React.FC = () => {
                 <Image
                   src={session.data.user.image || '/placeholder.png'}
                   priority
+                  loader={({ src }) => {
+                    return src
+                  }}
+                  unoptimized
                   alt="avatar"
                   width={40}
                   height={40}
