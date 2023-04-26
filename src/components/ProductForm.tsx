@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { api } from '../utils/api';
+import { supabase } from '~/utils/supabase';
 
 interface FormValues {
   name: string;
@@ -23,7 +24,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
   const [isAddCategorySelected, setAddCategorySelected] = useState(false);
   const [isOtherStockSelected, setOtherStockSelected] = useState(false);
 
-  const productList = api.product.createWithSupabase.useMutation();
+  const createProduct2 = api.product.createWithOutSupabase.useMutation();
 
   const { data: categoriesData, refetch: refetchCategories } =
     api.category.getAll.useQuery();
@@ -40,8 +41,9 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
   } = useForm<FormValues>();
 
   const MAX_IMAGE_SIZE = 1 * 1024 * 1024; // 5 MB
+  const productNameRegex = /^[a-zA-Z0-9]+(\s[a-zA-Z0-9]+)*$/;
 
-  const onSubmit = async (data: FormValues) => {
+  const onSubmit2 = async (data: FormValues) => {
     if (upldProState === 'Error' || upldProState === 'Subida') {
       setPrimaryImageSize(undefined);
       setSecondaryImagesSize(undefined);
@@ -67,13 +69,58 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
       metadataSecondaryImages.push(secondaryImageBuffer);
     }
 
-    productList.mutate(
+    const currentDate = new Date();
+    const uniqueName = `${data.name.split(" ").join("")}-${currentDate.getFullYear()}${currentDate.getMonth() + 1
+      }${currentDate.getDate()}${currentDate.getHours()}${currentDate.getMinutes()}${currentDate.getSeconds()}`;
+
+    const bucketName = 'images';
+    const folderName = 'products';
+
+    const { data: primaryImageURL, error: uploadError } =
+      await supabase.storage
+        .from(bucketName)
+        .upload(`${folderName}/${uniqueName}.jpg`, primaryImageBuffer);
+
+    if (uploadError || !primaryImageURL) {
+      throw new Error(
+        `Error while uploading the primary image: ${uploadError?.message}`
+      );
+    }
+
+    const secondaryImages: { path: string, sizeMb: number }[] = [];
+    if (metadataSecondaryImages.length > 0) {
+      for (const [index, element] of metadataSecondaryImages.entries()) {
+        const { data: secondaryImageURL, error: uploadSecError } =
+          await supabase.storage
+            .from(bucketName)
+            .upload(
+              `${folderName}/${uniqueName}-${index + 1}.jpg`,
+              element
+            );
+
+        if (uploadSecError || !secondaryImageURL) {
+          throw new Error(
+            `Error while uploading a secondary image: ${uploadSecError?.message}`
+          );
+        }
+
+        secondaryImages.push({
+          path: secondaryImageURL.path,
+          sizeMb: (element.length || 0) / 1000
+        });
+      }
+    }
+
+    createProduct2.mutate(
       {
         name: data.name,
         description: data.description,
-        primaryImage: primaryImageBuffer,
-        color: '',
-        secondaryImages: metadataSecondaryImages,
+        primaryImage: {
+          path: primaryImageURL.path,
+          sizeMb: (primaryImageBuffer.length || 0) / 1000
+        },
+        color: "",
+        secondaryImages: secondaryImages,
         price: parseInt(data.price),
         stock: parseInt(data.stock),
         categoryName: data.categoryName,
@@ -117,7 +164,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
       <div className="modal">
         <form
           className="modal-box flex w-auto max-w-5xl flex-col"
-          onSubmit={(event) => void handleSubmit(onSubmit)(event)}
+          onSubmit={(event) => void handleSubmit(onSubmit2)(event)}
         >
           <h3 className="card-title">Sube un Producto!</h3>
           <div className="form-control w-full max-w-xs">
@@ -285,7 +332,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
               <input
                 type="text"
                 placeholder="Nombre"
-                {...register('name', { required: true })}
+                {...register('name', { required: true, pattern: productNameRegex })}
                 className="input-bordered input w-full max-w-xs"
               />
               {errors.name ? (
@@ -503,3 +550,60 @@ function showSize(sizeInBytes: number) {
 }
 
 export default ProductForm;
+
+
+/* 
+LegacyCode
+
+const createProduct = api.product.createWithSupabase.useMutation();
+
+const onSubmit = async (data: FormValues) => {
+    if (upldProState === 'Error' || upldProState === 'Subida') {
+      setPrimaryImageSize(undefined);
+      setSecondaryImagesSize(undefined);
+      setUpldProstate('Subir');
+      reset();
+      return;
+    }
+
+    if (!data.primaryImage[0]) return;
+    setUpldProstate('Cargando');
+
+    const arrayBufferPrimaryImage = await data.primaryImage[0].arrayBuffer();
+    const primaryImageBuffer = Buffer.from(arrayBufferPrimaryImage);
+
+    const metadataSecondaryImages: Buffer[] = [];
+
+    for (const secondaryFile of Array.from(data.secondaryImages)) {
+      if (!secondaryFile) continue;
+      const arrayBufferSecondaryImage = await (
+        secondaryFile as unknown as File
+      ).arrayBuffer();
+      const secondaryImageBuffer = Buffer.from(arrayBufferSecondaryImage);
+      metadataSecondaryImages.push(secondaryImageBuffer);
+    }
+
+    createProduct.mutate(
+      {
+        name: data.name,
+        description: data.description,
+        primaryImage: primaryImageBuffer,
+        color: '',
+        secondaryImages: metadataSecondaryImages,
+        price: parseInt(data.price),
+        stock: parseInt(data.stock),
+        categoryName: data.categoryName,
+      },
+      {
+        onError: () => {
+          setUpldProstate('Error');
+        },
+        onSuccess() {
+          setUpldProstate('Subida');
+          if (isAddCategorySelected) void refetchCategories();
+          onUploadSucces();
+        },
+      }
+    );
+  };
+*/

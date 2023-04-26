@@ -74,6 +74,7 @@ model Image {
   id        Int       @id @default(autoincrement())
   url       String
   blurDataURL String
+  // TODO change name to route or path
   name      String
   sizeMb    Float
   color     String?
@@ -87,6 +88,7 @@ model Product {
   name            String
   description     String?
   primaryImageId  Int      @unique
+  // TODO change imageName to imageRoute or imagePath
   imageName       String
   imageUrl        String
   imageBlurDataURL String

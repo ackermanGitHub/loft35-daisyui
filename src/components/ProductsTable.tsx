@@ -50,17 +50,17 @@ const ProductsTable: React.FC = () => {
     });
 
     checkboxes.forEach((checkBox) => {
-      checkBox.addEventListener('change', () => {
+      checkBox.addEventListener('click', () => {
         setIsAnyProductSelected(
           Array.from(checkboxes).some((checkbox) => checkbox.checked)
         );
       });
     });
-  }, [productsData, setIsAnyProductSelected]);
+  }, [productsData]);
 
   const { data: categoriesData } = api.category.getAll.useQuery();
 
-  const deleteProducts = api.product.deleteMany.useMutation({
+  const deleteProducts = api.product.deleteManyHard.useMutation({
     onSuccess: () => {
       void refetchProducts();
     },
@@ -655,16 +655,30 @@ const ProductsTable: React.FC = () => {
                 '.select-checkbox-group'
               ) as NodeListOf<HTMLInputElement>;
               // Filter selected products ids
-              const checkedProductsIds = productsData
+              // TODO test if when change priority this crash
+              const checkedProducts = productsData
                 ?.filter((product, index) => {
                   return checkboxes[index]?.checked === true;
                 })
+
+              if (!checkedProducts) {
+                throw new Error('No products selected');
+              }
+
+              const checkedProductsIds = checkedProducts
                 .map((product) => product.id);
+              const checkedProductsRoutes = checkedProducts
+                .map((product) => product.imageName.split('/').splice(1).join('/'));
 
               if (!checkedProductsIds || checkedProductsIds?.length === 0)
                 return;
               deleteProducts.mutate({
                 productIds: checkedProductsIds,
+                storageRoutes: checkedProductsRoutes,
+              }, {
+                onSuccess: (data) => {
+                  console.log(data)
+                }
               });
             }}
             okBtnText="Eliminar"
