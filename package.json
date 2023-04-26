@@ -23,6 +23,7 @@
     "@vercel/analytics": "^0.1.11",
     "next": "13.2.4",
     "next-auth": "^4.20.1",
+    "pg": "^8.10.0",
     "plaiceholder": "^2.5.0",
     "react": "18.2.0",
     "react-cookie": "^4.1.1",
@@ -37,6 +38,7 @@
   "devDependencies": {
     "@types/eslint": "^8.37.0",
     "@types/node": "^18.15.11",
+    "@types/pg": "^8.6.6",
     "@types/react": "^18.0.31",
     "@types/react-beautiful-dnd": "^13.1.4",
     "@types/react-dom": "^18.0.11",
