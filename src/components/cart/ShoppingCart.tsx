@@ -149,7 +149,18 @@ export const CartProvider: React.FC<React.PropsWithChildren> = ({
                       </td>
                       <th>{item.price}</th>
                       <th>
-                        <select value={item.quantity} className="select">
+                        <select onChange={(e) => {
+                          // TODO check this later
+                          const newQuantity = Number(e.target.value);
+                          setCart({
+                            total: cart.total + (newQuantity - item.price) * item.quantity,
+                            items: cart.items.map((product) =>
+                              product.productId === item.productId
+                                ? { ...product, quantity: newQuantity }
+                                : product
+                            ),
+                          });
+                        }} value={item.quantity} className="select">
                           {Array(item.productStock)
                             .fill(0)
                             .map((_, index) => (
