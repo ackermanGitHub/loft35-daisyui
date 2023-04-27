@@ -36,9 +36,10 @@ export default function MyDocument({
     >
       <Head />
       <body
+        // TODO add white/black background
         className={`${gradientTheme === 'true'
-            ? 'from-primary to-secondary bg-gradient-to-br'
-            : 'bg-' + bgColorTheme
+          ? 'from-primary to-secondary bg-gradient-to-br'
+          : 'bg-' + bgColorTheme
           }`}
       >
         <Main />

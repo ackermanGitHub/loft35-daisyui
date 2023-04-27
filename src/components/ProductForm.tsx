@@ -111,6 +111,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
       }
     }
 
+    // TODO create abort controller for this call https://trpc.io/docs/client/aborting-procedure-calls
     createProduct2.mutate(
       {
         name: data.name,

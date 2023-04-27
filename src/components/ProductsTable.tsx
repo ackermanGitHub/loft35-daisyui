@@ -12,6 +12,8 @@ import { StrictModeDroppable as Droppable } from '~/helpers/DroppableStrictMode'
 import { api } from '~/utils/api';
 import { useInput } from '~/hooks/useInput';
 
+// TODO Fix rendering loaders on server and not changing in client
+
 const ProductsTable: React.FC = () => {
   const [isAnyProductSelected, setIsAnyProductSelected] = useState(false);
 

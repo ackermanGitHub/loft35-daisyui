@@ -70,6 +70,7 @@ const ProductsCardScroll: React.FC = () => {
             <div className="card-actions justify-end">
               <button
                 className="btn btn-primary"
+                // TODO mostrar no disponemos más de ese producto cuando no haya stock
                 onClick={() => {
                   addToCart({
                     productId: product.id,
