@@ -1,11 +1,15 @@
 import Head from 'next/head';
 import Layout from '~/layout/Layout';
 import { Pool, type QueryResult } from 'pg';
-import { type InferGetServerSidePropsType } from 'next';
+import { type InferGetServerSidePropsType } from "next";
 import superjson from 'superjson';
 
+import { getProviders, signIn } from "next-auth/react"
 
 export const getServerSideProps = async () => {
+
+  const providers = await getProviders();
+
   const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
   })
@@ -18,11 +22,12 @@ export const getServerSideProps = async () => {
   return {
     props: {
       products: jsonString,
+      providers: providers ?? []
     },
   };
 }
 
-const Tests: React.FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ products }) => {
+const Tests: React.FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ products, providers }) => {
   let object: QueryResult;
   if (typeof products !== 'undefined') {
     object = superjson.parse(products);
@@ -39,7 +44,15 @@ const Tests: React.FC<InferGetServerSidePropsType<typeof getServerSideProps>> = 
       </Head>
       <Layout>
         <div className="flex flex-wrap items-center justify-around">
-
+          {providers && Object.values(providers).map((provider) => (
+            <div key={provider.name}>
+              <button onClick={() => void signIn(provider.id, {
+                callbackUrl: "/test"
+              })}>
+                Sign in with {provider.name}
+              </button>
+            </div>
+          ))}
         </div>
       </Layout>
     </>
