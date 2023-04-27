@@ -102,6 +102,7 @@ const NavBar: React.FC = () => {
               <span className="text-info">Total: ${cart.total}</span>
               <div className="card-actions">
                 <label
+                  id='open-cart-modal'
                   htmlFor="cart-modal"
                   className="btn btn-primary btn-block"
                 >

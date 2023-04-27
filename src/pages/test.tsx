@@ -5,6 +5,7 @@ import { type InferGetServerSidePropsType } from "next";
 import superjson from 'superjson';
 
 import { getProviders, signIn } from "next-auth/react"
+import { useEffect } from 'react';
 
 export const getServerSideProps = async () => {
 
@@ -34,6 +35,12 @@ const Tests: React.FC<InferGetServerSidePropsType<typeof getServerSideProps>> = 
     console.log(object.fields)
     console.log(object)
   }
+  useEffect(() => {
+    const buyModal = document.getElementById("open-buy-modal");
+    const cartModal = document.getElementById("open-cart-modal");
+    buyModal?.click()
+    cartModal?.click()
+  }, [])
   return (
     <>
       <Head>

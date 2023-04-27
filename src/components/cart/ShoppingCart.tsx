@@ -178,7 +178,7 @@ export const CartProvider: React.FC<React.PropsWithChildren> = ({
             )}
           </div>
           <div className="modal-action">
-            <label htmlFor="buy-modal" className="btn btn-primary">
+            <label id='open-buy-modal' htmlFor="buy-modal" className="btn btn-primary">
               Comprar
             </label>
             <label htmlFor="cart-modal" className="btn btn-primary">
