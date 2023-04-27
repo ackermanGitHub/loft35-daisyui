@@ -76,6 +76,7 @@ MyDocument.getInitialProps = async (ctx: DocumentContext) => {
     ?.find((cookie) => cookie.includes('bg_theme'))
     ?.split('=')[1];
 
+
   if (
     defalutThemeCookie &&
     defalutLightThemeCookie &&
@@ -96,7 +97,6 @@ MyDocument.getInitialProps = async (ctx: DocumentContext) => {
   const cachedSetting: Setting | null = await redis.get('global-setting');
 
   if (cachedSetting) {
-    cachedSetting;
     return {
       ...initialProps,
       dataTheme: cachedSetting?.defaultTheme,
