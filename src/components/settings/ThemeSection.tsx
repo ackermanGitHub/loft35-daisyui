@@ -115,7 +115,7 @@ const ThemeSection = () => {
           >
             <option value={'primary'}>Primario</option>
             <option value={'secondary'}>Secundario</option>
-            <option value={'black&white'}>Blanco/Negro</option>
+            <option value={'black&white'}>Claro/Oscuro</option>
           </select>
         </div>
       </div>

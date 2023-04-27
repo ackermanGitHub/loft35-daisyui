@@ -11,7 +11,7 @@ const ProductsCardScroll: React.FC = () => {
   return (
     <div className="flex flex-wrap items-center justify-around">
       {/* Products Placeholders */}
-      {!isFetched || true &&
+      {!isFetched &&
         Array(6)
           .fill(0)
           .map((_, index) => (
