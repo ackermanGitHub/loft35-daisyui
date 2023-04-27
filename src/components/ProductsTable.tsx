@@ -23,42 +23,39 @@ const ProductsTable: React.FC = () => {
     data: productsData,
     refetch: refetchProducts,
     isLoading: isProductsLoading,
-  } = api.product.getAll.useQuery();
+  } = api.product.getAll.useQuery(undefined, {
+
+  });
 
   useEffect(() => {
-    const selectCheckbox = document.getElementById(
+    const selectAllCheckbox = document.getElementById(
       'select-all-checkbox'
     ) as HTMLInputElement;
-    const checkboxes = document.querySelectorAll(
+    const checkboxesList = document.querySelectorAll(
       '.select-checkbox-group'
     ) as NodeListOf<HTMLInputElement>;
-    const togglesActives = document.querySelectorAll(
-      '.toggle-active'
-    ) as NodeListOf<HTMLInputElement>;
 
-    if (!selectCheckbox || !checkboxes || !togglesActives) return;
-
-    togglesActives.forEach((toggle, index) => {
-      if (productsData && productsData[index]) {
-        toggle.checked = productsData[index]?.active || toggle.checked;
-      }
-    });
-
-    selectCheckbox.addEventListener('click', () => {
-      checkboxes.forEach((checkBox) => {
-        checkBox.checked = selectCheckbox.checked;
+    selectAllCheckbox.addEventListener('click', () => {
+      checkboxesList.forEach((checkBox) => {
+        checkBox.checked = selectAllCheckbox.checked;
       });
-      setIsAnyProductSelected(selectCheckbox.checked);
+      setIsAnyProductSelected(selectAllCheckbox.checked);
     });
 
-    checkboxes.forEach((checkBox) => {
-      checkBox.addEventListener('click', () => {
-        setIsAnyProductSelected(
-          Array.from(checkboxes).some((checkbox) => checkbox.checked)
-        );
+    checkboxesList.forEach((checkbox) => {
+      checkbox.addEventListener('click', () => {
+        const checkboxesList1 = document.querySelectorAll(
+          '.select-checkbox-group'
+        ) as NodeListOf<HTMLInputElement>;
+        console.log(Array.from(checkboxesList1))
+        if (Array.from(checkboxesList1).some((checkbox1) => checkbox1.checked)) {
+          setIsAnyProductSelected(true);
+        } else {
+          setIsAnyProductSelected(false);
+        }
       });
     });
-  }, [productsData]);
+  }, []);
 
   const { data: categoriesData } = api.category.getAll.useQuery();
 
@@ -105,11 +102,7 @@ const ProductsTable: React.FC = () => {
     },
   });
 
-  const setActive = api.product.setActive.useMutation({
-    onSuccess: () => {
-      void refetchProducts();
-    },
-  });
+  const setActive = api.product.setActive.useMutation();
 
   const onDragEndHandler = (result: DropResult) => {
     if (result.destination && productsData) {
@@ -337,11 +330,16 @@ const ProductsTable: React.FC = () => {
                                     type="checkbox"
                                     className="toggle toggle-active"
                                     defaultChecked={product.active}
-                                    onChange={() => {
+                                    onChange={(e) => {
                                       setActive.mutate({
                                         productId: product.id,
                                         active: !product.active,
-                                      });
+                                      }, {
+                                        onSuccess() {
+                                          void refetchProducts()
+                                        }
+                                      })
+                                      e.target.checked = !product.active;
                                     }}
                                   />
                                 </div>
