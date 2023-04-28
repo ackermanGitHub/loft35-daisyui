@@ -3,6 +3,7 @@ import { type Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
 import { CookiesProvider } from 'react-cookie';
 import { Analytics } from '@vercel/analytics/react';
+import { ToastProvider } from '~/hooks/useToast';
 
 import { api } from '~/utils/api';
 import '~/styles/globals.css';
@@ -17,7 +18,9 @@ const MyApp: AppType<{ session: Session | null }> = ({
       <Analytics mode={process.env.NODE_ENV === 'production' ? 'production' : 'development'} />
       <CookiesProvider>
         <CartProvider>
-          <Component {...pageProps} />
+          <ToastProvider>
+            <Component {...pageProps} />
+          </ToastProvider>
         </CartProvider>
       </CookiesProvider>
     </SessionProvider>

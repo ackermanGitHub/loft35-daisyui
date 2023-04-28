@@ -3,13 +3,11 @@ import Layout from '~/layout/Layout';
 import { Pool, type QueryResult } from 'pg';
 import { type InferGetServerSidePropsType } from "next";
 import superjson from 'superjson';
+import { useToast } from '~/hooks/useToast';
 
-import { getProviders, signIn } from "next-auth/react"
 import { useEffect } from 'react';
 
 export const getServerSideProps = async () => {
-
-  const providers = await getProviders();
 
   const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
@@ -23,24 +21,29 @@ export const getServerSideProps = async () => {
   return {
     props: {
       products: jsonString,
-      providers: providers ?? []
     },
   };
 }
 
-const Tests: React.FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ products, providers }) => {
+const Tests: React.FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ products }) => {
+
+  // eslint-disable-next-line @typescript-eslint/unbound-method
+  const { addToast } = useToast();
+
   let object: QueryResult;
   if (typeof products !== 'undefined') {
     object = superjson.parse(products);
     console.log(object.fields)
     console.log(object)
   }
+
   useEffect(() => {
     const buyModal = document.getElementById("open-buy-modal");
     const cartModal = document.getElementById("open-cart-modal");
     buyModal?.click()
     cartModal?.click()
   }, [])
+
   return (
     <>
       <Head>
@@ -50,16 +53,35 @@ const Tests: React.FC<InferGetServerSidePropsType<typeof getServerSideProps>> = 
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
-        <div className="flex flex-wrap items-center justify-around">
-          {providers && Object.values(providers).map((provider) => (
-            <div key={provider.name}>
-              <button onClick={() => void signIn(provider.id, {
-                callbackUrl: "/test"
-              })}>
-                Sign in with {provider.name}
-              </button>
-            </div>
-          ))}
+        <div className="flex h-full flex-wrap items-center justify-around">
+          <button className='btn btn-error' onClick={() => {
+            addToast({
+              type: 'error',
+              title: 'Error!',
+              description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
+            });
+          }}>Error</button>
+          <button className='btn btn-warning' onClick={() => {
+            addToast({
+              type: 'warning',
+              title: 'Warning!',
+              description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
+            });
+          }}>Warning</button>
+          <button className='btn btn-success' onClick={() => {
+            addToast({
+              type: 'success',
+              title: 'Success!',
+              description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
+            });
+          }}>Success</button>
+          <button className='btn btn-info' onClick={() => {
+            addToast({
+              type: 'info',
+              title: 'Info!',
+              description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
+            });
+          }}>Info</button>
         </div>
       </Layout>
     </>
