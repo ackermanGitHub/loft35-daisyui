@@ -5,8 +5,6 @@ import { type InferGetServerSidePropsType } from "next";
 import superjson from 'superjson';
 import { useToast } from '~/hooks/useToast';
 
-import { useEffect } from 'react';
-
 export const getServerSideProps = async () => {
 
   const pool = new Pool({
@@ -36,13 +34,6 @@ const Tests: React.FC<InferGetServerSidePropsType<typeof getServerSideProps>> = 
     console.log(object.fields)
     console.log(object)
   }
-
-  useEffect(() => {
-    const buyModal = document.getElementById("open-buy-modal");
-    const cartModal = document.getElementById("open-cart-modal");
-    buyModal?.click()
-    cartModal?.click()
-  }, [])
 
   return (
     <>
@@ -81,6 +72,13 @@ const Tests: React.FC<InferGetServerSidePropsType<typeof getServerSideProps>> = 
               title: 'Info!',
               description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
             });
+          }}>Info</button>
+          <button className='btn btn-primary' onClick={() => {
+            const buyModal = document.getElementById("buy-modal") as HTMLInputElement;
+            const cartModal = document.getElementById("cart-modal") as HTMLInputElement;
+
+            buyModal.checked = true
+            cartModal.checked = true
           }}>Info</button>
         </div>
       </Layout>

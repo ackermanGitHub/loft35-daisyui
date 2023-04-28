@@ -1,6 +1,7 @@
 import { type BuiltInProviderType } from "next-auth/providers";
 import { type ClientSafeProvider, type LiteralUnion, getProviders, signIn, useSession } from "next-auth/react"
 import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 
 // steps
 type Step = "Session" | "Payment" | "Order" | "Confirm";
@@ -9,6 +10,18 @@ const BuyingProcess = () => {
     const [providers, setProviders] = useState<Record<LiteralUnion<BuiltInProviderType, string>, ClientSafeProvider> | null>()
     const [currentStep, setCurrentStep] = useState<Step>('Session');
     const session = useSession();
+    const router = useRouter();
+
+    useEffect(() => {
+        const { query } = router;
+        if (query["buyingprocess"] && query["buyingprocess"] === "true") {
+            const buyModal = document.getElementById("buy-modal") as HTMLInputElement;
+            const cartModal = document.getElementById("cart-modal") as HTMLInputElement;
+            buyModal.checked = true
+            cartModal.checked = true
+            void router.replace(router.pathname);
+        }
+    }, [router])
 
     useEffect(() => {
         void (async () => {
@@ -41,7 +54,7 @@ const BuyingProcess = () => {
                             {providers && currentStep === "Session" && Object.values(providers).map((provider) => (
                                 <div key={provider.name}>
                                     <button className={`btn border-none btn-primary gap-2 ${provider.id === "google" ? "bg-[#fff]" : "bg-[#7289DA]"}`} onClick={() => void signIn(provider.id, {
-                                        callbackUrl: "/test"
+                                        callbackUrl: `${router.pathname}?buyingprocess=true`,
                                     })}>
                                         {provider.id === "google" &&
                                             <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
