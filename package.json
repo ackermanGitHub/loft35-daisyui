@@ -21,6 +21,7 @@
     "@trpc/server": "^10.18.0",
     "@upstash/redis": "^1.20.4",
     "@vercel/analytics": "^0.1.11",
+    "million": "^2.3.0",
     "next": "13.2.4",
     "next-auth": "^4.20.1",
     "pg": "^8.10.0",
