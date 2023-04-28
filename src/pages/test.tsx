@@ -79,7 +79,7 @@ const Tests: React.FC<InferGetServerSidePropsType<typeof getServerSideProps>> = 
 
             buyModal.checked = true
             cartModal.checked = true
-          }}>Info</button>
+          }}>Modal</button>
         </div>
       </Layout>
     </>
