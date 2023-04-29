@@ -9,7 +9,7 @@ const ProductsCardScroll: React.FC = () => {
     api.product.getAll.useQuery();
 
   return (
-    <div className="flex flex-wrap items-center justify-around">
+    <div className="flex flex-wrap max-w-lg items-center justify-around">
       {/* Products Placeholders */}
       {!isFetched &&
         Array(6)

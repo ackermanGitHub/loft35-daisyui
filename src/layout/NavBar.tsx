@@ -13,7 +13,7 @@ const NavBar: React.FC = () => {
 
   return (
     <nav className="navbar sticky top-0 z-30 text-base-content shadow-md backdrop-blur bg-opacity-90 bg-base-100">
-      <label htmlFor="my-drawer-3" className="btn btn-square btn-ghost">
+      <label htmlFor="my-drawer-3" className="btn btn-square btn-ghost min-[1024px]:hidden">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"

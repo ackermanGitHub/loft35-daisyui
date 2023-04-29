@@ -4,11 +4,13 @@ import SettingsOptions from '~/components/settings/Settings';
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <div className="drawer">
+    <div className="drawer drawer-mobile">
       <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
-      <div className="drawer-content mb-12 flex flex-col">
+      <div className="drawer-content flex flex-col items-center ">
         <NavBar />
-        {children}
+        <section className='flex items-center'>
+          {children}
+        </section>
         <SettingsOptions />
       </div>
       <div className="drawer-side">
