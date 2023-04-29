@@ -137,7 +137,7 @@ const ProductsTable: React.FC = () => {
       <table className="table static table-compact table-zebra m-4 w-full">
         <thead>
           <tr>
-            <th className='rounded-none'>
+            <th className='rounded-none !-left-[1px] '>
               <label>
                 <input
                   id="select-all-checkbox"
@@ -194,7 +194,7 @@ const ProductsTable: React.FC = () => {
                           {...provided.draggableProps}
                           ref={provided.innerRef}
                         >
-                          <th className="rounded-none">
+                          <th className="rounded-none !-left-[1px]">
                             <label>
                               <input
                                 type="checkbox"
@@ -534,7 +534,7 @@ const ProductsTable: React.FC = () => {
 
         <tfoot>
           <tr>
-            <th className="rounded-none"></th>
+            <th className="rounded-none !-left-[1px]"></th>
             <th></th>
             <th>
               <div className='flex flex-row justify-around'>
@@ -584,8 +584,8 @@ const ProductsTable: React.FC = () => {
                   description="Estás segura que deseas eliminar estos productos?"
                 >
                   <svg
-                    width={18}
-                    height={18}
+                    width={22}
+                    height={22}
                     viewBox="0 0 24 24"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"

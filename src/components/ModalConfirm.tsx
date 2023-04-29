@@ -18,7 +18,7 @@ const ModalConfirm: React.FC<IProps> = ({
   return (
     <div className="flex justify-around max-md:justify-between">
       <label
-        htmlFor={`${isDisabled ? '' : 'my-modal-6'}`}
+        htmlFor={`${isDisabled ? '' : 'confirm-modal'}`}
         className={`btn btn-sm btn-${isDisabled ? 'disabled' : 'ghost'}`}
       >
         {children}
@@ -27,15 +27,14 @@ const ModalConfirm: React.FC<IProps> = ({
       {/* Put this part before </body> tag */}
       <input
         type="checkbox"
-        id="my-modal-6"
+        id="confirm-modal"
         className="modal-toggle"
         disabled={isDisabled}
       />
-      <div className="modal modal-bottom sm:modal-middle">
-        <div className="modal-box">
+      <div className="modal absolute modal-bottom sm:modal-middle">
+        <div className="modal-box ">
           <div className="flex flex-row items-center gap-3">
             <svg
-              xmlns="http://www.w3.org/2000/svg"
               className="stroke-current flex-shrink-0 h-6 w-6"
               fill="none"
               viewBox="0 0 24 24"
@@ -48,18 +47,19 @@ const ModalConfirm: React.FC<IProps> = ({
               />
             </svg>
 
-            <h3 className="font-bold text-lg">{title}</h3>
+            <p className="font-bold text-lg">{title}</p>
           </div>
-          <p className="py-4">{description}</p>
+          {/* TODO: fix the inheritance overflow problem */}
+          <p className="py-4 whitespace-break-spaces">{description}</p>
           <div className="modal-action">
             <label
               onClick={onOkFn}
-              htmlFor="my-modal-6"
+              htmlFor="confirm-modal"
               className="btn btn-secondary"
             >
               {okBtnText}
             </label>
-            <label htmlFor="my-modal-6" className="btn btn-secondary">
+            <label htmlFor="confirm-modal" className="btn btn-secondary">
               Cancelar
             </label>
           </div>
