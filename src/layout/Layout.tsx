@@ -6,9 +6,9 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <div className="drawer drawer-mobile">
       <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
-      <div className="drawer-content flex flex-col items-center ">
+      <div className="drawer-content relative flex flex-col">
         <NavBar />
-        <section className='flex items-center'>
+        <section className='flex flex-col items-center'>
           {children}
         </section>
         <SettingsOptions />

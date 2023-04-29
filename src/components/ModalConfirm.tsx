@@ -19,7 +19,7 @@ const ModalConfirm: React.FC<IProps> = ({
     <div className="flex justify-around max-md:justify-between">
       <label
         htmlFor={`${isDisabled ? '' : 'my-modal-6'}`}
-        className={`btn btn-${isDisabled ? 'disabled' : 'ghost'}`}
+        className={`btn btn-sm btn-${isDisabled ? 'disabled' : 'ghost'}`}
       >
         {children}
       </label>

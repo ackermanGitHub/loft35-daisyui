@@ -43,6 +43,7 @@ export const CartProvider: React.FC<React.PropsWithChildren> = ({
     total: 0,
   });
 
+  // TODO fix this crapy code
   const addToCart = (newItem: CartItem) => {
     const existItem = cart.items.find(
       (item) => item.productId === newItem.productId
@@ -88,7 +89,7 @@ export const CartProvider: React.FC<React.PropsWithChildren> = ({
       <input type="checkbox" id="cart-modal" className="modal-toggle" />
       <label
         htmlFor="cart-modal"
-        className="modal modal-bottom sm:modal-middle cursor-pointer"
+        className="modal modal-bottom cursor-pointer"
       >
         <label className="modal-box relative" htmlFor="">
           <div className="flex flex-col gap-4 justify-between items-center">

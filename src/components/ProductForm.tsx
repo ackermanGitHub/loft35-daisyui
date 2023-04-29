@@ -141,10 +141,10 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
 
   return (
     <div className="flex justify-around max-md:justify-between">
-      <label htmlFor="my-modal-5" className="btn btn-ghost">
+      <label htmlFor="my-modal-5" className="btn btn-sm btn-ghost">
         <svg
-          width="25px"
-          height="25px"
+          width={18}
+          height={18}
           viewBox="0 0 24 24"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -162,7 +162,7 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
         </svg>
       </label>
       <input type="checkbox" id="my-modal-5" className="modal-toggle" />
-      <div className="modal">
+      <div className="modal absolute">
         <form
           className="modal-box flex w-auto max-w-5xl flex-col"
           onSubmit={(event) => void handleSubmit(onSubmit2)(event)}
