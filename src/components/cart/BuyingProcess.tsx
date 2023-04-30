@@ -10,7 +10,7 @@ const steps: Step[] = ["Session", "Order", "Confirm"];
 const BuyingProcess = () => {
     const [providers, setProviders] = useState<Record<LiteralUnion<BuiltInProviderType, string>, ClientSafeProvider> | null>()
     const [currentStep, setCurrentStep] = useState<Step>('Session');
-    const [orderWay, setOrderWay] = useState<"whatsapp" | "online">();
+    const [, setOrderWay] = useState<"whatsapp" | "online">();
     const session = useSession();
     const router = useRouter();
 
@@ -41,7 +41,7 @@ const BuyingProcess = () => {
             setCurrentStep('Session');
         }
 
-    }, [session])
+    }, [currentStep, session])
 
     return (
         <>
