@@ -1,15 +1,12 @@
 import Head from 'next/head';
 import Layout from '~/layout/Layout';
-import { Pool, type QueryResult } from 'pg';
+import { type QueryResult } from 'pg';
+import { pool } from '~/utils/pg';
 import { type InferGetServerSidePropsType } from "next";
 import superjson from 'superjson';
 import { useToast } from '~/hooks/useToast';
 
 export const getServerSideProps = async () => {
-
-  const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-  })
   const result = await pool.query('SELECT * FROM "Product"')
   console.log(result)
   await pool.end()
