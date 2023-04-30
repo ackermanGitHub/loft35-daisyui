@@ -29,6 +29,9 @@ const server = z.object({
   UPSTASH_REDIS_REST_TOKEN: z.string(),
   NEXT_PUBLIC_SUPABASE_URL: z.string(),
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string(),
+  OPENAI_API_KEY: z.string(),
+  BUILDERIO_API_KEY: z.string(),
+  OPENAI_ORGANIZATION_ID: z.string(),
 });
 
 /**
@@ -48,6 +51,9 @@ const client = z.object({
  */
 const processEnv = {
   DATABASE_URL: process.env.DATABASE_URL,
+  OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+  OPENAI_ORGANIZATION_ID: process.env.OPENAI_ORGANIZATION_ID,
+  BUILDERIO_API_KEY: process.env.BUILDERIO_API_KEY,
   NODE_ENV: process.env.NODE_ENV,
   NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
   NEXTAUTH_URL: process.env.NEXTAUTH_URL,

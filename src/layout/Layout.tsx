@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import NavBar from './NavBar';
-import SettingsOptions from '~/components/settings/Settings';
+// in now on ShoppingCart
+// import SettingsOptions from '~/components/settings/Settings';
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
@@ -11,7 +12,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         <section className='flex flex-col items-center'>
           {children}
         </section>
-        <SettingsOptions />
+        {/* <SettingsOptions />  in now on ShoppingCart */}
       </div>
       <div className="drawer-side">
         <label htmlFor="my-drawer-3" className="drawer-overlay"></label>

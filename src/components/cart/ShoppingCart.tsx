@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { createContext, useContext, useState } from 'react';
+import SettingsOptions from '~/components/settings/Settings';
 
 import BuyingProcess from '~/components/cart/BuyingProcess';
 
@@ -189,6 +190,7 @@ export const CartProvider: React.FC<React.PropsWithChildren> = ({
         </label>
       </label>
       <BuyingProcess />
+      <SettingsOptions />
 
       {children}
     </CartContext.Provider>
