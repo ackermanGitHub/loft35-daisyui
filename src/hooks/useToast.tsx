@@ -36,9 +36,9 @@ export const ToastProvider: React.FunctionComponent<{ children: React.ReactNode 
 
             setMessages((state) => [...state, toast]);
 
-            // setTimeout(() => {
-            //     setMessages((state) => state.filter((message) => message.id !== uniqueId));
-            // }, 5000)
+            setTimeout(() => {
+                setMessages((state) => state.filter((message) => message.id !== uniqueId));
+            }, 5000)
         }, [],
     );
 
@@ -73,7 +73,7 @@ export const ToastProvider: React.FunctionComponent<{ children: React.ReactNode 
                                     removeToast(message.id);
                                 }}
                                     className="absolute cursor-pointer top-2 right-2 rounded-full">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width={18} height={18} stroke='currentColor'>
+                                    <svg fill="none" viewBox="0 0 24 24" width={18} height={18} stroke='currentColor'>
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
                                     </svg>
                                 </span>
