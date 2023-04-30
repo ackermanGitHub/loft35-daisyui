@@ -1,4 +1,4 @@
-import { type Setting } from '@prisma/client';
+// import { type Setting } from '@prisma/client';
 import Document, {
   Html,
   Head,
@@ -8,7 +8,7 @@ import Document, {
   type DocumentContext,
 } from 'next/document';
 import { prisma } from '~/server/db';
-import { redis } from '~/utils/redis';
+// import { redis } from '~/utils/redis';
 
 interface IDocumentProps extends DocumentProps {
   dataTheme: string;
@@ -94,18 +94,18 @@ MyDocument.getInitialProps = async (ctx: DocumentContext) => {
     };
   }
 
-  const cachedSetting: Setting | null = await redis.get('global-setting');
+  //const cachedSetting: Setting | null = await redis.get('global-setting');
 
-  if (cachedSetting) {
-    return {
-      ...initialProps,
-      dataTheme: cachedSetting?.defaultTheme,
-      lightTheme: cachedSetting?.lightTheme,
-      darkTheme: cachedSetting?.darkTheme,
-      gradientTheme: cachedSetting?.gradientTheme,
-      bgColorTheme: cachedSetting?.bgColor,
-    };
-  }
+  /// if (cachedSetting) {
+  ///   return {
+  ///     ...initialProps,
+  ///     dataTheme: cachedSetting?.defaultTheme,
+  ///     lightTheme: cachedSetting?.lightTheme,
+  ///     darkTheme: cachedSetting?.darkTheme,
+  ///     gradientTheme: cachedSetting?.gradientTheme,
+  ///     bgColorTheme: cachedSetting?.bgColor,
+  ///   };
+  /// }
 
   const globalSetting = await prisma.setting.findUnique({
     where: {
@@ -113,7 +113,7 @@ MyDocument.getInitialProps = async (ctx: DocumentContext) => {
     },
   });
 
-  await redis.set('global-setting', globalSetting);
+  // await redis.set('global-setting', globalSetting);
 
   return {
     ...initialProps,
