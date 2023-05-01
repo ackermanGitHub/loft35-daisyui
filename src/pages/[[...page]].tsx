@@ -13,7 +13,6 @@ builder.init("2b2c25c6e4fc4a03ae76ae797b17151e");
 // Define a function that fetches the Builder
 // content for a given page
 // Fetch the builder content for the given page
-// disable the ts any variable error:
 
 export async function getStaticProps({ params }: any) {
   const page = await builder
