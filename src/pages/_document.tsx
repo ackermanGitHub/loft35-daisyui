@@ -55,6 +55,8 @@ MyDocument.getInitialProps = async (ctx: DocumentContext) => {
 
   const userCookies = ctx.req?.headers.cookie;
 
+  console.log(ctx);
+
   const userCookiesArr = userCookies?.split(' ');
 
   const themeCookies = userCookiesArr

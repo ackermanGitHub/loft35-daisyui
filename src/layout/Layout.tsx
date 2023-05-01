@@ -1,18 +1,16 @@
 import Link from 'next/link';
 import NavBar from './NavBar';
-// import SettingsOptions from '~/components/settings/Settings'; // is now in ShoppingCart
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <>
+    <div className="flex flex-col h-screen">
       <NavBar />
       <div className="drawer drawer-mobile">
         <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
-        <div className="drawer-content relative flex flex-col items-center">
-          <section className='flex max-w-screen-md flex-col items-center'>
+        <div className="drawer-content relative flex flex-col">
+          <section className='flex m-auto w-full max-w-screen-lg flex-col items-center'>
             {children}
           </section>
-          {/* <SettingsOptions />  is now in ShoppingCart */}
         </div>
         <div className="drawer-side">
           <label htmlFor="my-drawer-3" className="drawer-overlay"></label>
@@ -29,7 +27,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           </ul>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

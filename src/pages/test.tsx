@@ -5,6 +5,7 @@ import Layout from '~/layout/Layout';
 // import { type InferGetServerSidePropsType } from "next";
 // import superjson from 'superjson';
 import { useToast } from '~/hooks/useToast';
+import Loader from '~/components/Loader';
 
 /* export const getServerSideProps = async () => {
   const result = await pool.query('SELECT * FROM "Product"')
@@ -43,6 +44,7 @@ const Tests = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
+        <Loader />
         <div className="flex h-full flex-wrap items-center justify-around">
           <button className='btn btn-error' onClick={() => {
             addToast({
