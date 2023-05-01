@@ -4,6 +4,7 @@ import { BuilderComponent, builder, useIsPreviewing } from '@builder.io/react';
 import DefaultErrorPage from 'next/error';
 import Head from 'next/head';
 import Layout from '~/layout/Layout';
+import { api } from '~/utils/api';
 
 // Replace with your Public API Key
 builder.init("2b2c25c6e4fc4a03ae76ae797b17151e");
@@ -14,23 +15,23 @@ builder.init("2b2c25c6e4fc4a03ae76ae797b17151e");
 // content for a given page
 // Fetch the builder content for the given page
 
-export async function getServerSideProps({ params }: any) {
-  const page = await builder
-    .get('page', {
-      userAttributes: {
-        // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-        urlPath: '/' + (params?.page?.join('/') || ''),
-      },
-    })
-    .toPromise();
-
-  // Return the page content as props
-  return {
-    props: {
-      page: page || null,
-    },
-  };
-}
+// export async function getServerSideProps({ params }: any) {
+//   const page = await builder
+//     .get('page', {
+//       userAttributes: {
+//         // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+//         urlPath: '/' + (params?.page?.join('/') || ''),
+//       },
+//     })
+//     .toPromise();
+// 
+//   // Return the page content as props
+//   return {
+//     props: {
+//       page: page || null,
+//     },
+//   };
+// }
 
 // Define a function that generates the 
 // static paths for all pages in Builder
@@ -50,24 +51,21 @@ export async function getServerSideProps({ params }: any) {
 // }
 
 // Define the Page component
-export default function Page({ page }: any) {
+export default function Page() {
 
   const router = useRouter();
+  const { data: page } = api.page.get.useQuery({ urlPath: router.asPath })
   const isPreviewing = useIsPreviewing();
 
   // If the page is still being generated, 
   // show a loading message
-  if (router.isFallback) {
+  if (router.isFallback || !page) {
     return <h1>Loading...</h1>
   }
 
   // If the page content is not available 
   // and not in preview mode, show a 404 error page
   if (!page && !isPreviewing) {
-    return <DefaultErrorPage statusCode={404} />
-  }
-
-  if (!page) {
     return <DefaultErrorPage statusCode={404} />
   }
 
@@ -82,7 +80,8 @@ export default function Page({ page }: any) {
       <Layout>
         <div style={
           {
-            width: "-webkit-fill-available"
+            width: "-webkit-fill-available",
+            overflow: "hidden",
           }
         }>
           <BuilderComponent model="page" content={page} />
