@@ -39,10 +39,6 @@ export default function Page() {
   );
 }
 
-/* Page.getInitialProps = (ctx: any) => {
-
-  console.log(ctx);
-
+Page.getInitialProps = () => {
   return {};
 };
- */
