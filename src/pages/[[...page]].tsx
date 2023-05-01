@@ -14,7 +14,8 @@ builder.init("2b2c25c6e4fc4a03ae76ae797b17151e");
 // content for a given page
 // Fetch the builder content for the given page
 
-export async function getStaticProps({ params }: any) {
+export async function getServerSideProps({ params }: any) {
+  console.log(params)
   const page = await builder
     .get('page', {
       userAttributes: {
@@ -29,27 +30,25 @@ export async function getStaticProps({ params }: any) {
     props: {
       page: page || null,
     },
-    // Revalidate the content every 5 seconds
-    revalidate: 5
   };
 }
 
 // Define a function that generates the 
 // static paths for all pages in Builder
-export async function getStaticPaths() {
-  // Get a list of all pages in Builder
-  const pages = await builder.getAll('page', {
-    // We only need the URL field
-    fields: 'data.url',
-    options: { noTargeting: true },
-  });
-
-  // Generate the static paths for all pages in Builder
-  return {
-    paths: pages.map(page => `${page.data?.url}`),
-    fallback: true,
-  };
-}
+// export async function getStaticPaths() {
+//   // Get a list of all pages in Builder
+//   const pages = await builder.getAll('page', {
+//     // We only need the URL field
+//     fields: 'data.url',
+//     options: { noTargeting: true },
+//   });
+// 
+//   // Generate the static paths for all pages in Builder
+//   return {
+//     paths: pages.map(page => `${page.data?.url}`),
+//     fallback: true,
+//   };
+// }
 
 // Define the Page component
 export default function Page({ page }: any) {

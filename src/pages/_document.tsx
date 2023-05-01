@@ -25,6 +25,7 @@ export default function MyDocument({
   gradientTheme,
   bgColorTheme,
 }: IDocumentProps) {
+
   return (
     <Html
       data-theme={dataTheme === 'light' ? lightTheme : darkTheme}
