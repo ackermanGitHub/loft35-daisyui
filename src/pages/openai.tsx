@@ -1,9 +1,9 @@
 import Head from 'next/head';
-import { type InferGetServerSidePropsType } from "next";
+// import { type InferGetServerSidePropsType } from "next";
 import Layout from '~/layout/Layout';
-import { openai } from '~/utils/openai';
+// import { openai } from '~/utils/openai';
 
-export const getServerSideProps = async () => {
+/* export const getServerSideProps = async () => {
     const res = await openai.listModels();
     console.log(res);
     return {
@@ -13,11 +13,12 @@ export const getServerSideProps = async () => {
             },
         },
     };
-}
+} */
 
-const Openai: React.FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ openaiModels }) => {
+//const Openai: React.FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ openaiModels }) => {
+const Openai = () => {
 
-    console.log(openaiModels)
+    // console.log(openaiModels)
 
     return (
         <>

@@ -1,12 +1,12 @@
 import Head from 'next/head';
 import Layout from '~/layout/Layout';
-import { type QueryResult } from 'pg';
-import { pool } from '~/utils/pg';
-import { type InferGetServerSidePropsType } from "next";
-import superjson from 'superjson';
+//import { type QueryResult } from 'pg';
+// import { pool } from '~/utils/pg';
+// import { type InferGetServerSidePropsType } from "next";
+// import superjson from 'superjson';
 import { useToast } from '~/hooks/useToast';
 
-export const getServerSideProps = async () => {
+/* export const getServerSideProps = async () => {
   const result = await pool.query('SELECT * FROM "Product"')
   console.log(result)
   await pool.end()
@@ -18,19 +18,21 @@ export const getServerSideProps = async () => {
       products: jsonString,
     },
   };
-}
+} */
 
-const Tests: React.FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ products }) => {
+//const Tests: React.FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ products }) => {
+
+const Tests = () => {
 
   // eslint-disable-next-line @typescript-eslint/unbound-method
   const { addToast } = useToast();
 
-  let object: QueryResult;
+  /* let object: QueryResult;
   if (typeof products !== 'undefined') {
     object = superjson.parse(products);
     console.log(object.fields)
     console.log(object)
-  }
+  } */
 
   return (
     <>
