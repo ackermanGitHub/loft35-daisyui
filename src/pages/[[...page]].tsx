@@ -15,7 +15,6 @@ builder.init("2b2c25c6e4fc4a03ae76ae797b17151e");
 // Fetch the builder content for the given page
 
 export async function getServerSideProps({ params }: any) {
-  console.log(params)
   const page = await builder
     .get('page', {
       userAttributes: {
