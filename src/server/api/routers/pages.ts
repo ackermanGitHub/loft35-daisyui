@@ -1,6 +1,9 @@
 import { z } from 'zod';
 import { createTRPCRouter, publicProcedure } from '../trpc';
 import { builder, type BuilderPage } from '@builder.io/react';
+import { env } from '~/env.mjs';
+
+builder.init(env.BUILDERIO_API_KEY);
 
 export const pagesRouter = createTRPCRouter({
   get: publicProcedure
