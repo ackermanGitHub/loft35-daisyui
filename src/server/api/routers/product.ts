@@ -83,6 +83,7 @@ export const productRouter = createTRPCRouter({
         where: {
           id: input.productId,
         },
+        cacheStrategy: { swr: 60, ttl: 60 },
       });
     }),
 

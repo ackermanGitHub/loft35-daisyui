@@ -112,6 +112,7 @@ MyDocument.getInitialProps = async (ctx: DocumentContext) => {
     where: {
       id: 1,
     },
+    cacheStrategy: { swr: 60, ttl: 60 },
   });
 
   // await redis.set('global-setting', globalSetting);
@@ -126,3 +127,16 @@ MyDocument.getInitialProps = async (ctx: DocumentContext) => {
     bgColorTheme: globalSetting?.bgColor,
   };
 };
+
+
+/* 
+Define a `cache strategy` for your query:
+await prisma.user.findMany({
+  where: {
+    email: {
+      contains: "alice@prisma.io",
+    }, 
+  }, 
+  cacheStrategy: { swr: 60, ttl: 60 }, 
+});
+*/
