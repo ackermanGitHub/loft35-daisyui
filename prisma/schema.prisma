@@ -134,6 +134,7 @@ model Order {
 
 model Payment {
   id          Int      @id @default(autoincrement())
+  // Online || Whatssap
   paymentType String
   amount      Float
   paymentDate DateTime @default(now())
@@ -143,9 +144,13 @@ model Payment {
 
 model Shipping {
   id           Int      @id @default(autoincrement())
+  // Direccion
   address      String
+  // city = municipio
   city         String
+  // state = provincia ( La Habana )
   state        String
+  //  10 600
   zipCode      String
   shippingDate DateTime @default(now())
   orderId      Int      @unique

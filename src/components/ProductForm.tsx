@@ -44,11 +44,15 @@ const ProductForm: React.FC<IProps> = ({ onUploadSucces }) => {
   const productNameRegex = /^[a-zA-Z0-9]+(\s[a-zA-Z0-9]+)*$/;
 
   const onSubmit2 = async (data: FormValues) => {
-    if (upldProState === 'Error' || upldProState === 'Subida') {
+    if (upldProState === 'Subida') {
       setPrimaryImageSize(undefined);
       setSecondaryImagesSize(undefined);
       setUpldProstate('Subir');
       reset();
+      return;
+    }
+    if (upldProState === 'Error') {
+      setUpldProstate('Subir');
       return;
     }
 
