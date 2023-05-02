@@ -114,7 +114,7 @@ const ProductsTable: React.FC = () => {
   }
 
   return (
-    <div className="w-full overflow-scroll bg-base-100">
+    <div className="w-full h-screen overflow-scroll bg-base-100">
       {inputProps.active && (
         <div className="relative">
           <input

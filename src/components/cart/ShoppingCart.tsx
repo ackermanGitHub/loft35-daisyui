@@ -93,6 +93,13 @@ export const CartProvider: React.FC<React.PropsWithChildren> = ({
         className="modal modal-bottom cursor-pointer"
       >
         <label className="modal-box relative" htmlFor="">
+          <label
+            htmlFor="cart-modal"
+            className="absolute top-4 right-4 btn btn-ghost cursor-pointer rounded-full">
+            <svg fill="none" viewBox="0 0 24 24" width={18} height={18} stroke='currentColor'>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </label>
           <div className="flex flex-col gap-4 justify-between items-center">
             <div className="card-header gap-2 flex">
               <div className="stack">

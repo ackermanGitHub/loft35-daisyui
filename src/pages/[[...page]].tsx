@@ -38,7 +38,3 @@ export default function Page() {
     </>
   );
 }
-
-Page.getInitialProps = () => {
-  return {};
-};
