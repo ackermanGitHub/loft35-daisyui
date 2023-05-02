@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import Layout from '~/layout/Layout';
+
 const Error = () => {
   return (
     <>

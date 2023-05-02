@@ -1,6 +1,6 @@
-import { type AppType } from 'next/app';
+import App, { type AppType, type AppContext } from 'next/app';
 import { type Session } from 'next-auth';
-import { SessionProvider } from 'next-auth/react';
+import { SessionProvider, getSession } from 'next-auth/react';
 import { CookiesProvider } from 'react-cookie';
 import { Analytics } from '@vercel/analytics/react';
 import { ToastProvider } from '~/hooks/useToast';
@@ -25,6 +25,18 @@ const MyApp: AppType<{ session: Session | null }> = ({
       </CookiesProvider>
     </SessionProvider>
   );
+};
+
+MyApp.getInitialProps = async (context: AppContext) => {
+  const appProps = await App.getInitialProps(context);
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const session = await getSession(context);
+
+  return {
+    ...appProps,
+    session,
+  };
 };
 
 export default api.withTRPC(MyApp);
