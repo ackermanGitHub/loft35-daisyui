@@ -1,6 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import { BuilderComponent } from '@builder.io/react';
+import '@builder.io/widgets';
 import DefaultErrorPage from 'next/error';
 import Head from 'next/head';
 import Layout from '~/layout/Layout';
