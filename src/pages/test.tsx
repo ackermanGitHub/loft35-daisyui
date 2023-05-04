@@ -4,8 +4,8 @@ import Layout from '~/layout/Layout';
 // import { pool } from '~/utils/pg';
 // import { type InferGetServerSidePropsType } from "next";
 // import superjson from 'superjson';
-import { useToast } from '~/hooks/useToast';
-import Loader from '~/components/Loader';
+// import { useToast } from '~/hooks/useToast';
+import InstagramCarousel from '~/components/InstagramCarousel';
 
 /* export const getServerSideProps = async () => {
   const result = await pool.query('SELECT * FROM "Product"')
@@ -26,7 +26,7 @@ import Loader from '~/components/Loader';
 const Tests = () => {
 
   // eslint-disable-next-line @typescript-eslint/unbound-method
-  const { addToast } = useToast();
+  // const { addToast } = useToast();
 
   /* let object: QueryResult;
   if (typeof products !== 'undefined') {
@@ -44,43 +44,47 @@ const Tests = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
-        <Loader />
-        <div className="flex h-full flex-wrap items-center justify-around">
-          <button className='btn btn-error' onClick={() => {
-            addToast({
-              type: 'error',
-              title: 'Error!',
-              description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
-            });
-          }}>Error</button>
-          <button className='btn btn-warning' onClick={() => {
-            addToast({
-              type: 'warning',
-              title: 'Warning!',
-              description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
-            });
-          }}>Warning</button>
-          <button className='btn btn-success' onClick={() => {
-            addToast({
-              type: 'success',
-              title: 'Success!',
-              description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
-            });
-          }}>Success</button>
-          <button className='btn btn-info' onClick={() => {
-            addToast({
-              type: 'info',
-              title: 'Info!',
-              description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
-            });
-          }}>Info</button>
-          <button className='btn btn-primary' onClick={() => {
-            const buyModal = document.getElementById("buy-modal") as HTMLInputElement;
-            const cartModal = document.getElementById("cart-modal") as HTMLInputElement;
+        <div className="flex h-screen my-12 items-center flex-col overflow-auto justify-evenly">
+          <InstagramCarousel />
+          {/*
+          <div>
+            <button className='btn btn-error' onClick={() => {
+              addToast({
+                type: 'error',
+                title: 'Error!',
+                description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
+              });
+            }}>Error</button>
+            <button className='btn btn-warning' onClick={() => {
+              addToast({
+                type: 'warning',
+                title: 'Warning!',
+                description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
+              });
+            }}>Warning</button>
+            <button className='btn btn-success' onClick={() => {
+              addToast({
+                type: 'success',
+                title: 'Success!',
+                description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
+              });
+            }}>Success</button>
+            <button className='btn btn-info' onClick={() => {
+              addToast({
+                type: 'info',
+                title: 'Info!',
+                description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
+              });
+            }}>Info</button>
+            <button className='btn btn-primary' onClick={() => {
+              const buyModal = document.getElementById("buy-modal") as HTMLInputElement;
+              const cartModal = document.getElementById("cart-modal") as HTMLInputElement;
 
-            buyModal.checked = true
-            cartModal.checked = true
-          }}>Modal</button>
+              buyModal.checked = true
+              cartModal.checked = true
+            }}>Modal</button>
+          </div>
+          */}
         </div>
       </Layout>
     </>
