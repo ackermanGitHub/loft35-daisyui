@@ -12,7 +12,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             {children}
           </section>
         </div>
-        <div className="drawer-side">
+        <div className="drawer-side min-[768px]:visible">
           <label htmlFor="my-drawer-3" className="drawer-overlay"></label>
           <ul className="menu p-4 w-80 bg-base-100">
             <li>
