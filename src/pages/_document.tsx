@@ -112,6 +112,8 @@ MyDocument.getInitialProps = async (ctx: DocumentContext) => {
     where: {
       id: 1,
     },
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     cacheStrategy: { swr: 60, ttl: 60 },
   });
 

@@ -83,6 +83,8 @@ export const productRouter = createTRPCRouter({
         where: {
           id: input.productId,
         },
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         cacheStrategy: { swr: 60, ttl: 60 },
       });
     }),
