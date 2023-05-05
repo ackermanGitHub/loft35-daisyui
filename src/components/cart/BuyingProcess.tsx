@@ -92,7 +92,7 @@ const BuyingProcess = () => {
                             </label>
                         </div>
                         <div className="flex items-center justify-evenly flex-col w-full h-full">
-                            {providers && currentStep === "Session" || false &&
+                            {providers && currentStep === "Session" &&
                                 <>
                                     <h1 className="w-2/3 text-center font-medium text-md"> Primero inicia sesión para que podamos saber quien eres 🧙‍♂️ </h1>
                                     {Object.values(providers).map((provider) => (
@@ -118,7 +118,7 @@ const BuyingProcess = () => {
                                     ))}
                                 </>
                             }
-                            {currentStep === "Order" || true &&
+                            {currentStep === "Order" &&
                                 <form
                                     // eslint-disable-next-line @typescript-eslint/no-misused-promises
                                     onSubmit={handleSubmit(submitHandler)}
