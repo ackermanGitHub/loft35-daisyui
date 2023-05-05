@@ -44,7 +44,7 @@ const Tests = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
-        <div className="flex h-screen my-12 items-center flex-col overflow-auto justify-evenly">
+        <div className="flex w-full h-full py-12 mb-16 items-center flex-col">
           <InstagramCarousel />
           {/*
           <div>

@@ -8,7 +8,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       <div className="drawer drawer-mobile">
         <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
         <div className="drawer-content relative flex flex-col">
-          <section className='flex m-auto w-full max-w-screen-lg flex-col items-center'>
+          <section className='flex w-full max-w-screen-lg flex-col items-center'>
             {children}
           </section>
         </div>
