@@ -6,6 +6,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Example {
@@ -48,6 +49,7 @@ model User {
   image         String?
   role          String   @default("user")
   accounts      Account[]
+  // posts         Post[]
   sessions      Session[]
   customer      Customer?
 }
@@ -83,6 +85,7 @@ model Image {
   productId Int?
   product   Product?
   products  Product[] @relation("secondaryImages")
+  // posts      Post[]   @relation("postsImages")
 }
 
 model Product {
@@ -139,7 +142,6 @@ model Order {
 
 model Payment {
   id          Int      @id @default(autoincrement())
-  // Online || Whatssap
   paymentType String
   amount      Float
   confirmed   Boolean  @default(false)
@@ -150,16 +152,45 @@ model Payment {
 
 model Shipping {
   id           Int      @id @default(autoincrement())
-  // Direccion
   address      String
-  // city = municipio
   city         String
-  // state = provincia ( La Habana )
   state        String
-  //  10 600
   zipCode      String
   shippingDate DateTime @default(now())
   confirmed    Boolean  @default(false)
   orderId      Int      @unique
   order        Order    @relation(fields: [orderId], references: [id])
 }
+
+// model Post {
+//   id           Int      @id @default(autoincrement())
+//   date         DateTime @default(now())
+//   description  String?
+//   userId       String      @unique
+//   user         User     @relation(fields: [userId], references: [id])
+//   images      Image[]   @relation("postsImages")
+// 
+// 
+//   // primaryImageId  Int      @unique
+//   // // TODO change imageName to imageRoute or imagePath
+//   // imageUrl        String
+//   // imageBlurDataURL String
+//   // price           Float
+//   // // coin            String
+//   // priority        Int      @unique @default(autoincrement())
+//   // active          Boolean
+//   // deleted         Boolean
+//   // stock           Int
+//   // categoryName    String
+//   // categoryId      Int
+//   // category        Category @relation(fields: [categoryId], references: [id])
+//   // primaryImage    Image    @relation(fields: [primaryImageId], references: [id])
+//   // orders          Order[]  @relation("Product-Orders")
+//   // secondaryImages Image[]  @relation("secondaryImages")
+// }
+
+// model Comment {
+//   id           Int      @id @default(autoincrement())
+//   date         DateTime @default(now())
+//  // user         User     @relation(fields: [email], references: [id])
+// }
