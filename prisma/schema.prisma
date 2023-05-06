@@ -125,7 +125,7 @@ model Customer {
   address String
   phone   String  @unique
   orders  Order[]
-  user    User    @relation(fields: [email], references: [id])
+  user    User    @relation(fields: [email], references: [email])
 }
 
 model Order {
