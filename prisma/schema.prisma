@@ -49,6 +49,7 @@ model User {
   role          String   @default("user")
   accounts      Account[]
   sessions      Session[]
+  customer      Customer?
 }
 
 model VerificationToken {
@@ -120,6 +121,7 @@ model Customer {
   email   String  @unique
   address String
   orders  Order[]
+  user    User @relation(fields: [email], references: [id])
 }
 
 model Order {
