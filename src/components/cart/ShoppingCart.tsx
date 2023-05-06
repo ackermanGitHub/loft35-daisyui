@@ -44,6 +44,10 @@ export const CartProvider: React.FC<React.PropsWithChildren> = ({
     total: 0,
   });
 
+  // const calcTotal = (cart: Cart) => {
+  //   return cart.items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  // }
+
   // TODO fix this crapy code
   const addToCart = (newItem: CartItem) => {
     const existItem = cart.items.find(
@@ -90,12 +94,12 @@ export const CartProvider: React.FC<React.PropsWithChildren> = ({
       <input type="checkbox" id="cart-modal" className="modal-toggle" />
       <label
         htmlFor="cart-modal"
-        className="modal modal-bottom cursor-pointer"
+        className="modal max-[768px]:modal-bottom cursor-pointer"
       >
         <label className="modal-box relative" htmlFor="">
           <label
             htmlFor="cart-modal"
-            className="absolute top-4 right-4 btn btn-ghost cursor-pointer rounded-full">
+            className="absolute top-4 right-4 btn btn-ghost cursor-pointer rounded-full z-20">
             <svg fill="none" viewBox="0 0 24 24" width={18} height={18} stroke='currentColor'>
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
             </svg>
@@ -135,55 +139,58 @@ export const CartProvider: React.FC<React.PropsWithChildren> = ({
                 Tu carrito esta vacio 😥
               </h1>
             ) : (
-              <table>
-                <thead>
-                  <tr>
-                    <th>Producto</th>
-                    <th>Precio</th>
-                    <th>Cantidad</th>
-                    <th>Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {cart.items.map((item) => (
-                    <tr key={item.productId}>
-                      <td>
-                        <Image
-                          src={item.imageURL}
-                          alt={item.name}
-                          blurDataURL={item.blurImageUrl}
-                          width={64}
-                          height={64}
-                        />
-                      </td>
-                      <th>{item.price}</th>
-                      <th>
-                        <select onChange={(e) => {
-                          // TODO check this later
-                          const newQuantity = Number(e.target.value);
-                          setCart({
-                            total: cart.total + (newQuantity - item.price) * item.quantity,
-                            items: cart.items.map((product) =>
-                              product.productId === item.productId
-                                ? { ...product, quantity: newQuantity }
-                                : product
-                            ),
-                          });
-                        }} value={item.quantity} className="select">
-                          {Array(item.productStock)
-                            .fill(0)
-                            .map((_, index) => (
-                              <option value={index + 1} key={index + 1}>
-                                {index + 1}
-                              </option>
-                            ))}
-                        </select>
-                      </th>
-                      <th>{item.quantity * item.price}</th>
+              <div className='w-full max-h-[40vh] overflow-scroll bg-base-100'>
+                <table className='table table-compact table-zebra w-full'>
+                  <thead>
+                    <tr>
+                      <th>Producto</th>
+                      <th>Precio</th>
+                      <th>Cantidad</th>
+                      <th>Total</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {cart.items.map((item) => (
+                      <tr key={item.productId}>
+                        <th>
+                          <Image
+                            src={item.imageURL}
+                            alt={item.name}
+                            placeholder="blur"
+                            blurDataURL={item.blurImageUrl}
+                            width={64}
+                            height={64}
+                          />
+                        </th>
+                        <th>{item.price}</th>
+                        <th>
+                          <select onChange={(e) => {
+                            // TODO check this later
+                            const newQuantity = Number(e.target.value);
+                            setCart({
+                              total: cart.total + (newQuantity - item.price) * item.quantity,
+                              items: cart.items.map((product) =>
+                                product.productId === item.productId
+                                  ? { ...product, quantity: newQuantity }
+                                  : product
+                              ),
+                            });
+                          }} value={item.quantity} className="select">
+                            {Array(item.productStock)
+                              .fill(0)
+                              .map((_, index) => (
+                                <option value={index + 1} key={index + 1}>
+                                  {index + 1}
+                                </option>
+                              ))}
+                          </select>
+                        </th>
+                        <th>{item.quantity * item.price}</th>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )}
           </div>
           <div className="modal-action">
