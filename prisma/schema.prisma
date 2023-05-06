@@ -131,6 +131,7 @@ model Order {
   totalPrice   Float
   orderDate    DateTime  @default(now())
   customer     Customer  @relation(fields: [customerId], references: [id])
+  confirmed    Boolean   @default(false)
   paymentInfo  Payment?
   shippingInfo Shipping?
   products     Product[] @relation("Product-Orders")
@@ -141,6 +142,7 @@ model Payment {
   // Online || Whatssap
   paymentType String
   amount      Float
+  confirmed   Boolean  @default(false)
   paymentDate DateTime @default(now())
   orderId     Int      @unique
   order       Order    @relation(fields: [orderId], references: [id])
@@ -157,6 +159,7 @@ model Shipping {
   //  10 600
   zipCode      String
   shippingDate DateTime @default(now())
+  confirmed    Boolean  @default(false)
   orderId      Int      @unique
   order        Order    @relation(fields: [orderId], references: [id])
 }
