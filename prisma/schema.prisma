@@ -94,7 +94,7 @@ model Product {
   imageUrl        String
   imageBlurDataURL String
   price           Float
-  // coin            String
+  currency        String
   priority        Int      @unique @default(autoincrement())
   active          Boolean
   deleted         Boolean
