@@ -61,7 +61,7 @@ export default function InstagramCarousel() {
 
     return (
         <div style={{
-            backgroundColor: colorTheme === "light" ? "white" : "black"
+            backgroundColor: colorTheme === "dark" ? "black" : "white"
         }} className="instagram-card-container flex text-sm/[16px] font-sans items-center rounded-lg justify-center shadow-lg overflow-hidden max-w-2xl max-[735px]:flex-col min-[735px]:w-2/3 max-[360px]:w-full w-[360px]">
             <div className="flex min-[735px]:hidden justify-between w-full p-3">
                 <div className="flex items-center">
@@ -111,7 +111,7 @@ export default function InstagramCarousel() {
                     ))
                 }
             </div>
-            <div className="flex flex-col w-full justify-between min-[735px]:h-full min-[735px]:max-w-[300px] min-w-[270px]">
+            <div className="flex flex-col w-full justify-between min-[735px]:h-full min-[735px]:max-w-[300px] min-w-[280px]">
                 <div className="flex flex-col h-full max-h-96 max-[735px]:hidden w-full">
                     <div className="flex justify-between w-full pt-3 pb-2 px-3">
                         <div className="flex items-center">
@@ -213,7 +213,7 @@ export default function InstagramCarousel() {
                                         />
                                     </div>
 
-                                    <div className="inline-block whitespace-pre shrink relative ml-3 h-full">
+                                    <div className="inline-block whitespace-pre ml-3 shrink relative h-full">
                                         <h2 className="inline-flex font-semibold text-sm items-center">
                                             {comment.author.name}
                                         </h2>
@@ -281,7 +281,7 @@ export default function InstagramCarousel() {
                     <div className="flex justify-between max-[735px]:hidden px-3 h-10 items-center w-full">
                         <svg aria-label="Emoji" color="currentColor" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24"><title>Emoji</title><path d="M15.83 10.997a1.167 1.167 0 1 0 1.167 1.167 1.167 1.167 0 0 0-1.167-1.167Zm-6.5 1.167a1.167 1.167 0 1 0-1.166 1.167 1.167 1.167 0 0 0 1.166-1.167Zm5.163 3.24a3.406 3.406 0 0 1-4.982.007 1 1 0 1 0-1.557 1.256 5.397 5.397 0 0 0 8.09 0 1 1 0 0 0-1.55-1.263ZM12 .503a11.5 11.5 0 1 0 11.5 11.5A11.513 11.513 0 0 0 12 .503Zm0 21a9.5 9.5 0 1 1 9.5-9.5 9.51 9.51 0 0 1-9.5 9.5Z"></path></svg>
                         <input placeholder="Add a comment..."
-                            className="input p-0 input-ghost h-6"></input>
+                            className="input w-2/3 px-3 py-0 input-ghost h-6"></input>
                         <h2 className="font-semibold text-sm color-[rgb(179,219,255)]">
                             POST
                         </h2>
