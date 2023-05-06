@@ -3,6 +3,8 @@ import { type ClientSafeProvider, type LiteralUnion, getProviders, signIn, useSe
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useForm, type SubmitHandler } from 'react-hook-form';
+import { api } from "~/utils/api";
+import { useCart } from "./ShoppingCart";
 
 interface FormValues {
     address: string;
@@ -23,11 +25,15 @@ const BuyingProcess = () => {
     const session = useSession();
     const router = useRouter();
 
+    const { cart } = useCart()
+
+    const createOrder = api.order.create.useMutation();
+
     const {
         handleSubmit,
         register,
         formState: { errors },
-        // getValues,
+        getValues,
         // reset,
         // setError,
         // setValue,
@@ -48,10 +54,12 @@ const BuyingProcess = () => {
     useEffect(() => {
         const { query } = router;
         if (query["buyingprocess"] && query["buyingprocess"] === "true") {
-            const buyModal = document.getElementById("buy-modal") as HTMLInputElement;
-            const cartModal = document.getElementById("cart-modal") as HTMLInputElement;
-            buyModal.checked = true
-            cartModal.checked = true
+            const buyModal = document.querySelector<HTMLInputElement>("#buy-modal");
+            const cartModal = document.querySelector<HTMLInputElement>("#cart-modal");
+            if (buyModal && cartModal) {
+                buyModal.checked = true
+                cartModal.checked = true
+            }
             void router.replace(router.pathname);
         }
     }, [router])
@@ -237,6 +245,34 @@ const BuyingProcess = () => {
                         }} className={`btn ${currentStep !== steps[2] ? "btn-disabled" : "btn-secondary"}`}>Anterior</button>
                         <button
                             form={currentStep === "Confirm" ? "submit-order" : "shipping-info"}
+                            onClick={() => {
+                                if (currentStep === "Confirm") {
+                                    if (
+                                        session.status === "authenticated"
+                                        && session.data
+                                        && session.data.user
+                                        && session.data.user.email
+                                        && session.data.user.name
+                                    ) {
+                                        const productsIdArr = cart.items.map(item => Array(item.quantity).fill(item.productId));
+                                        const productsId = productsIdArr.flat();
+
+                                        createOrder.mutate({
+                                            address: getValues("address"),
+                                            city: getValues("city"),
+                                            phone: getValues("phone"),
+                                            state: "La Habana",
+                                            email: session.data.user.email,
+                                            name: session.data.user.name,
+                                            productsId: productsId,
+                                            totalPrice: cart.total,
+                                            zipCode: "10600"
+                                        })
+                                    } else {
+                                        throw new Error("No se encuentra autenticado");
+                                    }
+                                }
+                            }}
                             type="submit" className={`btn ${currentStep === steps[0] ? "btn-disabled" : "btn-secondary"}`}>{currentStep === "Confirm" ? "Completar" : "Siguiente"}</button>
                     </div>
                 </div>

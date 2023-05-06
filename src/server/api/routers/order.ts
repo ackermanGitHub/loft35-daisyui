@@ -18,30 +18,64 @@ export const orderRouter = createTRPCRouter({
 
   create: publicProcedure
     .input(
-      z.object({ email: z.string(), address: z.string(), name: z.string() })
+      z.object({
+        email: z.string(),
+        address: z.string(),
+        city: z.string(),
+        state: z.string(),
+        phone: z.string(),
+        zipCode: z.string(),
+        name: z.string(),
+        productsId: z.array(z.number()),
+        totalPrice: z.number(),
+      })
     )
     .mutation(async ({ ctx, input }) => {
-      const costumer = await ctx.prisma.customer.findUnique({
+      let costumer = await ctx.prisma.customer.findUnique({
         where: {
           email: input.email,
         },
       });
       if (!costumer) {
-        const newCostumer = await ctx.prisma.customer.create({
+        costumer = await ctx.prisma.customer.create({
           data: {
             email: input.email,
             address: input.address,
+            phone: input.phone,
             name: input.name,
           },
         });
-        console.log(newCostumer);
       }
+      const order = await ctx.prisma.order.create({
+        data: {
+          customerId: costumer.id,
+          totalPrice: input.totalPrice,
+          products: {
+            connect: input.productsId.map((id) => ({ id })),
+          },
+        },
+      });
+      const shipping = await ctx.prisma.shipping.create({
+        data: {
+          address: input.address,
+          city: input.city,
+          state: input.state,
+          zipCode: input.zipCode,
+          orderId: order.id,
+        },
+      });
 
-      // return ctx.prisma.order.create({
-      //   data: {
-      //     customerId: input.customer,
-      //     totalPrice: 0,
-      //   },
-      // });
+      return await ctx.prisma.order.update({
+        where: {
+          id: order.id,
+        },
+        data: {
+          shippingInfo: {
+            connect: {
+              id: shipping.id,
+            },
+          },
+        },
+      });
     }),
 });
