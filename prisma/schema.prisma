@@ -120,6 +120,7 @@ model Customer {
   name    String
   email   String  @unique
   address String
+  phone   String  @unique
   orders  Order[]
   user    User @relation(fields: [email], references: [id])
 }
