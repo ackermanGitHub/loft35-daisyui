@@ -10,7 +10,7 @@ export interface ToastMessage {
 }
 
 interface ToastContextData {
-    addToast(message: Omit<ToastMessage, 'id'>): void;
+    addToast(this: void, message: Omit<ToastMessage, 'id'>): void;
     removeToast(id: string): void;
 }
 
@@ -91,7 +91,7 @@ export const ToastProvider: React.FunctionComponent<{ children: React.ReactNode 
     );
 };
 
-export function useToast(): ToastContextData {
+export const useToast = () => {
     const context = useContext(ToastContext);
 
     if (!context) {

@@ -1,9 +1,11 @@
 import Image from 'next/image';
 import { useCart } from '~/components/cart/ShoppingCart';
+import { useToast } from '~/hooks/useToast';
 import { api } from '~/utils/api';
 
 const ProductsCardScroll: React.FC = () => {
-  const { addToCart } = useCart();
+  const { cart, addToCart } = useCart();
+  const { addToast } = useToast()
 
   const { data: productsData, isFetched } =
     api.product.getAll.useQuery();
@@ -72,6 +74,17 @@ const ProductsCardScroll: React.FC = () => {
                 className="btn btn-primary"
                 // TODO mostrar no disponemos más de ese producto cuando no haya stock
                 onClick={() => {
+                  const existItem = cart.items.find(item => item.productId === product.id)
+
+                  if (existItem && product.stock <= existItem.quantity) {
+                    addToast({
+                      title: 'No stock',
+                      description: "Sorry, we don't have that many in stock",
+                      type: "error"
+                    })
+                    return;
+                  }
+
                   addToCart({
                     productId: product.id,
                     imageURL: product.imageName,
@@ -81,6 +94,7 @@ const ProductsCardScroll: React.FC = () => {
                     price: product.price,
                     quantity: 1,
                   });
+
                 }}
               >
                 <svg

@@ -44,11 +44,6 @@ export const CartProvider: React.FC<React.PropsWithChildren> = ({
     total: 0,
   });
 
-  // const calcTotal = (cart: Cart) => {
-  //   return cart.items.reduce((acc, item) => acc + item.price * item.quantity, 0);
-  // }
-
-  // TODO fix this crapy code
   const addToCart = (newItem: CartItem) => {
     const existItem = cart.items.find(
       (item) => item.productId === newItem.productId
@@ -64,12 +59,13 @@ export const CartProvider: React.FC<React.PropsWithChildren> = ({
         total: cart.total + newItem.price,
       });
       return;
+    } else {
+      setCart({
+        items: [...cart.items, newItem],
+        total: cart.total + newItem.price,
+      });
     }
 
-    setCart({
-      items: [...cart.items, newItem],
-      total: cart.total + newItem.price,
-    });
   };
 
   const removeFromCart = (productId: number) => {
@@ -165,10 +161,10 @@ export const CartProvider: React.FC<React.PropsWithChildren> = ({
                         <th>{item.price}</th>
                         <th>
                           <select onChange={(e) => {
-                            // TODO check this later
                             const newQuantity = Number(e.target.value);
+
                             setCart({
-                              total: cart.total + (newQuantity - item.price) * item.quantity,
+                              total: cart.total + (newQuantity - item.quantity) * item.price,
                               items: cart.items.map((product) =>
                                 product.productId === item.productId
                                   ? { ...product, quantity: newQuantity }
@@ -194,7 +190,7 @@ export const CartProvider: React.FC<React.PropsWithChildren> = ({
             )}
           </div>
           <div className="modal-action">
-            <label id='open-buy-modal' htmlFor="buy-modal" className={`btn btn-primary ${cart.items.length === 0 ? '' : ''}`}>
+            <label id='open-buy-modal' htmlFor="buy-modal" className={`btn btn-primary ${cart.items.length === 0 ? 'btn-disabled' : ''}`}>
               Comprar
             </label>
             <label htmlFor="cart-modal" className="btn btn-primary">
