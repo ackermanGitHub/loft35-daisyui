@@ -147,7 +147,7 @@ const BuyingProcess = () => {
                                             </h2>
                                             <textarea placeholder="Dirección"
                                                 {...register('address', { required: "Obligatorio" })}
-                                                className="textarea textarea-primary w-full"></textarea>
+                                                className="textarea textarea-primary  max-h-20 w-full"></textarea>
                                             {errors.address ? (
                                                 <div className="badge-warning badge my-[2px] gap-2">
                                                     <svg
