@@ -1,8 +1,9 @@
 import Image from 'next/image';
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import SettingsOptions from '~/components/settings/Settings';
 
 import BuyingProcess from '~/components/cart/BuyingProcess';
+import { useCookies } from 'react-cookie';
 
 // TODO store cart items on cookies
 export interface CartItem {
@@ -43,6 +44,18 @@ export const CartProvider: React.FC<React.PropsWithChildren> = ({
     items: [],
     total: 0,
   });
+  const [cookies, setCookie] = useCookies(['cart']);
+
+
+  useEffect(() => {
+    setCookie("cart", cart)
+    console.log("added to cookies", cart)
+  }, [cart, setCookie])
+
+  useEffect(() => {
+    setCart(cookies.cart)
+    console.log("added from cookies", cart)
+  }, [])
 
   const addToCart = (newItem: CartItem) => {
     const existItem = cart.items.find(
@@ -58,14 +71,12 @@ export const CartProvider: React.FC<React.PropsWithChildren> = ({
         ),
         total: cart.total + newItem.price,
       });
-      return;
     } else {
       setCart({
         items: [...cart.items, newItem],
         total: cart.total + newItem.price,
       });
     }
-
   };
 
   const removeFromCart = (productId: number) => {
@@ -190,6 +201,12 @@ export const CartProvider: React.FC<React.PropsWithChildren> = ({
             )}
           </div>
           <div className="modal-action">
+            <label onClick={() => {
+              console.log("cookies", cookies.cart)
+              console.log("cart", cart)
+            }} className="btn btn-primary">
+              Cookies/Cart
+            </label>
             <label id='open-buy-modal' htmlFor="buy-modal" className={`btn btn-primary ${cart.items.length === 0 ? 'btn-disabled' : ''}`}>
               Comprar
             </label>
